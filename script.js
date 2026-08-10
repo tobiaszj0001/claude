@@ -1,4 +1,4 @@
-/* ===== Odliczanie aż Kubica pójdzie na emeryturę ===== */
+/* ===== Odliczanie aż Grażyna Kubica przejdzie na emeryturę ===== */
 
 // Łączny czas odliczania: milion lat (przybliżone, z latami przestępnymi).
 const MS_PER_SECOND = 1000;
@@ -58,19 +58,3 @@ function render() {
 
 render();
 setInterval(render, 1000);
-
-/* ===== Dekoracyjne linie prędkości w tle ===== */
-(function speedLines() {
-  const container = document.getElementById("speedLines");
-  if (!container) return;
-  const count = 14;
-  for (let i = 0; i < count; i++) {
-    const line = document.createElement("span");
-    const width = 60 + Math.random() * 160;
-    line.style.width = width + "px";
-    line.style.top = Math.random() * 100 + "%";
-    line.style.animationDuration = 2 + Math.random() * 4 + "s";
-    line.style.animationDelay = -Math.random() * 6 + "s";
-    container.appendChild(line);
-  }
-})();
