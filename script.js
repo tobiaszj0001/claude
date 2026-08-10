@@ -1,76 +1,76 @@
-// Sticky nav
-const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 40);
-});
+/* ===== Odliczanie aż Kubica pójdzie na emeryturę ===== */
 
-// Mobile menu
-const burger = document.getElementById('burger');
-const navLinks = document.querySelector('.nav__links');
-burger.addEventListener('click', () => {
-  navLinks.classList.toggle('open');
-});
-navLinks.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => navLinks.classList.remove('open'));
-});
+// Łączny czas odliczania: milion lat (przybliżone, z latami przestępnymi).
+const MS_PER_SECOND = 1000;
+const MS_PER_MINUTE = 60 * MS_PER_SECOND;
+const MS_PER_HOUR   = 60 * MS_PER_MINUTE;
+const MS_PER_DAY    = 24 * MS_PER_HOUR;
+const MS_PER_YEAR   = 365.25 * MS_PER_DAY;
+const TOTAL_MS      = 1_000_000 * MS_PER_YEAR;
 
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry, i) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => entry.target.classList.add('visible'), i * 80);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12 });
-
-document.querySelectorAll(
-  '.card--service, .portfolio__card, .process__step, .stat'
-).forEach(el => {
-  el.classList.add('reveal');
-  observer.observe(el);
-});
-
-// Form submit
-document.getElementById('contactForm').addEventListener('submit', (e) => {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type=submit]');
-  btn.textContent = 'Wiadomość wysłana!';
-  btn.style.background = 'linear-gradient(135deg, #059669, #10b981)';
-  btn.disabled = true;
-  setTimeout(() => {
-    btn.innerHTML = 'Wyślij wiadomość <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-    btn.style.background = '';
-    btn.disabled = false;
-    e.target.reset();
-  }, 3000);
-});
-
-// Smooth counter animation
-function animateCounter(el, target, suffix = '') {
-  let start = 0;
-  const duration = 1800;
-  const step = (timestamp) => {
-    if (!start) start = timestamp;
-    const progress = Math.min((timestamp - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.floor(eased * target) + suffix;
-    if (progress < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
+// Moment startu odliczania zapisujemy w localStorage,
+// żeby licznik płynnie kontynuował przy każdym odświeżeniu.
+const STORAGE_KEY = "kubica-countdown-start";
+let startTime = parseInt(localStorage.getItem(STORAGE_KEY), 10);
+if (!Number.isFinite(startTime)) {
+  startTime = Date.now();
+  localStorage.setItem(STORAGE_KEY, String(startTime));
 }
 
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const nums = entry.target.querySelectorAll('.stat__num');
-      nums[0] && animateCounter(nums[0], 100, 'K+');
-      nums[1] && animateCounter(nums[1], 50, '+');
-      nums[2] && animateCounter(nums[2], 3, 'x');
-      statsObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.5 });
+const els = {
+  years:   document.getElementById("years"),
+  days:    document.getElementById("days"),
+  hours:   document.getElementById("hours"),
+  minutes: document.getElementById("minutes"),
+  seconds: document.getElementById("seconds"),
+  bar:     document.getElementById("progressBar"),
+  text:    document.getElementById("progressText"),
+};
 
-const heroStats = document.querySelector('.hero__stats');
-if (heroStats) statsObserver.observe(heroStats);
+function pad(value, size) {
+  return String(value).padStart(size, "0");
+}
+
+function render() {
+  const elapsed   = Date.now() - startTime;
+  const remaining = Math.max(0, TOTAL_MS - elapsed);
+
+  let rest = remaining;
+  const years = Math.floor(rest / MS_PER_YEAR);   rest -= years * MS_PER_YEAR;
+  const days  = Math.floor(rest / MS_PER_DAY);    rest -= days * MS_PER_DAY;
+  const hours = Math.floor(rest / MS_PER_HOUR);   rest -= hours * MS_PER_HOUR;
+  const mins  = Math.floor(rest / MS_PER_MINUTE); rest -= mins * MS_PER_MINUTE;
+  const secs  = Math.floor(rest / MS_PER_SECOND);
+
+  els.years.textContent   = pad(years, 6);
+  els.days.textContent    = pad(days, 3);
+  els.hours.textContent   = pad(hours, 2);
+  els.minutes.textContent = pad(mins, 2);
+  els.seconds.textContent = pad(secs, 2);
+
+  const percent = (elapsed / TOTAL_MS) * 100;
+  els.bar.style.width = Math.min(100, percent) + "%";
+  els.text.textContent = percent.toLocaleString("pl-PL", {
+    minimumFractionDigits: 8,
+    maximumFractionDigits: 8,
+  }) + "% ukończono";
+}
+
+render();
+setInterval(render, 1000);
+
+/* ===== Dekoracyjne linie prędkości w tle ===== */
+(function speedLines() {
+  const container = document.getElementById("speedLines");
+  if (!container) return;
+  const count = 14;
+  for (let i = 0; i < count; i++) {
+    const line = document.createElement("span");
+    const width = 60 + Math.random() * 160;
+    line.style.width = width + "px";
+    line.style.top = Math.random() * 100 + "%";
+    line.style.animationDuration = 2 + Math.random() * 4 + "s";
+    line.style.animationDelay = -Math.random() * 6 + "s";
+    container.appendChild(line);
+  }
+})();

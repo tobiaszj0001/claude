@@ -3,306 +3,90 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Social Reach — 100 000 osób miesięcznie</title>
+  <title>Odliczanie aż Kubica pójdzie na emeryturę</title>
+  <meta name="description" content="Wielki licznik odliczający milion lat do emerytury Roberta Kubicy." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Animowane tło -->
+  <div class="bg">
+    <div class="bg__grid"></div>
+    <div class="bg__glow bg__glow--1"></div>
+    <div class="bg__glow bg__glow--2"></div>
+    <div class="speed-lines" id="speedLines"></div>
+  </div>
 
-  <!-- NAV -->
-  <nav class="nav" id="nav">
-    <div class="container nav__inner">
-      <a href="#" class="nav__logo">Social<span>Reach</span></a>
-      <ul class="nav__links">
-        <li><a href="#uslugi">Usługi</a></li>
-        <li><a href="#realizacje">Realizacje</a></li>
-        <li><a href="#kontakt" class="btn btn--sm">Kontakt</a></li>
-      </ul>
-      <button class="nav__burger" id="burger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero__bg"></div>
-    <div class="container hero__content">
-      <div class="hero__badge">Social Media dla firm</div>
-      <h1 class="hero__title">
-        Twoja marka<br />
-        <span class="gradient-text">widoczna przez<br />100 000 osób</span><br />
-        każdego miesiąca
+  <main class="wrap">
+    <header class="hero">
+      <div class="badge">
+        <span class="badge__dot"></span>
+        F1 · Status: wciąż się ściga
+      </div>
+      <h1 class="title">
+        Odliczanie aż <span class="title__name">Kubica</span><br />
+        pójdzie na emeryturę
       </h1>
-      <p class="hero__sub">
-        Buduję profesjonalny wizerunek Twojej firmy w social mediach.<br />
-        Gwarantowany zasięg. Mierzalne efekty.
+      <p class="subtitle">
+        Naukowcy szacują, że zostało jeszcze dokładnie <strong>milion lat</strong>.
+        Legenda nie zwalnia.
       </p>
-      <div class="hero__cta">
-        <a href="#kontakt" class="btn btn--primary btn--lg">Zacznijmy współpracę</a>
-        <a href="#realizacje" class="btn btn--ghost btn--lg">Zobacz realizacje</a>
+    </header>
+
+    <!-- LICZNIK -->
+    <section class="counter" aria-label="Licznik odliczający">
+      <div class="counter__unit">
+        <div class="counter__value" id="years">000000</div>
+        <div class="counter__label">Lata</div>
       </div>
-      <div class="hero__stats">
-        <div class="stat">
-          <span class="stat__num">100K+</span>
-          <span class="stat__label">zasięgu miesięcznie</span>
-        </div>
-        <div class="stat__divider"></div>
-        <div class="stat">
-          <span class="stat__num">50+</span>
-          <span class="stat__label">obsługiwanych firm</span>
-        </div>
-        <div class="stat__divider"></div>
-        <div class="stat">
-          <span class="stat__num">3x</span>
-          <span class="stat__label">wzrost zaangażowania</span>
-        </div>
+      <span class="counter__sep">:</span>
+      <div class="counter__unit">
+        <div class="counter__value" id="days">000</div>
+        <div class="counter__label">Dni</div>
+      </div>
+      <span class="counter__sep">:</span>
+      <div class="counter__unit">
+        <div class="counter__value" id="hours">00</div>
+        <div class="counter__label">Godziny</div>
+      </div>
+      <span class="counter__sep">:</span>
+      <div class="counter__unit">
+        <div class="counter__value" id="minutes">00</div>
+        <div class="counter__label">Minuty</div>
+      </div>
+      <span class="counter__sep">:</span>
+      <div class="counter__unit">
+        <div class="counter__value" id="seconds">00</div>
+        <div class="counter__label">Sekundy</div>
+      </div>
+    </section>
+
+    <div class="progress">
+      <div class="progress__bar" id="progressBar"></div>
+      <span class="progress__text" id="progressText">0,0000% ukończono</span>
+    </div>
+
+    <div class="facts">
+      <div class="fact">
+        <span class="fact__num">🏁</span>
+        <span class="fact__txt">Emerytura odwołana do odwołania</span>
+      </div>
+      <div class="fact">
+        <span class="fact__num">💪</span>
+        <span class="fact__txt">Forma: wieczna</span>
+      </div>
+      <div class="fact">
+        <span class="fact__num">⏱️</span>
+        <span class="fact__txt">Odliczanie trwa na żywo</span>
       </div>
     </div>
-    <div class="hero__scroll">
-      <span></span>
-    </div>
-  </section>
 
-  <!-- USŁUGI -->
-  <section class="section" id="uslugi">
-    <div class="container">
-      <div class="section__header">
-        <p class="section__tag">Co oferuję</p>
-        <h2 class="section__title">Kompleksowe prowadzenie<br />social mediów</h2>
-      </div>
-      <div class="services__grid">
-        <div class="card card--service">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20.5c4.694 0 8.5-3.806 8.5-8.5S16.694 3.5 12 3.5 3.5 7.306 3.5 12s3.806 8.5 8.5 8.5z"/><path d="M8.5 12h7M12 8.5v7"/></svg>
-          </div>
-          <h3>Tworzenie contentu</h3>
-          <p>Profesjonalne grafiki, reelsy i posty dopasowane do charakteru Twojej marki i algorytmów platformy.</p>
-        </div>
-        <div class="card card--service card--featured">
-          <div class="card__badge">Najpopularniejsze</div>
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </div>
-          <h3>Gwarantowany zasięg</h3>
-          <p>100 000 unikalnych odbiorców miesięcznie. Nie szacunki — gwarancja w umowie. Twoja firma zawsze widoczna.</p>
-        </div>
-        <div class="card card--service">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-          </div>
-          <h3>Analityka i raportowanie</h3>
-          <p>Miesięczne raporty z wynikami: zasięg, zaangażowanie, wzrost obserwujących i konwersje.</p>
-        </div>
-        <div class="card card--service">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          </div>
-          <h3>Budowanie społeczności</h3>
-          <p>Angażuję obserwatorów, odpowiadam na komentarze i buduję lojalną społeczność wokół Twojej marki.</p>
-        </div>
-        <div class="card card--service">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-          </div>
-          <h3>Reklamy płatne</h3>
-          <p>Skuteczne kampanie Meta Ads i TikTok Ads z optymalizacją pod konwersje i świadomość marki.</p>
-        </div>
-        <div class="card card--service">
-          <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
-          <h3>Strategia marki</h3>
-          <p>Opracowuję spójną strategię komunikacji — tone of voice, identyfikacja wizualna i plan publikacji.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- REALIZACJE -->
-  <section class="section section--dark" id="realizacje">
-    <div class="container">
-      <div class="section__header">
-        <p class="section__tag">Portfolio</p>
-        <h2 class="section__title">Moje realizacje</h2>
-        <p class="section__sub">Wybrane projekty i efekty współpracy z klientami</p>
-      </div>
-      <div class="portfolio__grid">
-
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--1">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">Instagram + Facebook</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Restauracja "Smak Południa"</h3>
-            <p>Budowanie marki lokalnej restauracji od zera do 12 000 obserwujących w 4 miesiące.</p>
-            <div class="portfolio__metrics">
-              <span><strong>180K</strong> zasięgu/mies.</span>
-              <span><strong>+340%</strong> zaangażowanie</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--2">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">TikTok + Instagram</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Sklep online "FashionPL"</h3>
-            <p>Wiralowe reelsy i TikToki generujące ruch do sklepu i bezpośrednią sprzedaż.</p>
-            <div class="portfolio__metrics">
-              <span><strong>250K</strong> zasięgu/mies.</span>
-              <span><strong>+520%</strong> sprzedaż</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--3">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">LinkedIn + Facebook</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Firma B2B "TechSolve"</h3>
-            <p>Profesjonalny wizerunek eksperta branżowego, generowanie leadów przez LinkedIn.</p>
-            <div class="portfolio__metrics">
-              <span><strong>120K</strong> zasięgu/mies.</span>
-              <span><strong>45</strong> leadów/mies.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--4">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">Instagram + TikTok</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Gabinet kosmetyczny "Glow"</h3>
-            <p>Content beauty i edukacyjny budujący zaufanie klientek i zapełniający kalendarz wizyt.</p>
-            <div class="portfolio__metrics">
-              <span><strong>110K</strong> zasięgu/mies.</span>
-              <span><strong>+280%</strong> rezerwacje</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="portfolio__cta">
-        <p>Chcesz dołączyć do grona moich klientów?</p>
-        <a href="#kontakt" class="btn btn--primary btn--lg">Napisz do mnie</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROCES -->
-  <section class="section" id="proces">
-    <div class="container">
-      <div class="section__header">
-        <p class="section__tag">Jak to działa</p>
-        <h2 class="section__title">Prosty proces,<br />konkretne wyniki</h2>
-      </div>
-      <div class="process__steps">
-        <div class="process__step">
-          <div class="process__num">01</div>
-          <h3>Bezpłatna konsultacja</h3>
-          <p>Poznajemy Twoją firmę, cele i grupę docelową. Analizuję obecne działania i konkurencję.</p>
-        </div>
-        <div class="process__arrow">→</div>
-        <div class="process__step">
-          <div class="process__num">02</div>
-          <h3>Strategia i plan</h3>
-          <p>Przygotowuję spersonalizowaną strategię z harmonogramem publikacji i planem działania.</p>
-        </div>
-        <div class="process__arrow">→</div>
-        <div class="process__step">
-          <div class="process__num">03</div>
-          <h3>Realizacja</h3>
-          <p>Tworzę content, prowadzę profile i optymalizuję działania na bieżąco.</p>
-        </div>
-        <div class="process__arrow">→</div>
-        <div class="process__step">
-          <div class="process__num">04</div>
-          <h3>Raport i optymalizacja</h3>
-          <p>Co miesiąc dostajesz szczegółowy raport z wynikami i planem na kolejny okres.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- KONTAKT -->
-  <section class="section section--dark" id="kontakt">
-    <div class="container">
-      <div class="contact__wrap">
-        <div class="contact__left">
-          <p class="section__tag">Kontakt</p>
-          <h2 class="contact__title">Zacznijmy budować<br />Twój zasięg</h2>
-          <p class="contact__sub">Napisz do mnie — odpowiem w ciągu 24 godzin z bezpłatną analizą Twoich social mediów.</p>
-          <div class="contact__info">
-            <a href="mailto:kontakt@socialreach.pl" class="contact__link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              kontakt@socialreach.pl
-            </a>
-            <a href="tel:+48000000000" class="contact__link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.52 6.52l1.93-1.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              +48 000 000 000
-            </a>
-          </div>
-        </div>
-        <form class="contact__form" id="contactForm">
-          <div class="form__row">
-            <div class="form__group">
-              <label for="name">Imię i nazwisko</label>
-              <input type="text" id="name" placeholder="Jan Kowalski" required />
-            </div>
-            <div class="form__group">
-              <label for="company">Nazwa firmy</label>
-              <input type="text" id="company" placeholder="Moja Firma Sp. z o.o." />
-            </div>
-          </div>
-          <div class="form__group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="jan@firma.pl" required />
-          </div>
-          <div class="form__group">
-            <label for="message">Opowiedz o swojej firmie</label>
-            <textarea id="message" rows="4" placeholder="Czym zajmuje się Twoja firma i czego oczekujesz od współpracy?"></textarea>
-          </div>
-          <button type="submit" class="btn btn--primary btn--full">
-            Wyślij wiadomość
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-          <p class="form__note">Bezpłatna konsultacja i analiza Twoich social mediów w prezencie.</p>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <a href="#" class="nav__logo">Social<span>Reach</span></a>
-      <p class="footer__copy">© 2025 SocialReach. Wszystkie prawa zastrzeżone.</p>
-      <div class="footer__social">
-        <a href="#" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-        </a>
-        <a href="#" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
-        </a>
-        <a href="#" aria-label="LinkedIn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        </a>
-      </div>
-    </div>
-  </footer>
+    <footer class="foot">
+      Zrobione z przymrużeniem oka dla fanów Roberta Kubicy 🇵🇱
+    </footer>
+  </main>
 
   <script src="script.js"></script>
 </body>
