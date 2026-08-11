@@ -1,0 +1,36 @@
+# Konfiguracja wdrożenia na Netlify.
+#
+# Netlify wykrywa Next.js i sam instaluje runtime (@netlify/plugin-nextjs),
+# ale wpisujemy go jawnie, żeby build był powtarzalny i nie zależał
+# od automatycznej detekcji.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  # Prisma potrzebuje silnika pod Amazon Linux (patrz binaryTargets w schema).
+  NODE_VERSION = "20"
+  # Nie ściągaj przeglądarek Playwright podczas builda.
+  PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
+  # Daty liczymy w strefie Warszawy.
+  TZ = "Europe/Warsaw"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Nagłówki bezpieczeństwa. To są dane finansowe — nie chcemy, żeby
+# aplikacja dała się osadzić w ramce ani żeby adresy wyciekały w referrerze.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Aplikacja jest prywatna — nie chcemy jej w wynikach wyszukiwania.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"

@@ -14,7 +14,7 @@ Waluta: **PLN**. Strefa czasowa: **Europe/Warsaw**. Interfejs po polsku.
 |---|---|
 | Framework | Next.js 14 (App Router) + TypeScript |
 | Style | Tailwind CSS (własne komponenty, mobile-first) |
-| Baza | Prisma — SQLite lokalnie, Postgres (Neon) na produkcji |
+| Baza | Prisma + PostgreSQL (Neon na produkcji, lokalny Postgres w dev) |
 | Wykresy | Recharts |
 | Logowanie | hasło w zmiennej środowiskowej (bcrypt) + sesja JWT w cookie `httpOnly` |
 | Testy | Vitest (logika biznesowa) |
@@ -37,11 +37,17 @@ node scripts/hash-password.mjs "twoje-haslo"
 # 4. Wygeneruj sekret sesji i wklej do .env jako AUTH_SECRET
 openssl rand -base64 48
 
-# 5. Baza + dane przykładowe (ostatnie 3 miesiące)
+# 5. Baza — potrzebujesz Postgresa. Najprościej darmowa baza na Neonie
+#    (ta sama co produkcja) albo lokalny Postgres w Dockerze:
+#    docker run -d --name tcrm-pg -e POSTGRES_PASSWORD=postgres \
+#      -p 5432:5432 postgres:16
+#    Wtedy DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+
+# 6. Schema + dane przykładowe (ostatnie 3 miesiące)
 npm run db:push
 npm run db:seed
 
-# 6. Start
+# 7. Start
 npm run dev
 ```
 
@@ -65,7 +71,7 @@ Aplikacja: http://localhost:3000 — zostaniesz przekierowany na `/login`.
 
 | Zmienna | Opis |
 |---|---|
-| `DATABASE_URL` | SQLite lokalnie (`file:./dev.db`), Postgres na produkcji |
+| `DATABASE_URL` | connection string do Postgresa (Neon na produkcji) |
 | `AUTH_PASSWORD_HASH` | hash bcrypt hasła do aplikacji (`scripts/hash-password.mjs`) |
 | `AUTH_SECRET` | losowy sekret (min. 32 znaki) do podpisywania sesji |
 | `TZ` | `Europe/Warsaw` |
@@ -75,31 +81,61 @@ w `.env.example`.
 
 ---
 
-## Wdrożenie na Vercel + Neon
+## Wdrożenie na Netlify + Neon
 
-1. **Baza (Neon).** Załóż projekt na [neon.tech](https://neon.tech), skopiuj
-   connection string (`postgresql://…?sslmode=require`).
+Konfiguracja builda jest w `netlify.toml` — Netlify sam wykryje Next.js
+i użyje runtime'u `@netlify/plugin-nextjs`.
 
-2. **Przełącz Prismę na Postgresa.** W `prisma/schema.prisma` zmień:
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
-   Schema jest kompatybilna z obydwoma silnikami — „enumy" trzymamy jako `String`
-   i walidujemy w kodzie (Zod), więc nic więcej nie trzeba zmieniać.
+### 1. Baza na Neonie
 
-3. **Vercel.** Zaimportuj repozytorium, a w *Settings → Environment Variables*
-   ustaw `DATABASE_URL`, `AUTH_PASSWORD_HASH`, `AUTH_SECRET` i `TZ`.
+Załóż projekt na [neon.tech](https://neon.tech) i skopiuj connection string
+w postaci `postgresql://…?sslmode=require`.
 
-4. **Migracja schematu na produkcji:**
-   ```bash
-   DATABASE_URL="<neon-url>" npx prisma db push
-   ```
-   Opcjonalnie dane przykładowe: `DATABASE_URL="<neon-url>" npm run db:seed`.
+### 2. Zmienne środowiskowe w Netlify
 
-5. **Deploy.** `npm run build` uruchamia `prisma generate` automatycznie.
+*Site configuration → Environment variables* — ustaw:
+
+| Zmienna | Wartość |
+|---|---|
+| `DATABASE_URL` | connection string z Neona |
+| `AUTH_PASSWORD_HASH` | hash z `node scripts/hash-password.mjs "haslo"` |
+| `AUTH_SECRET` | `openssl rand -base64 48` |
+
+> **Uwaga na hash.** W panelu Netlify wklejasz hash **surowy**
+> (`$2a$10$...`). Escapowanie znaków `$` przez `\$` obowiązuje **wyłącznie**
+> w lokalnym pliku `.env` — Next.js rozwija tam zmienne. Wklejenie
+> zescapowanej wersji do panelu skończy się komunikatem „Błędne hasło".
+
+### 3. Utwórz tabele w bazie (raz)
+
+Build celowo **nie** dotyka schematu bazy — automatyczne migracje przy każdym
+deployu to najprostsza droga do zepsucia danych. Uruchom lokalnie:
+
+```bash
+DATABASE_URL="<neon-url>" npx prisma db push
+```
+
+Opcjonalnie dane przykładowe: `DATABASE_URL="<neon-url>" npm run db:seed`.
+(Seed **czyści bazę przed zasianiem** — nie odpalaj go na bazie z realnymi
+danymi.)
+
+### 4. Deploy
+
+Po połączeniu repozytorium Netlify buduje przy każdym pushu. Domyślnie
+buduje się tylko gałąź produkcyjna — jeśli chcesz podglądać pracę z gałęzi
+`claude/*`, włącz *branch deploys* w *Build & deploy → Branches*.
+
+### 5. Sprawdź, czy ochrona działa
+
+Aplikacja nie może być publicznie dostępna. Po pierwszym deployu:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" https://<twoja-domena>/api/items   # 401
+curl -s -o /dev/null -w "%{http_code}\n" https://<twoja-domena>/            # 307
+```
+
+`401` i `307` oznaczają, że middleware działa. Jeśli zobaczysz `200` —
+nie wgrywaj tam żadnych realnych danych, dopóki to nie zostanie naprawione.
 
 ---
 
@@ -144,4 +180,4 @@ logowania:
 | 6 | Sport: moduł treningów, historia, wykresy progresu | ⏳ |
 | 7 | Życie: wydarzenia, oś czasu, koszty | ⏳ |
 | 8 | Podsumowania i cele: okresy, porównania, główny cel | ⏳ |
-| 9 | PWA + deploy: manifest, offline shell, Vercel + Neon | ⏳ |
+| 9 | PWA + deploy: manifest, offline shell, Netlify + Neon | 🔶 deploy gotowy, offline shell w etapie 9 |

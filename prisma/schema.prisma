@@ -1,19 +1,21 @@
 // TobiaszCRM — schema Prisma
 //
-// Lokalnie używamy SQLite, na produkcji Postgres (Neon).
-// SQLite nie wspiera natywnych enumów Prisma, dlatego "enumy" trzymamy jako
-// String i walidujemy w kodzie (src/lib/enums.ts + Zod). Dzięki temu ten sam
-// schema działa na SQLite i na Postgresie bez zmian w modelu.
+// Baza: Postgres (Neon na produkcji, lokalnie dowolny Postgres).
+// Ten sam silnik lokalnie i na produkcji, żeby nie tłumaczyć różnic
+// między SQLite a Postgresem przy każdym wdrożeniu.
 //
-// Aby wdrożyć na Postgres: zmień `provider` na "postgresql" i ustaw DATABASE_URL
-// na connection string z Neona, następnie `prisma migrate deploy` / `db push`.
+// "Enumy" trzymamy jako String i walidujemy w kodzie (src/lib/enums.ts + Zod).
 
 generator client {
   provider = "prisma-client-js"
+  // Netlify uruchamia funkcje na Amazon Linux — bez tych targetów Prisma
+  // nie znajdzie silnika zapytań po wdrożeniu ("Query engine library
+  // for current platform could not be found").
+  binaryTargets = ["native", "rhel-openssl-3.0.x", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -51,7 +53,7 @@ model Item {
 model Transaction {
   id              String    @id @default(cuid())
   kind            String
-  amount          Decimal
+  amount          Decimal  @db.Decimal(12, 2)
   date            DateTime
   area            String
   businessSection String?
@@ -71,7 +73,7 @@ model Transaction {
 model FixedCost {
   id              String   @id @default(cuid())
   name            String
-  amount          Decimal
+  amount          Decimal  @db.Decimal(12, 2)
   area            String
   businessSection String?
   dayOfMonth      Int
@@ -173,7 +175,7 @@ model WorkoutSet {
   exercise   Exercise @relation(fields: [exerciseId], references: [id])
   setNumber  Int
   reps       Int
-  weight     Decimal?
+  weight     Decimal? @db.Decimal(6, 2)
   difficulty Int?
   note       String?
 
