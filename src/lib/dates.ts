@@ -39,7 +39,10 @@ export function rangeForPeriod(period: PeriodKey, ref: Date = new Date()): Range
     case "YEAR":
       return { start: startOfYear(ref), end: endOfYear(ref) };
     case "ALL":
-      return { start: new Date(2000, 0, 1), end: endOfDay(ref) };
+      // „Od początku" = wszystko, bez ucinania. Gdyby koniec zatrzymać na
+      // dzisiaj, transakcje wpisane z datą w przyszłości (np. faktura
+      // wystawiona na 20. tego miesiąca) znikałyby z podsumowania.
+      return { start: new Date(2000, 0, 1), end: new Date(2100, 0, 1) };
   }
 }
 

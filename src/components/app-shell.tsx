@@ -34,10 +34,36 @@ function areaForPath(path: string): Area | undefined {
   return NAV.find((n) => n.href !== "/" && path.startsWith(n.href))?.area;
 }
 
+/** Licznik kosztów stałych czekających na zatwierdzenie (badge przy Finansach). */
+function usePendingCount() {
+  const { dataVersion } = useApp();
+  const [count, setCount] = React.useState(0);
+  React.useEffect(() => {
+    let alive = true;
+    api<{ pendingCount: number }>("/api/finance/summary?period=DAY")
+      .then((d) => alive && setCount(d.pendingCount ?? 0))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [dataVersion]);
+  return count;
+}
+
+function NavBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="tnum absolute -right-1 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-warning px-1 text-[10px] font-bold text-white">
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { openAdd } = useApp();
+  const pending = usePendingCount();
 
   async function logout() {
     await api("/api/auth/logout", { method: "POST" });
@@ -67,7 +93,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   active ? "bg-accent/10 text-accent" : "text-muted-foreground hover:bg-muted"
                 )}
               >
-                <Icon className="h-5 w-5" />
+                <span className="relative">
+                  <Icon className="h-5 w-5" />
+                  {n.href === "/finanse" && <NavBadge count={pending} />}
+                </span>
                 {n.label}
               </Link>
             );
@@ -130,7 +159,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 active ? "text-accent" : "text-muted-foreground"
               )}
             >
-              <Icon className="h-5 w-5 shrink-0" />
+              <span className="relative">
+                <Icon className="h-5 w-5 shrink-0" />
+                {n.href === "/finanse" && <NavBadge count={pending} />}
+              </span>
               <span className="w-full truncate text-center">{n.label}</span>
             </Link>
           );

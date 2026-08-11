@@ -3,8 +3,16 @@ import type { Area, TxKind } from "./enums";
 // Kwoty liczymy w groszach (liczby całkowite), żeby uniknąć błędów float.
 // Wejście przyjmujemy jako number (PLN) lub string (z Decimal serializowanego).
 
-export function toCents(amount: number | string): number {
-  const n = typeof amount === "string" ? parseFloat(amount) : amount;
+/**
+ * Zamienia kwotę na grosze.
+ *
+ * Przyjmuje też Prisma.Decimal — z bazy kwoty przychodzą jako obiekt Decimal,
+ * nie jako number ani string. Wcześniejsza wersja sprawdzała tylko te dwa
+ * typy i po cichu zwracała 0 dla każdej kwoty z bazy, przez co cały stan
+ * konta wychodził zerowy.
+ */
+export function toCents(amount: number | string | { toString(): string }): number {
+  const n = typeof amount === "number" ? amount : parseFloat(String(amount));
   if (!Number.isFinite(n)) return 0;
   return Math.round(n * 100);
 }
@@ -13,12 +21,12 @@ export function fromCents(cents: number): number {
   return cents / 100;
 }
 
-export function sumCents(amounts: Array<number | string>): number {
+export function sumCents(amounts: Array<number | string | { toString(): string }>): number {
   return amounts.reduce<number>((acc, a) => acc + toCents(a), 0);
 }
 
 /** Formatuje kwotę w PLN: "12 480 zł", "-6 420 zł". */
-export function formatPLN(amount: number | string, opts?: { sign?: boolean; decimals?: boolean }): string {
+export function formatPLN(amount: number | string | { toString(): string }, opts?: { sign?: boolean; decimals?: boolean }): string {
   const cents = toCents(amount);
   const value = fromCents(cents);
   const showDecimals = opts?.decimals ?? false;
@@ -35,7 +43,8 @@ export function formatPLN(amount: number | string, opts?: { sign?: boolean; deci
 
 export type MoneyTx = {
   kind: TxKind;
-  amount: number | string;
+  /** number, string albo Prisma.Decimal — patrz toCents(). */
+  amount: number | string | { toString(): string };
   area: Area;
 };
 

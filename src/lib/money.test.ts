@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { Prisma } from "@prisma/client";
 import {
   toCents,
   formatPLN,
@@ -13,6 +14,20 @@ describe("toCents", () => {
     expect(toCents(10.1)).toBe(1010);
     expect(toCents(0.1 + 0.2)).toBe(30); // 0.30000000004 -> 30
     expect(toCents("18900")).toBe(1890000);
+  });
+
+  // Regresja: z bazy kwoty przychodzą jako Prisma.Decimal (obiekt, nie liczba
+  // ani string). Wcześniej funkcja zwracała dla nich 0, przez co CAŁY stan
+  // konta wychodził zerowy mimo poprawnych danych w bazie.
+  it("obsługuje Prisma.Decimal (obiekt z toString)", () => {
+    const decimal = new Prisma.Decimal("1800.00");
+    expect(toCents(decimal)).toBe(180000);
+    expect(toCents(new Prisma.Decimal("123.45"))).toBe(12345);
+  });
+
+  it("nadal zwraca 0 dla śmieci", () => {
+    expect(toCents("nie-liczba")).toBe(0);
+    expect(toCents(NaN)).toBe(0);
   });
 });
 
@@ -48,6 +63,16 @@ describe("computeAccountBalance", () => {
     expect(r.expenseByAreaCents.BIZNES).toBe(310000);
     expect(r.expenseByAreaCents.SPORT).toBe(52000);
     expect(r.expenseByAreaCents.ZYCIE).toBe(280000);
+  });
+
+  it("liczy poprawnie, gdy kwoty są obiektami Decimal (jak z bazy)", () => {
+    const r = computeAccountBalance([
+      { kind: "INCOME", amount: new Prisma.Decimal("18900.00"), area: "BIZNES" },
+      { kind: "EXPENSE", amount: new Prisma.Decimal("6420.00"), area: "ZYCIE" },
+    ]);
+    expect(r.incomeCents).toBe(1890000);
+    expect(r.expenseTotalCents).toBe(642000);
+    expect(r.balanceCents).toBe(1248000);
   });
 
   it("ignoruje INCOME spoza biznesu w przychodach", () => {
