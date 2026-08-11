@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { SESSION_COOKIE, createSessionToken, verifyPassword } from "@/lib/auth";
+import { SESSION_COOKIE, createSessionToken, hasSessionSecret } from "@/lib/session";
+import { verifyPassword, hasPasswordHash } from "@/lib/password";
+
+// bcrypt wymaga Node — nie wolno tego uruchamiać na Edge.
+export const runtime = "nodejs";
 
 const schema = z.object({
   password: z.string().min(1, "Podaj hasło"),
@@ -12,6 +16,19 @@ let attempts = 0;
 let lockedUntil = 0;
 
 export async function POST(req: NextRequest) {
+  // Czytelny komunikat zamiast tajemniczego 500, gdy brakuje konfiguracji.
+  if (!hasPasswordHash() || !hasSessionSecret()) {
+    const missing = [
+      !hasPasswordHash() && "AUTH_PASSWORD_HASH",
+      !hasSessionSecret() && "AUTH_SECRET",
+    ].filter(Boolean);
+    console.error("[auth] brak zmiennych środowiskowych:", missing.join(", "));
+    return NextResponse.json(
+      { error: `Aplikacja nie jest skonfigurowana: brak ${missing.join(" i ")}.` },
+      { status: 503 }
+    );
+  }
+
   if (Date.now() < lockedUntil) {
     return NextResponse.json(
       { error: "Zbyt wiele prób. Spróbuj za chwilę." },

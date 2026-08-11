@@ -151,6 +151,33 @@ logowania:
 - Sesja to podpisany JWT w cookie `httpOnly`, `sameSite=lax`, `secure`
   na produkcji. „Zapamiętaj mnie" wydłuża ważność do 30 dni.
 - Prosty limit prób logowania (5 prób → 30 s przerwy).
+- Brak konfiguracji nie odsłania danych: gdy zabraknie `AUTH_SECRET` lub
+  `AUTH_PASSWORD_HASH`, middleware **zamyka** dostęp (307/401), a `/login`
+  nadal się otwiera i logowanie zwraca czytelne `503` z nazwą brakującej
+  zmiennej — zamiast pustego 500.
+
+### Pułapka: Edge Runtime a bcrypt
+
+Middleware Next.js działa w **Edge Runtime** (na Netlify jako funkcja Deno),
+gdzie nie ma API Node. Zaimportowanie `bcryptjs` do middleware — choćby
+pośrednio, przez wspólny moduł `auth.ts` — wywala funkcję przy starcie
+i daje **500 na każdej trasie, łącznie z `/login`**, więc aplikacji nie da
+się nawet otworzyć.
+
+Dlatego kod jest rozdzielony:
+
+| Moduł | Runtime | Zawiera |
+|---|---|---|
+| `src/lib/session.ts` | Edge (i Node) | tylko `jose` — podpisywanie i weryfikacja sesji |
+| `src/lib/password.ts` | wyłącznie Node | `bcryptjs`, oznaczony `server-only` |
+
+Middleware importuje **tylko** `session.ts`. Route `/api/auth/login` ma
+`export const runtime = "nodejs"`. Pilnuje tego zestaw testów
+`src/lib/edge-safety.test.ts` — `npm test` wyłapie regresję, zanim trafi
+na produkcję.
+
+> `next dev` **nie** wykrywa tego problemu, bo uruchamia middleware
+> w pobłażliwym sandboksie Node. Błąd pojawia się dopiero po wdrożeniu.
 
 ---
 
