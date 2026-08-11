@@ -84,16 +84,15 @@ export function ItemRow({
             )}
             {item.title}
           </span>
-          {/* Jedna linia — „Zadanie czasowe" łamało wiersz na wąskim ekranie. */}
+          {/* Jedna linia. Typ niesie ikona — powtarzanie go słowami zjadało
+              miejsce i ucinało godzinę, a to jej się tu szuka wzrokiem. */}
           <span className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-xs text-muted-foreground">
-            <TypeIcon className="h-3 w-3" />
-            <span>{ITEM_TYPE_LABELS[item.type]}</span>
-            <span aria-hidden>·</span>
-            <span>{AREA_LABELS[item.area]}</span>
+            <TypeIcon className="h-3 w-3 shrink-0" aria-label={ITEM_TYPE_LABELS[item.type]} />
+            <span className="truncate">{AREA_LABELS[item.area]}</span>
             {showTime && t != null && (
               <>
                 <span aria-hidden>·</span>
-                <span className="tnum">{formatTime((item.startAt ?? item.dueAt)!)}</span>
+                <span className="tnum shrink-0">{formatTime((item.startAt ?? item.dueAt)!)}</span>
               </>
             )}
           </span>

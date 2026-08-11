@@ -3,15 +3,27 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Briefcase, Dumbbell, Heart, Wallet, Plus, LogOut } from "lucide-react";
+import {
+  ListTodo,
+  CalendarDays,
+  Briefcase,
+  Dumbbell,
+  Heart,
+  Wallet,
+  Plus,
+  LogOut,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/components/providers";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { api } from "@/lib/api";
 import type { Area } from "@/lib/enums";
 
+// Kalendarz i lista zadań to osobne zakładki — na telefonie „Główna"
+// robiła się długą stroną z dwiema niezależnymi rzeczami.
 const NAV = [
-  { href: "/", label: "Główna", icon: Home, area: undefined },
+  { href: "/", label: "Dziś", icon: ListTodo, area: undefined },
+  { href: "/kalendarz", label: "Kalendarz", icon: CalendarDays, area: undefined },
   { href: "/biznes", label: "Biznes", icon: Briefcase, area: "BIZNES" as Area },
   { href: "/sport", label: "Sport", icon: Dumbbell, area: "SPORT" as Area },
   { href: "/zycie", label: "Życie", icon: Heart, area: "ZYCIE" as Area },
@@ -114,12 +126,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               key={n.href}
               href={n.href}
               className={cn(
-                "flex flex-1 flex-col items-center gap-0.5 py-2 text-[11px] font-medium transition-colors",
+                "flex min-w-0 flex-1 flex-col items-center gap-0.5 px-0.5 py-2 text-[10px] font-medium transition-colors",
                 active ? "text-accent" : "text-muted-foreground"
               )}
             >
-              <Icon className="h-5 w-5" />
-              {n.label}
+              <Icon className="h-5 w-5 shrink-0" />
+              <span className="w-full truncate text-center">{n.label}</span>
             </Link>
           );
         })}
