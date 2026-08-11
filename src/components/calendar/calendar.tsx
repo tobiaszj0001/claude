@@ -39,13 +39,19 @@ const HOUR_START = 6;
 const HOUR_END = 23;
 const HOUR_PX = 48;
 
-export function Calendar() {
+/**
+ * Kalendarz. `sportOnly` zawęża go do samego Sportu — ten sam mechanizm
+ * co na ekranie głównym, użyty w historii treningów (§7.2).
+ */
+export function Calendar({ sportOnly = false }: { sportOnly?: boolean } = {}) {
   const { openAdd, openEdit, dataVersion } = useApp();
   const [view, setView] = React.useState<View>("week");
   const [cursor, setCursor] = React.useState(() => new Date());
   const [data, setData] = React.useState<CalData>({ items: [], workouts: [], activities: [] });
-  const [areaFilter, setAreaFilter] = React.useState<Set<Area>>(new Set(AREAS));
-  const [trainingOnly, setTrainingOnly] = React.useState(false);
+  const [areaFilter, setAreaFilter] = React.useState<Set<Area>>(
+    sportOnly ? new Set<Area>(["SPORT"]) : new Set(AREAS)
+  );
+  const [trainingOnly, setTrainingOnly] = React.useState(sportOnly);
   const [workoutId, setWorkoutId] = React.useState<string | null>(null);
 
   // Domyślny widok wg szerokości ekranu (mobile: dzień).
@@ -144,7 +150,8 @@ export function Calendar() {
         </div>
       </div>
 
-      {/* Legenda + filtry obszarów */}
+      {/* Legenda + filtry obszarów (w trybie sportowym niepotrzebne) */}
+      {!sportOnly && (
       <div className="mb-3 flex flex-wrap items-center gap-2">
         {AREAS.map((a) => (
           <button
@@ -170,6 +177,7 @@ export function Calendar() {
           Tylko treningi
         </button>
       </div>
+      )}
 
       {view === "month" && (
         <MonthView
