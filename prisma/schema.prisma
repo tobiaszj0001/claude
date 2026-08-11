@@ -1,0 +1,211 @@
+// TobiaszCRM — schema Prisma
+//
+// Lokalnie używamy SQLite, na produkcji Postgres (Neon).
+// SQLite nie wspiera natywnych enumów Prisma, dlatego "enumy" trzymamy jako
+// String i walidujemy w kodzie (src/lib/enums.ts + Zod). Dzięki temu ten sam
+// schema działa na SQLite i na Postgresie bez zmian w modelu.
+//
+// Aby wdrożyć na Postgres: zmień `provider` na "postgresql" i ustaw DATABASE_URL
+// na connection string z Neona, następnie `prisma migrate deploy` / `db push`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ── Item: wspólny model dla eventów i zadań ────────────────────────
+// type: EVENT | TASK | TIMED_TASK
+// area: BIZNES | SPORT | ZYCIE
+// businessSection: SOCIAL_MEDIA | CRM | DODATKOWE (tylko gdy area = BIZNES)
+// priority: NORMAL | PILNE
+model Item {
+  id              String    @id @default(cuid())
+  type            String
+  title           String
+  description     String?
+  area            String
+  businessSection String?
+  startAt         DateTime?
+  endAt           DateTime?
+  dueAt           DateTime?
+  priority        String    @default("NORMAL")
+  done            Boolean   @default(false)
+  doneAt          DateTime?
+  recurrenceRule  String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([area])
+  @@index([type])
+  @@index([done])
+  @@index([startAt])
+  @@index([dueAt])
+}
+
+// ── Transaction: przychody i koszty ───────────────────────────────
+// kind: INCOME | EXPENSE (INCOME tylko dla area = BIZNES)
+model Transaction {
+  id              String    @id @default(cuid())
+  kind            String
+  amount          Decimal
+  date            DateTime
+  area            String
+  businessSection String?
+  category        String?
+  description     String?
+  fixedCostId     String?
+  fixedCost       FixedCost? @relation(fields: [fixedCostId], references: [id], onDelete: SetNull)
+  entry           FixedCostEntry?
+  createdAt       DateTime  @default(now())
+
+  @@index([area])
+  @@index([kind])
+  @@index([date])
+}
+
+// ── FixedCost: koszty stałe (nie księgują się automatycznie) ──────
+model FixedCost {
+  id              String   @id @default(cuid())
+  name            String
+  amount          Decimal
+  area            String
+  businessSection String?
+  dayOfMonth      Int
+  startDate       DateTime
+  endDate         DateTime?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  entries         FixedCostEntry[]
+  transactions    Transaction[]
+}
+
+// ── FixedCostEntry: stan kosztu stałego w danym miesiącu ──────────
+// status: PENDING | CONFIRMED | SKIPPED
+// month: "YYYY-MM"
+model FixedCostEntry {
+  id            String   @id @default(cuid())
+  fixedCostId   String
+  fixedCost     FixedCost @relation(fields: [fixedCostId], references: [id], onDelete: Cascade)
+  month         String
+  status        String   @default("PENDING")
+  transactionId String?  @unique
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([fixedCostId, month])
+  @@index([status])
+}
+
+// ── Trening: BAZA ──────────────────────────────────────────────────
+// Exercise — biblioteka pojedynczych ćwiczeń
+// muscleGroup: klatka | plecy | barki | biceps | triceps | nogi | brzuch | inne
+model Exercise {
+  id           String   @id @default(cuid())
+  name         String
+  muscleGroup  String
+  isMachine    Boolean  @default(false)
+  equipment    String?
+  note         String?
+  defaultSets  Int?
+  defaultReps  Int?
+  archived     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  templateItems WorkoutTemplateItem[]
+  sets          WorkoutSet[]
+
+  @@index([muscleGroup])
+  @@index([archived])
+}
+
+model WorkoutTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  archived    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  items    WorkoutTemplateItem[]
+  workouts Workout[]
+}
+
+model WorkoutTemplateItem {
+  id         String   @id @default(cuid())
+  templateId String
+  template   WorkoutTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  order      Int
+  targetSets Int?
+  targetReps Int?
+  note       String?
+
+  @@index([templateId])
+}
+
+// ── Trening: HISTORIA ──────────────────────────────────────────────
+model Workout {
+  id          String   @id @default(cuid())
+  date        DateTime
+  name        String?
+  templateId  String?
+  template    WorkoutTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+  note        String?
+  durationMin Int?
+  createdAt   DateTime @default(now())
+
+  sets WorkoutSet[]
+
+  @@index([date])
+}
+
+model WorkoutSet {
+  id         String   @id @default(cuid())
+  workoutId  String
+  workout    Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  setNumber  Int
+  reps       Int
+  weight     Decimal?
+  difficulty Int?
+  note       String?
+
+  @@index([workoutId])
+  @@index([exerciseId])
+}
+
+// Activity — dodatkowe treningi i aktywności fizyczne
+model Activity {
+  id          String   @id @default(cuid())
+  date        DateTime
+  name        String
+  durationMin Int?
+  note        String?
+  createdAt   DateTime @default(now())
+
+  @@index([date])
+}
+
+// ── Goal: cele i założenia ─────────────────────────────────────────
+// period: DAY | WEEK | MONTH | QUARTER | YEAR
+model Goal {
+  id          String   @id @default(cuid())
+  area        String
+  title       String
+  description String?
+  period      String
+  targetDate  DateTime?
+  isMainFocus Boolean  @default(false)
+  done        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([area])
+}

@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Paleta motywu ────────────────────────────────────────────────
+   Neutralne tło/tekst + jeden kolor akcentu (indigo).
+   Trzy stałe kolory obszarów: biznes (niebieski), sport (zielony),
+   życie (bursztyn). Wartości w formacie "H S% L%" pod hsl(var()).      */
+:root {
+  --background: 210 20% 99%;
+  --foreground: 222 24% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 24% 12%;
+  --muted: 210 16% 95%;
+  --muted-foreground: 215 14% 40%;
+  --border: 214 15% 89%;
+  --input: 214 15% 85%;
+  --ring: 243 75% 59%;
+
+  --accent: 243 75% 59%;
+  --accent-foreground: 0 0% 100%;
+
+  --success: 142 68% 36%;
+  --danger: 0 72% 51%;
+  --warning: 32 95% 44%;
+
+  --biznes: 221 83% 53%;
+  --sport: 162 84% 30%;
+  --zycie: 32 95% 44%;
+}
+
+.dark {
+  --background: 222 24% 8%;
+  --foreground: 210 20% 92%;
+  --card: 222 20% 11%;
+  --card-foreground: 210 20% 92%;
+  --muted: 217 19% 16%;
+  --muted-foreground: 215 16% 62%;
+  --border: 217 19% 20%;
+  --input: 217 19% 24%;
+  --ring: 243 75% 66%;
+
+  --accent: 243 80% 68%;
+  --accent-foreground: 222 47% 11%;
+
+  --success: 142 60% 45%;
+  --danger: 0 72% 60%;
+  --warning: 36 95% 55%;
+
+  --biznes: 217 91% 64%;
+  --sport: 160 66% 46%;
+  --zycie: 36 95% 56%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Liczby w wariancie tabularnym — kwoty i wyniki równo w kolumnach. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Safe-area (notch / pasek gestów) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+.h-safe-bottom {
+  height: env(safe-area-inset-bottom);
+}
+
+/* Ukryj scrollbar (poziome paski filtrów itp.) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Focus spójny w całej aplikacji */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
