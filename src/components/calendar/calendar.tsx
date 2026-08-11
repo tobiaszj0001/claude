@@ -309,7 +309,24 @@ function TimeGrid({
   const gridHeight = (HOUR_END - HOUR_START + 1) * HOUR_PX;
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
-  // Przewiń do bieżącej godziny (albo 8:00), żeby nie zaczynać od pustego poranka.
+  // Bieżący czas — odświeżany co minutę. Startujemy od null, żeby serwer
+  // i klient wyrenderowały to samo (inaczej błąd hydracji).
+  const [now, setNow] = React.useState<Date | null>(null);
+  React.useEffect(() => {
+    const tick = () => setNow(new Date());
+    tick();
+    const id = setInterval(tick, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Pozycja znacznika „teraz" w pikselach od góry siatki.
+  const nowMin = now ? now.getHours() * 60 + now.getMinutes() : null;
+  const nowTop =
+    nowMin != null && nowMin >= HOUR_START * 60 && nowMin <= (HOUR_END + 1) * 60
+      ? ((nowMin - HOUR_START * 60) / 60) * HOUR_PX
+      : null;
+
+  // Przewiń tak, żeby „teraz" było widoczne (a nie pusty poranek).
   React.useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -384,7 +401,7 @@ function TimeGrid({
       >
         <div className="relative flex" style={{ height: gridHeight }}>
           {/* Oś godzin */}
-          <div className="sticky left-0 z-10 w-12 shrink-0 bg-card">
+          <div className="sticky left-0 z-20 w-12 shrink-0 bg-card">
             {hours.map((h) => (
               <div
                 key={h}
@@ -396,6 +413,15 @@ function TimeGrid({
                 </span>
               </div>
             ))}
+            {/* Aktualna godzina na osi — plakietka przy linii „teraz" */}
+            {nowTop != null && now && (
+              <span
+                className="tnum absolute right-0.5 z-30 rounded px-1 py-px text-[10px] font-semibold text-white"
+                style={{ top: nowTop - 8, backgroundColor: "hsl(var(--danger))" }}
+              >
+                {format(now, "HH:mm")}
+              </span>
+            )}
           </div>
 
           {/* Kolumny dni */}
@@ -421,8 +447,28 @@ function TimeGrid({
               })),
             ]);
 
+            const showNow = nowTop != null && now != null && isSameDay(day, now);
+
             return (
               <div key={day.toISOString()} className="relative min-w-0 flex-1 border-l border-border">
+                {/* Znacznik „teraz" — tylko w kolumnie dzisiejszego dnia */}
+                {showNow && (
+                  <div
+                    className="pointer-events-none absolute inset-x-0 z-10 flex items-center"
+                    style={{ top: nowTop! }}
+                    aria-hidden
+                  >
+                    <span
+                      className="-ml-1 h-2 w-2 shrink-0 rounded-full"
+                      style={{ backgroundColor: "hsl(var(--danger))" }}
+                    />
+                    <span
+                      className="h-px flex-1"
+                      style={{ backgroundColor: "hsl(var(--danger))" }}
+                    />
+                  </div>
+                )}
+
                 {/* Sloty do klikania */}
                 {hours.map((h) => (
                   <button

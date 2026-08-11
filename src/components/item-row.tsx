@@ -84,7 +84,8 @@ export function ItemRow({
             )}
             {item.title}
           </span>
-          <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          {/* Jedna linia — „Zadanie czasowe" łamało wiersz na wąskim ekranie. */}
+          <span className="flex items-center gap-1.5 overflow-hidden whitespace-nowrap text-xs text-muted-foreground">
             <TypeIcon className="h-3 w-3" />
             <span>{ITEM_TYPE_LABELS[item.type]}</span>
             <span aria-hidden>·</span>
