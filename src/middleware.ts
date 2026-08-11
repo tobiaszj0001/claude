@@ -13,6 +13,7 @@ const PUBLIC_FILES = [
   "/sw.js",
   "/favicon.ico",
   "/robots.txt",
+  "/offline.html",
 ];
 
 function isPublicPath(pathname: string): boolean {

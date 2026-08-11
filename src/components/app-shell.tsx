@@ -12,6 +12,7 @@ import {
   Wallet,
   Plus,
   LogOut,
+  Settings,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useApp } from "@/components/providers";
@@ -104,6 +105,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
         <div className="flex items-center gap-1 border-t border-border pt-3">
           <ThemeToggle />
+          <Link
+            href="/ustawienia"
+            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+            aria-label="Ustawienia"
+          >
+            <Settings className="h-5 w-5" />
+          </Link>
           <button
             onClick={logout}
             className="flex h-11 flex-1 items-center gap-2 rounded-md px-3 text-sm text-muted-foreground hover:bg-muted"
@@ -120,6 +128,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           Tobiasz<span className="text-accent">CRM</span>
         </span>
         <div className="flex items-center gap-1">
+          <Link
+            href="/ustawienia"
+            className="flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+            aria-label="Ustawienia"
+          >
+            <Settings className="h-5 w-5" />
+          </Link>
           <ThemeToggle />
           <button
             onClick={logout}

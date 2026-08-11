@@ -8,6 +8,7 @@ import { useApp } from "@/components/providers";
 import { Calendar } from "@/components/calendar/calendar";
 import { AreaItems } from "@/components/area-items";
 import { Goals } from "@/components/goals";
+import { AreaSummary } from "@/components/area-summary";
 import { TransactionList } from "@/components/finance/transaction-list";
 import { WorkoutLogger } from "@/components/sport/workout-logger";
 import { Templates } from "@/components/sport/templates";
@@ -68,6 +69,7 @@ export default function SportPage() {
 
       {tab === "reszta" && (
         <div className="space-y-6">
+          <AreaSummary area="SPORT" />
           <TransactionList
             area="SPORT"
             title="Koszty sportowe"

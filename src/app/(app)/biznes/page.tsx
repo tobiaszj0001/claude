@@ -3,6 +3,7 @@
 import * as React from "react";
 import { SegmentedControl } from "@/components/ui/misc";
 import { BusinessOverview } from "@/components/finance/business-overview";
+import { AreaSummary } from "@/components/area-summary";
 import { SectionFinance } from "@/components/finance/section-finance";
 import { TransactionList } from "@/components/finance/transaction-list";
 import { AreaItems } from "@/components/area-items";
@@ -39,6 +40,7 @@ export default function BiznesPage() {
 
       {tab === "ALL" ? (
         <>
+          <AreaSummary area="BIZNES" />
           <BusinessOverview />
           <Goals area="BIZNES" />
         </>

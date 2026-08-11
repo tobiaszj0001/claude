@@ -139,6 +139,21 @@ nie wgrywaj tam żadnych realnych danych, dopóki to nie zostanie naprawione.
 
 ---
 
+## Kopia zapasowa
+
+*Ustawienia* → eksport wszystkich danych do JSON (pełny backup) albo transakcji
+do CSV. Import wgrywa plik JSON, **zastępując całą zawartość bazy** — operacja
+jest w transakcji, więc nieudany import zostawia bazę bez zmian.
+
+## PWA
+
+`manifest.webmanifest` + service worker (`public/sw.js`). Aplikację można
+zainstalować na telefonie z menu przeglądarki („Dodaj do ekranu głównego").
+
+Service worker **celowo nie cache'uje odpowiedzi API** — pokazanie
+nieaktualnego stanu konta byłoby gorsze niż komunikat o braku sieci.
+Cache'owana jest tylko powłoka offline i statyczne zasoby.
+
 ## Bezpieczeństwo
 
 To są dane finansowe — aplikacja nie ma żadnych publicznych stron poza ekranem
@@ -202,9 +217,9 @@ na produkcję.
 | 1 | Fundament: repo, Next.js, Tailwind, Prisma, seed, logowanie, nawigacja, dark mode | ✅ |
 | 2 | Itemy: model, CRUD, wspólny modal, PILNE, sortowanie, odhaczanie | ✅ |
 | 3 | Ekran główny: kalendarz (miesiąc/tydzień/dzień), lista na dziś, zaległe | ✅ |
-| 4 | Finanse: transakcje, koszty stałe, karta stanu konta | ⏳ |
-| 5 | Biznes: trzy podzakładki, przychód/koszty/dochód, widok zbiorczy | ⏳ |
-| 6 | Sport: moduł treningów, historia, wykresy progresu | ⏳ |
-| 7 | Życie: wydarzenia, oś czasu, koszty | ⏳ |
-| 8 | Podsumowania i cele: okresy, porównania, główny cel | ⏳ |
-| 9 | PWA + deploy: manifest, offline shell, Netlify + Neon | 🔶 deploy gotowy, offline shell w etapie 9 |
+| 4 | Finanse: transakcje, koszty stałe, karta stanu konta | ✅ |
+| 5 | Biznes: trzy podzakładki, przychód/koszty/dochód, widok zbiorczy | ✅ |
+| 6 | Sport: moduł treningów, historia, wykresy progresu | ✅ |
+| 7 | Życie: wydarzenia, oś czasu, koszty | ✅ |
+| 8 | Podsumowania i cele: okresy, porównania, główny cel | ✅ |
+| 9 | PWA + deploy: manifest, offline shell, Netlify + Neon | ✅ |
