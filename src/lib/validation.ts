@@ -87,6 +87,8 @@ export const confirmEntryInput = z.object({
 // ── Goal ───────────────────────────────────────────────────────────
 export const goalInput = z.object({
   area: areaEnum,
+  // Cel może dotyczyć podzakładki Biznesu; null = cel całego obszaru.
+  businessSection: sectionEnum.optional().nullable(),
   title: z.string().min(1).max(200),
   description: z.string().max(1000).optional().nullable(),
   period: z.enum(PERIODS),

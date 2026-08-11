@@ -15,34 +15,47 @@ import {
   type BusinessSection,
 } from "@/lib/enums";
 
-/** Lista eventów/zadań/zadań czasowych danego obszaru (pilne na górze). */
-export function AreaItems({ area }: { area: Area }) {
+/**
+ * Lista eventów/zadań/zadań czasowych danego obszaru (pilne na górze).
+ * `fixedSection` przypina listę do jednej podzakładki Biznesu i chowa
+ * własny przełącznik — używane na stronie Biznes, gdzie podzakładkę
+ * wybiera się wyżej.
+ */
+export function AreaItems({
+  area,
+  fixedSection,
+}: {
+  area: Area;
+  fixedSection?: BusinessSection;
+}) {
   const { openAdd } = useApp();
   const { items, loading, reload } = useItems({ area });
   const [section, setSection] = React.useState<BusinessSection | "ALL">("ALL");
 
+  const activeSection = fixedSection ?? (section === "ALL" ? undefined : section);
+
   const filtered = React.useMemo(() => {
     let list = items;
-    if (area === "BIZNES" && section !== "ALL") {
-      list = list.filter((i) => i.businessSection === section);
+    if (area === "BIZNES" && activeSection) {
+      list = list.filter((i) => i.businessSection === activeSection);
     }
     return sortForList(list);
-  }, [items, area, section]);
+  }, [items, area, activeSection]);
 
   return (
-    <section className="space-y-3">
-      <div className="flex items-center justify-between">
+    <section className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
         <h2 className="text-lg font-semibold">Eventy i zadania</h2>
         <Button
           size="sm"
           variant="secondary"
-          onClick={() => openAdd({ area, section: area === "BIZNES" && section !== "ALL" ? section : undefined })}
+          onClick={() => openAdd({ area, section: activeSection })}
         >
           Dodaj
         </Button>
       </div>
 
-      {area === "BIZNES" && (
+      {area === "BIZNES" && !fixedSection && (
         <SegmentedControl<BusinessSection | "ALL">
           value={section}
           onChange={setSection}
@@ -62,10 +75,14 @@ export function AreaItems({ area }: { area: Area }) {
           icon={Inbox}
           title="Brak pozycji"
           description="Nic tu jeszcze nie ma."
-          action={<Button onClick={() => openAdd({ area })}>Dodaj pierwszą</Button>}
+          action={
+            <Button onClick={() => openAdd({ area, section: activeSection })}>
+              Dodaj pierwszą
+            </Button>
+          }
         />
       ) : (
-        <div className="space-y-1.5">
+        <div className="flex flex-col gap-1.5">
           {filtered.map((item) => (
             <ItemRow key={item.id} item={item} onChanged={reload} />
           ))}

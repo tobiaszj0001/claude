@@ -97,8 +97,11 @@ async function main() {
   console.log("🎯 Cele…");
   await prisma.goal.createMany({
     data: [
-      { area: "BIZNES", title: "10 000 zł MRR z social media", period: "QUARTER", isMainFocus: true },
-      { area: "BIZNES", title: "Pozyskać 3 nowych klientów CRM", period: "MONTH" },
+      { area: "BIZNES", title: "10 000 zł MRR z social media", period: "QUARTER", isMainFocus: true, businessSection: "SOCIAL_MEDIA" },
+      { area: "BIZNES", title: "Pozyskać 3 nowych klientów CRM", period: "MONTH", businessSection: "CRM" },
+      { area: "BIZNES", title: "20 rolek miesięcznie", period: "MONTH", businessSection: "SOCIAL_MEDIA" },
+      { area: "BIZNES", title: "Wdrożyć automatyzację leadów", period: "QUARTER", businessSection: "CRM" },
+      { area: "BIZNES", title: "Przetestować nowy kanał reklamowy", period: "MONTH", businessSection: "DODATKOWE" },
       { area: "SPORT", title: "Wyciskanie 100 kg na 5 powtórzeń", period: "QUARTER", isMainFocus: true },
       { area: "SPORT", title: "4 treningi w tygodniu", period: "WEEK" },
       { area: "ZYCIE", title: "Przeczytać 12 książek w tym roku", period: "YEAR", isMainFocus: true },
