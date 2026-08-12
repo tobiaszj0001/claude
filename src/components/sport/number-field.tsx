@@ -19,6 +19,7 @@ export function NumberField({
   label,
   suffix,
   className,
+  compact,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -29,6 +30,8 @@ export function NumberField({
   label?: string;
   suffix?: string;
   className?: string;
+  /** Węższe przyciski — dla pól pobocznych, np. trudności. */
+  compact?: boolean;
 }) {
   const num = parseFloat(value.replace(",", ".")) || 0;
 
@@ -38,13 +41,19 @@ export function NumberField({
   };
 
   return (
-    <div className={cn("min-w-0", className)}>
+    // min-w pilnuje, żeby liczba miała miejsce między przyciskami −/+.
+    // Bez tego przy trzech polach w rzędzie na 375 px wartość ściskała się
+    // do zera i widać było same strzałki.
+    <div className={cn("min-w-[8rem] flex-1", className)}>
       {label && <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>}
       <div className="flex items-stretch overflow-hidden rounded-md border border-input">
         <button
           type="button"
           onClick={() => bump(-step)}
-          className="flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground transition-colors active:bg-muted"
+          className={cn(
+            "flex h-11 shrink-0 items-center justify-center text-muted-foreground transition-colors active:bg-muted",
+            compact ? "w-8" : "w-11"
+          )}
           aria-label={`Zmniejsz${label ? " " + label : ""}`}
         >
           <Minus className="h-4 w-4" />
@@ -59,7 +68,10 @@ export function NumberField({
         <button
           type="button"
           onClick={() => bump(step)}
-          className="flex h-11 w-11 shrink-0 items-center justify-center text-muted-foreground transition-colors active:bg-muted"
+          className={cn(
+            "flex h-11 shrink-0 items-center justify-center text-muted-foreground transition-colors active:bg-muted",
+            compact ? "w-8" : "w-11"
+          )}
           aria-label={`Zwiększ${label ? " " + label : ""}`}
         >
           <Plus className="h-4 w-4" />

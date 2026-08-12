@@ -59,6 +59,9 @@ export function WorkoutLogger({
   const [duration, setDuration] = React.useState("");
   const [drafts, setDrafts] = React.useState<ExDraft[]>([]);
   const [picker, setPicker] = React.useState(false);
+  // Trudność domyślnie schowana — przy trzech polach seria nie mieści się
+  // w jednej linii na 375 px, a RPE i tak rzadko notuje się przy każdej serii.
+  const [showDifficulty, setShowDifficulty] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [err, setErr] = React.useState<string | null>(null);
 
@@ -75,7 +78,7 @@ export function WorkoutLogger({
         sets: Array.from({ length: i.targetSets ?? 3 }, () => ({
           reps: String(i.targetReps ?? i.exercise.defaultReps ?? 10),
           weight: "",
-          difficulty: "7",
+          difficulty: "",
         })),
       }));
       setDrafts(init);
@@ -117,7 +120,7 @@ export function WorkoutLogger({
         sets: Array.from({ length: ex.defaultSets ?? 3 }, () => ({
           reps: String(ex.defaultReps ?? 10),
           weight: "",
-          difficulty: "7",
+          difficulty: "",
         })),
       },
     ]);
@@ -137,7 +140,7 @@ export function WorkoutLogger({
     setDrafts((prev) =>
       prev.map((d, i) => {
         if (i !== ei) return d;
-        const last = d.sets[d.sets.length - 1] ?? { reps: "10", weight: "", difficulty: "7" };
+        const last = d.sets[d.sets.length - 1] ?? { reps: "10", weight: "", difficulty: "" };
         return { ...d, sets: [...d.sets, { ...last }] };
       })
     );
@@ -152,7 +155,7 @@ export function WorkoutLogger({
           sets: d.lastSets.map((s) => ({
             reps: String(s.reps),
             weight: s.weight != null ? String(s.weight) : "",
-            difficulty: "7",
+            difficulty: "",
           })),
         };
       })
@@ -232,9 +235,24 @@ export function WorkoutLogger({
                 {Math.round(totalVolume).toLocaleString("pl-PL")} kg
               </p>
             )}
-            <Button className="w-full" size="lg" onClick={save} disabled={saving}>
-              {saving ? "Zapisywanie…" : "Zapisz trening"}
-            </Button>
+            {/* Dodawanie ćwiczenia musi być w stopce, nie tylko pod listą:
+                przy treningu z szablonu przycisk na dole był 1800 px niżej,
+                poza ekranem, więc nie dało się go znaleźć w trakcie ćwiczeń. */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="lg"
+                className="shrink-0"
+                onClick={() => setPicker(true)}
+                aria-label="Dodaj ćwiczenie"
+              >
+                <Plus className="h-4 w-4" />
+                Ćwiczenie
+              </Button>
+              <Button className="flex-1" size="lg" onClick={save} disabled={saving}>
+                {saving ? "Zapisywanie…" : "Zapisz trening"}
+              </Button>
+            </div>
           </div>
         }
       >
@@ -294,40 +312,60 @@ export function WorkoutLogger({
                 </button>
               </div>
 
-              <div className="mt-3 space-y-2">
+              {ei === 0 && (
+                <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
+                  <input
+                    type="checkbox"
+                    checked={showDifficulty}
+                    onChange={(e) => setShowDifficulty(e.target.checked)}
+                    className="h-4 w-4 accent-[hsl(var(--accent))]"
+                  />
+                  Notuj trudność (1–10)
+                </label>
+              )}
+              <div className="mt-3 space-y-1.5">
+                {/* Wiersz serii zawija się na wąskim ekranie: powtórzenia
+                    i ciężar zostają obok siebie, trudność schodzi niżej —
+                    zamiast ściskać wszystkie trzy do nieczytelności. */}
                 {d.sets.map((s, si) => (
-                  <div key={si} className="flex items-end gap-2">
-                    <span className="tnum w-5 shrink-0 pb-3 text-center text-xs font-semibold text-muted-foreground">
+                  <div
+                    key={si}
+                    className="flex flex-wrap items-end gap-x-1.5 gap-y-1"
+                  >
+                    <span className="tnum w-3.5 shrink-0 pb-3 text-center text-xs font-semibold text-muted-foreground">
                       {si + 1}
                     </span>
                     <NumberField
-                      className="flex-1"
-                      label={si === 0 ? "Powt." : undefined}
+                      label={si === 0 ? "Powtórzenia" : undefined}
                       value={s.reps}
                       onChange={(v) => update(ei, si, { reps: v })}
                     />
                     <NumberField
-                      className="flex-1"
-                      label={si === 0 ? "Ciężar" : undefined}
+                      label={si === 0 ? "Ciężar (kg)" : undefined}
                       value={s.weight}
                       onChange={(v) => update(ei, si, { weight: v })}
                       step={2.5}
                       decimal
                     />
-                    <NumberField
-                      className="w-[4.5rem]"
-                      label={si === 0 ? "Trud." : undefined}
-                      value={s.difficulty}
-                      onChange={(v) => update(ei, si, { difficulty: v })}
-                      min={1}
-                      max={10}
-                    />
+                    {/* Stała szerokość: bez min-w-0 input rozpycha się do
+                        swojej domyślnej wielkości i zjada całą linię. */}
+                    {showDifficulty && (
+                      <NumberField
+                        className="w-24 min-w-0 flex-none"
+                        label={si === 0 ? "Trudność" : undefined}
+                        value={s.difficulty}
+                        onChange={(v) => update(ei, si, { difficulty: v })}
+                        min={1}
+                        max={10}
+                        compact
+                      />
+                    )}
                     <button
                       onClick={() => removeSet(ei, si)}
-                      className="mb-0 flex h-11 w-8 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-danger"
+                      className="flex h-11 w-6 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:text-danger"
                       aria-label={`Usuń serię ${si + 1}`}
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ))}
