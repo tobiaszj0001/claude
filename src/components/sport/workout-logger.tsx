@@ -361,6 +361,19 @@ export function WorkoutLogger({
             />
           </div>
 
+          {/* Ustawienie całego formularza, nie pojedynczego ćwiczenia —
+              wcześniej siedziało w karcie pierwszego ćwiczenia i nie dało
+              się go znaleźć. */}
+          <label className="flex cursor-pointer items-center gap-2 rounded-md border border-border px-3 py-2.5 text-sm">
+            <input
+              type="checkbox"
+              checked={showDifficulty}
+              onChange={(e) => setShowDifficulty(e.target.checked)}
+              className="h-4 w-4 accent-[hsl(var(--accent))]"
+            />
+            Notuj trudność serii (1–10)
+          </label>
+
           {drafts.map((d, ei) => (
             <div key={`${d.exercise.id}-${ei}`} className="rounded-lg border border-border p-3">
               <div className="flex items-start gap-2">
@@ -391,17 +404,6 @@ export function WorkoutLogger({
                 </button>
               </div>
 
-              {ei === 0 && (
-                <label className="mt-3 flex cursor-pointer items-center gap-2 text-xs text-muted-foreground">
-                  <input
-                    type="checkbox"
-                    checked={showDifficulty}
-                    onChange={(e) => setShowDifficulty(e.target.checked)}
-                    className="h-4 w-4 accent-[hsl(var(--accent))]"
-                  />
-                  Notuj trudność (1–10)
-                </label>
-              )}
               <div className="mt-3 space-y-1.5">
                 {/* Wiersz serii zawija się na wąskim ekranie: powtórzenia
                     i ciężar zostają obok siebie, trudność schodzi niżej —

@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Search, Plus, Dumbbell, Archive, Pencil } from "lucide-react";
+import { Search, Plus, Dumbbell, Trash2, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, Select, Label } from "@/components/ui/input";
 import { Sheet } from "@/components/ui/sheet";
@@ -58,14 +58,15 @@ export function ExerciseLibrary() {
 
   async function archive(ex: Exercise) {
     const ok = await confirm({
-      title: "Zarchiwizować ćwiczenie?",
-      description: `„${ex.name}" zniknie z listy wyboru, ale cała historia treningów zostaje.`,
-      confirmLabel: "Archiwizuj",
+      title: "Usunąć ćwiczenie z listy?",
+      description: `„${ex.name}" zniknie z listy wyboru. Wykonane serie zostają w historii — bez tego przepadłyby dane o Twoich treningach.`,
+      confirmLabel: "Usuń z listy",
+      danger: true,
     });
     if (!ok) return;
     try {
       await api(`/api/exercises/${ex.id}`, { method: "DELETE" });
-      toast("Zarchiwizowano");
+      toast("Usunięto z listy");
       load();
     } catch (e: any) {
       toast(e.message, "error");
@@ -160,10 +161,10 @@ export function ExerciseLibrary() {
               </button>
               <button
                 onClick={() => archive(ex)}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
-                aria-label="Archiwizuj"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-danger"
+                aria-label="Usuń ćwiczenie z listy"
               >
-                <Archive className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </button>
             </div>
           ))}

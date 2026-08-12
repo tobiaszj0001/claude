@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Play, Copy, Archive, LayoutList, Plus, Pencil, X } from "lucide-react";
+import { Play, Copy, Trash2, LayoutList, Plus, Pencil, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea, Label } from "@/components/ui/input";
 import { Sheet } from "@/components/ui/sheet";
@@ -49,14 +49,15 @@ export function Templates({ onWorkoutSaved }: { onWorkoutSaved: () => void }) {
 
   async function archive(t: Template) {
     const ok = await confirm({
-      title: "Zarchiwizować szablon?",
-      description: `„${t.name}" zniknie z listy. Wykonane treningi zostają.`,
-      confirmLabel: "Archiwizuj",
+      title: "Usunąć szablon?",
+      description: `„${t.name}" zniknie z listy. Wykonane na jego podstawie treningi zostają w historii.`,
+      confirmLabel: "Usuń",
+      danger: true,
     });
     if (!ok) return;
     try {
       await api(`/api/workout-templates/${t.id}`, { method: "DELETE" });
-      toast("Zarchiwizowano");
+      toast("Usunięto");
       load();
     } catch (e: any) {
       toast(e.message, "error");
@@ -137,8 +138,8 @@ export function Templates({ onWorkoutSaved }: { onWorkoutSaved: () => void }) {
                 <Button size="sm" variant="outline" onClick={() => duplicate(t)} aria-label="Duplikuj">
                   <Copy className="h-4 w-4" />
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => archive(t)} aria-label="Archiwizuj">
-                  <Archive className="h-4 w-4" />
+                <Button size="sm" variant="outline" onClick={() => archive(t)} aria-label="Usuń szablon">
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
