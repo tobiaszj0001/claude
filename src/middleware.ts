@@ -3,7 +3,7 @@ import { SESSION_COOKIE, verifySessionToken } from "@/lib/session";
 
 // Chroni WSZYSTKIE trasy poza /login, /api/auth/*, zasobami PWA i statykami.
 //
-// WAŻNE: middleware działa w Edge Runtime (na Netlify jako funkcja Deno).
+// WAŻNE: middleware działa w Edge Runtime (na Vercel jako Edge Function).
 // Importujemy tylko `@/lib/session` (jose). Wciągnięcie tu `bcryptjs`
 // wywala funkcję edge przy starcie i daje 500 na każdej trasie — łącznie
 // z /login, przez co nie da się nawet zalogować.

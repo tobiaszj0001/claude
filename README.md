@@ -44,7 +44,7 @@ openssl rand -base64 48
 #    Wtedy DATABASE_URL="postgresql://postgres:postgres@localhost:5432/postgres"
 
 # 6. Schema + dane przykładowe (ostatnie 3 miesiące)
-npm run db:push
+npm run db:migrate
 npm run db:seed
 
 # 7. Start
@@ -60,7 +60,7 @@ Aplikacja: http://localhost:3000 — zostaniesz przekierowany na `/login`.
 | `npm run dev` | serwer deweloperski |
 | `npm run build` | build produkcyjny |
 | `npm test` | testy jednostkowe |
-| `npm run db:push` | zsynchronizuj schema z bazą |
+| `npm run db:migrate` | utwórz/zaktualizuj tabele (`prisma migrate deploy`) |
 | `npm run db:seed` | wypełnij bazę danymi przykładowymi |
 | `npm run db:reset` | wyczyść bazę i zasiej od nowa |
 | `npm run db:studio` | przeglądarka bazy (Prisma Studio) |
@@ -81,49 +81,71 @@ w `.env.example`.
 
 ---
 
-## Wdrożenie na Netlify + Neon
+## Wdrożenie na Vercel + Neon
 
-Konfiguracja builda jest w `netlify.toml` — Netlify sam wykryje Next.js
-i użyje runtime'u `@netlify/plugin-nextjs`.
+Nie ma pliku konfiguracyjnego — Vercel wykrywa Next.js sam. Tabele tworzą
+się **automatycznie przy pierwszym buildzie**, bo skrypt `build` to
+`prisma generate && prisma migrate deploy && next build`. Nie musisz nic
+uruchamiać u siebie na komputerze.
 
 ### 1. Baza na Neonie
 
-Załóż projekt na [neon.tech](https://neon.tech) i skopiuj connection string
-w postaci `postgresql://…?sslmode=require`.
+Załóż projekt na [neon.tech](https://neon.tech) (darmowy plan wystarcza),
+region **Frankfurt (eu-central-1)** — najbliżej Polski.
 
-### 2. Zmienne środowiskowe w Netlify
+Skopiuj connection string **bezpośredni**, czyli ten, w którym host **nie**
+zawiera `-pooler`:
 
-*Site configuration → Environment variables* — ustaw:
+```
+postgresql://user:haslo@ep-xxx.eu-central-1.aws.neon.tech/neondb?sslmode=require
+```
+
+> Przez pooler (`ep-xxx-pooler…`) Prisma **nie** uruchomi migracji — build
+> padnie. Przy jednym użytkowniku pooler i tak nic nie daje.
+
+### 2. Import repozytorium do Vercel
+
+*Add New… → Project* → wybierz to repozytorium. Framework: **Next.js**
+(wykryty automatycznie). Nie zmieniaj komendy builda.
+
+Gałąź produkcyjna to domyślnie gałąź główna repozytorium. Jeśli pracujesz
+na `claude/*`, ustaw ją jako *Production Branch*
+(*Settings → Git → Production Branch*) albo scal ją do głównej.
+
+### 3. Zmienne środowiskowe
+
+*Settings → Environment Variables* — wszystkie trzy dla środowiska
+**Production** (i **Preview**, jeśli chcesz podglądy z gałęzi):
 
 | Zmienna | Wartość |
 |---|---|
-| `DATABASE_URL` | connection string z Neona |
-| `AUTH_PASSWORD_HASH` | hash z `node scripts/hash-password.mjs "haslo"` |
-| `AUTH_SECRET` | `openssl rand -base64 48` |
+| `DATABASE_URL` | bezpośredni connection string z Neona |
+| `AUTH_PASSWORD_HASH` | wynik `node scripts/hash-password.mjs "haslo"` |
+| `AUTH_SECRET` | wynik `openssl rand -base64 48` |
 
-> **Uwaga na hash.** W panelu Netlify wklejasz hash **surowy**
+> **Uwaga na hash.** W panelu Vercel wklejasz hash **surowy**
 > (`$2a$10$...`). Escapowanie znaków `$` przez `\$` obowiązuje **wyłącznie**
 > w lokalnym pliku `.env` — Next.js rozwija tam zmienne. Wklejenie
 > zescapowanej wersji do panelu skończy się komunikatem „Błędne hasło".
 
-### 3. Utwórz tabele w bazie (raz)
-
-Build celowo **nie** dotyka schematu bazy — automatyczne migracje przy każdym
-deployu to najprostsza droga do zepsucia danych. Uruchom lokalnie:
-
-```bash
-DATABASE_URL="<neon-url>" npx prisma db push
-```
-
-Opcjonalnie dane przykładowe: `DATABASE_URL="<neon-url>" npm run db:seed`.
-(Seed **czyści bazę przed zasianiem** — nie odpalaj go na bazie z realnymi
-danymi.)
-
 ### 4. Deploy
 
-Po połączeniu repozytorium Netlify buduje przy każdym pushu. Domyślnie
-buduje się tylko gałąź produkcyjna — jeśli chcesz podglądać pracę z gałęzi
-`claude/*`, włącz *branch deploys* w *Build & deploy → Branches*.
+*Deploy*. Build sam zastosuje migracje z `prisma/migrations/` i utworzy
+11 tabel. Kolejne deploye są bezpieczne: gdy nie ma nowych migracji,
+`migrate deploy` nic nie robi (`No pending migrations to apply`).
+
+Po połączeniu repozytorium Vercel buduje przy każdym pushu na gałąź
+produkcyjną; pozostałe gałęzie dostają deploye *preview* pod osobnym URL-em.
+
+**Baza startuje pusta** — bez danych przykładowych. Tak ma być: to miejsce
+na Twoje realne dane. Jeśli chcesz najpierw poklikać na przykładowych:
+
+```bash
+DATABASE_URL="<neon-url>" npm run db:seed
+```
+
+Seed **czyści bazę przed zasianiem** — nie odpalaj go, gdy są tam już realne
+dane.
 
 ### 5. Sprawdź, czy ochrona działa
 
@@ -136,6 +158,15 @@ curl -s -o /dev/null -w "%{http_code}\n" https://<twoja-domena>/            # 30
 
 `401` i `307` oznaczają, że middleware działa. Jeśli zobaczysz `200` —
 nie wgrywaj tam żadnych realnych danych, dopóki to nie zostanie naprawione.
+
+### Migracje przy zmianie schematu
+
+Po edycji `prisma/schema.prisma` wygeneruj migrację i zacommituj ją razem
+ze zmianą schematu — deploy zastosuje ją sam:
+
+```bash
+npx prisma migrate dev --name opis-zmiany
+```
 
 ---
 
@@ -173,7 +204,7 @@ logowania:
 
 ### Pułapka: Edge Runtime a bcrypt
 
-Middleware Next.js działa w **Edge Runtime** (na Netlify jako funkcja Deno),
+Middleware Next.js działa w **Edge Runtime** (na Vercel jako Edge Function),
 gdzie nie ma API Node. Zaimportowanie `bcryptjs` do middleware — choćby
 pośrednio, przez wspólny moduł `auth.ts` — wywala funkcję przy starcie
 i daje **500 na każdej trasie, łącznie z `/login`**, więc aplikacji nie da
@@ -222,7 +253,7 @@ na produkcję.
 | 6 | Sport: moduł treningów, historia, wykresy progresu | ✅ |
 | 7 | Życie: wydarzenia, oś czasu, koszty | ✅ |
 | 8 | Podsumowania i cele: okresy, porównania, główny cel | ✅ |
-| 9 | PWA + deploy: manifest, offline shell, Netlify + Neon | ✅ |
+| 9 | PWA + deploy: manifest, offline shell, Vercel + Neon | ✅ |
 
 ---
 

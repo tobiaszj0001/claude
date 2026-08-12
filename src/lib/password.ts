@@ -1,5 +1,5 @@
 // Hasło — kod wyłącznie dla środowiska Node (nigdy dla Edge Runtime).
-// `bcryptjs` nie może trafić do bundla middleware, bo na Netlify middleware
+// `bcryptjs` nie może trafić do bundla middleware, bo na Vercel middleware
 // działa jako funkcja edge i wywala się przy starcie (500 na każdej trasie).
 
 import "server-only";

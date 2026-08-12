@@ -4,15 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "db:reset": "prisma db push --force-reset && prisma db seed",
+    "db:reset": "prisma migrate reset --force",
     "postinstall": "prisma generate"
   },
   "prisma": {
@@ -35,7 +35,6 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
-    "@netlify/plugin-nextjs": "^5.15.13",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.14.15",
     "@types/react": "^18.3.3",

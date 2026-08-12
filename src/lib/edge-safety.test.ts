@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-// Regresja: middleware działa w Edge Runtime (na Netlify jako funkcja Deno).
+// Regresja: middleware działa w Edge Runtime (na Vercel jako Edge Function).
 // Wciągnięcie tam `bcryptjs` wywala funkcję przy starcie i daje 500 na KAŻDEJ
 // trasie — łącznie z /login, więc aplikacji nie da się nawet otworzyć.
 // `next dev` tego nie wyłapuje, bo uruchamia middleware w pobłażliwym

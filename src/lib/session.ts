@@ -1,6 +1,6 @@
 // Sesja — TYLKO kod bezpieczny dla Edge Runtime (middleware).
 //
-// UWAGA: ten plik importuje middleware, które na Netlify działa jako funkcja
+// UWAGA: ten plik importuje middleware, które na Vercel działa jako funkcja
 // edge (Deno). Nie wolno tu wciągać niczego z Node API — w szczególności
 // `bcryptjs`. Hashowanie hasła siedzi w `password.ts` i jest używane
 // wyłącznie po stronie serwera Node (route /api/auth/login).
