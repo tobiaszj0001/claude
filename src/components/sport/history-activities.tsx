@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Dumbbell, Plus, Trash2, Search, Activity as ActivityIcon, TrendingUp } from "lucide-react";
+import { Dumbbell, Plus, Trash2, Pencil, Search, Activity as ActivityIcon, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { Sheet } from "@/components/ui/sheet";
@@ -13,6 +13,7 @@ import { useApp } from "@/components/providers";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { WorkoutSheet } from "@/components/calendar/workout-sheet";
+import { WorkoutLogger } from "./workout-logger";
 
 type WorkoutRow = {
   id: string;
@@ -103,6 +104,7 @@ export function WorkoutHistory() {
   const [loading, setLoading] = React.useState(true);
   const [q, setQ] = React.useState("");
   const [openId, setOpenId] = React.useState<string | null>(null);
+  const [editId, setEditId] = React.useState<string | null>(null);
 
   const load = React.useCallback(async () => {
     setLoading(true);
@@ -174,6 +176,13 @@ export function WorkoutHistory() {
                 </span>
               </button>
               <button
+                onClick={() => setEditId(w.id)}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted"
+                aria-label="Edytuj trening"
+              >
+                <Pencil className="h-4 w-4" />
+              </button>
+              <button
                 onClick={() => remove(w)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-danger"
                 aria-label="Usuń trening"
@@ -185,7 +194,23 @@ export function WorkoutHistory() {
         </div>
       )}
 
-      <WorkoutSheet id={openId} onClose={() => setOpenId(null)} />
+      <WorkoutSheet
+        id={openId}
+        onClose={() => setOpenId(null)}
+        onEdit={(id) => {
+          setOpenId(null);
+          setEditId(id);
+        }}
+      />
+      <WorkoutLogger
+        open={!!editId}
+        workoutId={editId}
+        onClose={() => setEditId(null)}
+        onSaved={() => {
+          load();
+          refresh();
+        }}
+      />
     </section>
   );
 }

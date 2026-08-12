@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { Pencil } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/misc";
 import { api } from "@/lib/api";
 
@@ -22,7 +24,16 @@ type WorkoutDetail = {
 };
 
 /** Podgląd wykonanego treningu (read-only). Pełna edycja: etap Sport. */
-export function WorkoutSheet({ id, onClose }: { id: string | null; onClose: () => void }) {
+export function WorkoutSheet({
+  id,
+  onClose,
+  onEdit,
+}: {
+  id: string | null;
+  onClose: () => void;
+  /** Gdy podane, w stopce pojawia się przycisk edycji tego treningu. */
+  onEdit?: (id: string) => void;
+}) {
   const [data, setData] = React.useState<WorkoutDetail | null>(null);
   const [loading, setLoading] = React.useState(false);
 
@@ -50,7 +61,19 @@ export function WorkoutSheet({ id, onClose }: { id: string | null; onClose: () =
   }, [data]);
 
   return (
-    <Sheet open={!!id} onClose={onClose} title={data?.name ?? "Trening"}>
+    <Sheet
+      open={!!id}
+      onClose={onClose}
+      title={data?.name ?? "Trening"}
+      footer={
+        onEdit && id ? (
+          <Button className="w-full" size="lg" variant="secondary" onClick={() => onEdit(id)}>
+            <Pencil className="h-4 w-4" />
+            Edytuj trening
+          </Button>
+        ) : undefined
+      }
+    >
       {loading || !data ? (
         <div className="flex justify-center py-8">
           <Spinner className="h-6 w-6 text-muted-foreground" />

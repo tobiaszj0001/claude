@@ -36,6 +36,21 @@ type ExDraft = {
   lastSets?: { reps: number; weight: number | null }[];
 };
 
+type ExistingWorkout = {
+  id: string;
+  date: string;
+  name: string | null;
+  durationMin: number | null;
+  sets: {
+    exerciseId: string;
+    setNumber: number;
+    reps: number;
+    weight: string | null;
+    difficulty: number | null;
+    exercise: { id: string; name: string; muscleGroup: string };
+  }[];
+};
+
 const todayInput = () => {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -46,11 +61,14 @@ export function WorkoutLogger({
   onClose,
   onSaved,
   template,
+  workoutId,
 }: {
   open: boolean;
   onClose: () => void;
   onSaved: () => void;
   template?: Template | null;
+  /** Ustawione = edycja istniejącego treningu zamiast tworzenia nowego. */
+  workoutId?: string | null;
 }) {
   const toast = useToast();
   const { refresh } = useApp();
@@ -63,14 +81,68 @@ export function WorkoutLogger({
   // w jednej linii na 375 px, a RPE i tak rzadko notuje się przy każdej serii.
   const [showDifficulty, setShowDifficulty] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [err, setErr] = React.useState<string | null>(null);
 
-  // Wypełnij z szablonu przy otwarciu.
+  // Wypełnij z istniejącego treningu (edycja) albo z szablonu.
   React.useEffect(() => {
     if (!open) return;
     setErr(null);
     setDate(todayInput());
     setDuration("");
+
+    if (workoutId) {
+      setLoading(true);
+      api<ExistingWorkout>(`/api/workouts/${workoutId}`)
+        .then((w) => {
+          const d = new Date(w.date);
+          setDate(
+            `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+          );
+          setName(w.name ?? "");
+          setDuration(w.durationMin ? String(w.durationMin) : "");
+
+          // Grupujemy serie po ćwiczeniu, zachowując kolejność wystąpienia.
+          const order: string[] = [];
+          const byEx = new Map<string, ExistingWorkout["sets"]>();
+          for (const st of w.sets) {
+            if (!byEx.has(st.exerciseId)) {
+              byEx.set(st.exerciseId, []);
+              order.push(st.exerciseId);
+            }
+            byEx.get(st.exerciseId)!.push(st);
+          }
+          const loaded: ExDraft[] = order.map((exId) => {
+            const sets = byEx.get(exId)!;
+            return {
+              exercise: {
+                id: exId,
+                name: sets[0].exercise.name,
+                muscleGroup: sets[0].exercise.muscleGroup,
+                isMachine: false,
+                note: null,
+                defaultSets: null,
+                defaultReps: null,
+              },
+              sets: sets
+                .slice()
+                .sort((a, b) => a.setNumber - b.setNumber)
+                .map((st) => ({
+                  reps: String(st.reps),
+                  weight: st.weight != null ? String(Number(st.weight)) : "",
+                  difficulty: st.difficulty != null ? String(st.difficulty) : "",
+                })),
+            };
+          });
+          setDrafts(loaded);
+          // Jeśli w zapisanym treningu jest trudność, pokaż od razu kolumnę.
+          if (w.sets.some((st) => st.difficulty != null)) setShowDifficulty(true);
+        })
+        .catch(() => setErr("Nie udało się wczytać treningu"))
+        .finally(() => setLoading(false));
+      return;
+    }
+
     if (template) {
       setName(template.name);
       const init = template.items.map((i) => ({
@@ -88,7 +160,7 @@ export function WorkoutLogger({
       setDrafts([]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, template]);
+  }, [open, template, workoutId]);
 
   /** Dociąga ostatnią sesję ćwiczenia, żeby pokazać punkt wyjścia. */
   async function hydrateLast(exerciseId: string, index: number) {
@@ -189,17 +261,19 @@ export function WorkoutLogger({
     const [y, m, d] = date.split("-").map(Number);
     setSaving(true);
     try {
-      await api("/api/workouts", {
-        method: "POST",
-        json: {
-          date: new Date(y, m - 1, d, 18).toISOString(),
-          name: name.trim() || null,
-          templateId: template?.id ?? null,
-          durationMin: duration ? parseInt(duration, 10) : null,
-          sets,
-        },
-      });
-      toast("Trening zapisany");
+      const payload = {
+        date: new Date(y, m - 1, d, 18).toISOString(),
+        name: name.trim() || null,
+        templateId: template?.id ?? null,
+        durationMin: duration ? parseInt(duration, 10) : null,
+        sets,
+      };
+      if (workoutId) {
+        await api(`/api/workouts/${workoutId}`, { method: "PUT", json: payload });
+      } else {
+        await api("/api/workouts", { method: "POST", json: payload });
+      }
+      toast(workoutId ? "Zmiany zapisane" : "Trening zapisany");
       onSaved();
       refresh();
       onClose();
@@ -226,7 +300,7 @@ export function WorkoutLogger({
       <Sheet
         open={open && !picker}
         onClose={onClose}
-        title={template ? `Trening: ${template.name}` : "Nowy trening"}
+        title={workoutId ? "Edytuj trening" : template ? `Trening: ${template.name}` : "Nowy trening"}
         footer={
           <div className="flex flex-col gap-2">
             {totalSets > 0 && (
@@ -250,12 +324,17 @@ export function WorkoutLogger({
                 Ćwiczenie
               </Button>
               <Button className="flex-1" size="lg" onClick={save} disabled={saving}>
-                {saving ? "Zapisywanie…" : "Zapisz trening"}
+                {saving ? "Zapisywanie…" : workoutId ? "Zapisz zmiany" : "Zapisz trening"}
               </Button>
             </div>
           </div>
         }
       >
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <Spinner className="h-6 w-6 text-muted-foreground" />
+          </div>
+        ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -393,6 +472,7 @@ export function WorkoutLogger({
 
           {err && <p className="text-sm text-danger">{err}</p>}
         </div>
+        )}
       </Sheet>
 
       <ExercisePicker
