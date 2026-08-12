@@ -223,3 +223,30 @@ na produkcję.
 | 7 | Życie: wydarzenia, oś czasu, koszty | ✅ |
 | 8 | Podsumowania i cele: okresy, porównania, główny cel | ✅ |
 | 9 | PWA + deploy: manifest, offline shell, Netlify + Neon | ✅ |
+
+---
+
+## Podgląd interfejsu (artifact)
+
+Poza aplikacją utrzymywany jest samodzielny, klikalny podgląd
+(`scratchpad/preview.html`, publikowany jako artifact) — jeden plik HTML
+bez zależności, ze stanem w pamięci przeglądarki. Służy do oglądania
+i oceniania interfejsu bez stawiania bazy i serwera.
+
+**Podgląd nie zapisuje danych** — odświeżenie strony przywraca stan
+wyjściowy. To makieta do recenzji, nie miejsce na realne dane.
+
+Ponieważ to druga, równoległa implementacja tego samego interfejsu, łatwo
+o rozjazd. `scripts/audit-parity.mjs` porównuje oba: przechodzi po
+wszystkich zakładkach w aplikacji i w podglądzie, zbiera widoczne akcje
+i nagłówki, po czym wypisuje, czego brakuje w podglądzie.
+
+```bash
+npm run dev                      # aplikacja na :3000
+node scripts/serve-preview.mjs   # podgląd na :4000
+node scripts/audit-parity.mjs    # różnice
+```
+
+Podgląd serwujemy przez HTTP, a nie przez `file://` — przy `file://`
+przeglądarka zgaduje kodowanie i polskie znaki się psują, czego
+opublikowany artifact nie robi (dostaje `charset=utf-8` w nagłówku).
