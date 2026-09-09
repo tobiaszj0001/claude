@@ -17,11 +17,12 @@ const ROSTER = [
   { id: 'rociu',      name: 'Rociu',      title: 'Rudy Wulkan',          glove: '#ff7a1a', speed: 1.10, power: 1.00, taunt: 'Najpierw dymek, potem lanie.' },
   { id: 'szon',       name: 'Szon',       title: 'Zmarszczona Brew',     glove: '#a3e635', speed: 1.05, power: 1.05, taunt: 'Co ty odwalasz?' },
   { id: 'zoska',      name: 'Zośka',      title: 'Pazurki Zagłady',      glove: '#40e0d0', speed: 1.20, power: 0.90, taunt: 'Peace. A teraz śpij.' },
+  { id: 'wiczka',     name: 'Wiczka',     title: 'Uśmiech Zagłady',      glove: '#00d4ff', speed: 1.15, power: 0.95, taunt: 'Uśmiecham się, bo zaraz będzie po tobie.' },
   { id: 'king_pala',  name: 'Król Pała',  title: 'Władca Only Pantslow', glove: '#ffd700', speed: 1.00, power: 1.20, legendary: true, taunt: 'Klękaj przed koroną.' },
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.20, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v5';
+const VERSION = 'v6';
 const BASE_HP = 100;
 const LEGEND_MULT = 10;          // legendy mają 10x HP
 const W = 960, H = 540, FLOOR = 470;
