@@ -20,7 +20,7 @@ html, body {
   overflow: hidden;
   -webkit-user-select: none; user-select: none;
   -webkit-tap-highlight-color: transparent;
-  touch-action: none;
+  touch-action: pan-y;
   overscroll-behavior: none;
 }
 button, .card { touch-action: manipulation; }
@@ -29,6 +29,9 @@ button, .card { touch-action: manipulation; }
 
 .screen { position: absolute; inset: 0; display: none; }
 .screen.active { display: flex; flex-direction: column; }
+/* każdy ekran poza walką da się przewinąć palcem (wynik po meczu, sklep, kasyno na małym telefonie) */
+.screen:not(#s-game) { overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; touch-action: pan-y; overscroll-behavior: contain; }
+#s-game { overflow: hidden; touch-action: none; }
 
 h1, h2, h3, .logo, .kicker, .champ-title { font-family: var(--font-display); letter-spacing: 0.04em; font-weight: 400; }
 
@@ -214,8 +217,10 @@ kbd {
 @media (max-width: 640px) { .help-cols { grid-template-columns: 1fr; } .overlay-box { padding: 1rem; } }
 
 /* ---------- Wynik ---------- */
-#s-result, #s-champion { align-items: center; justify-content: center; text-align: center; padding: 1rem; background: radial-gradient(ellipse at 50% 30%, var(--bg2), var(--bg)); }
-.result-box, .champion-box { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; max-width: 640px; position: relative; }
+#s-result, #s-champion { align-items: center; justify-content: flex-start; text-align: center; padding: 1rem; background: radial-gradient(ellipse at 50% 30%, var(--bg2), var(--bg)); }
+/* margin:auto zamiast justify-content:center: wyśrodkowane, a gdy się nie mieści, górna część nie ucieka poza ekran i da się przewinąć */
+.result-box, .champion-box { display: flex; flex-direction: column; align-items: center; gap: 0.8rem; max-width: 640px; position: relative; margin: auto; flex: none; width: 100%; }
+#s-result .menu, #s-champion .menu { width: 100%; }
 .kicker { color: var(--pink); font-size: 1.4rem; letter-spacing: 0.3em; }
 #result-title { margin: 0; font-size: clamp(2.5rem, 9vw, 5rem); color: var(--gold); line-height: 1; text-shadow: 0 6px 0 #a06d00; }
 #result-title.lose { color: #ff5c5c; text-shadow: 0 6px 0 #7a0e0e; }
@@ -465,7 +470,42 @@ kbd {
 .bj-ctrl { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
 .bj-msg { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.05em; color: var(--gold); text-align: center; min-height: 1.2em; }
 .bj-msg.lose { color: #ff5c5c; }
-@media (max-width: 900px) { .casino-body { flex-direction: column; } .dealer { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 0.6rem; } .dealer-head { width: 70px; } .dealer-hat { font-size: 1.8rem; top: -20px; } .bubble { flex: 1; min-width: 160px; } .casino-stats { display: none; } .table { grid-template-columns: 30px repeat(12, 24px) 34px; grid-auto-rows: 26px; gap: 2px; } .cell { font-size: 0.65rem; } .casino-game { padding: 0.6rem; border-radius: 24px; } #wheel { width: 170px; height: 170px; } }
+/* telefon: krupier jako wąski pasek, stół dostaje cały ekran */
+@media (max-width: 900px) {
+  #s-casino { padding: 0.4rem 0.6rem; gap: 0.4rem; }
+  #s-casino .select-head h2 { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .casino-body { flex-direction: column; gap: 0.4rem; }
+  .dealer { width: 100%; flex: none; flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px; padding: 6px 8px; border-radius: 14px; overflow: visible; }
+  .dealer-head { width: 44px; }
+  .dealer-head img { box-shadow: 0 0 0 2px var(--gold), 0 4px 10px rgba(0,0,0,0.6); }
+  .dealer-hat { font-size: 1.1rem; top: -12px; }
+  .dealer-name { font-size: 0.95rem; }
+  .dealer-name small { display: none; }
+  .bubble { flex: 1; min-width: 140px; min-height: 0; padding: 5px 10px; font-size: 0.78rem; }
+  .bubble::before { top: 50%; left: -10px; transform: translateY(-50%); border: 6px solid transparent; border-right-color: #fff; border-left: 0; border-bottom: 6px solid transparent; }
+  .jackpot { width: auto; padding: 3px 10px; font-size: 0.7rem; display: flex; gap: 6px; align-items: baseline; }
+  .jackpot b { font-size: 0.95rem; display: inline; animation: none; }
+  #s-casino .jackpot small { display: none; }
+  .casino-stats { display: none; }
+  .duel-box { width: auto; flex: 1; min-width: 200px; padding: 5px 8px; font-size: 0.72rem; gap: 3px; }
+  #s-casino .tab { font-size: 0.85rem; padding: 0.3em 0.7em; }
+  .table { grid-template-columns: 30px repeat(12, 24px) 34px; grid-auto-rows: 26px; gap: 2px; } .cell { font-size: 0.65rem; } .casino-game { padding: 0.6rem; border-radius: 24px; } #wheel { width: 170px; height: 170px; }
+}
+@media (max-width: 900px) {
+  .pk-layout .seat { min-height: 0; padding: 4px 6px; gap: 2px; }
+  .pk-layout .seat img { width: 30px; }
+  .pk-layout .seat .n { font-size: 0.8rem; }
+  .pk-layout .seat .stack { font-size: 0.85rem; }
+  .pk-layout .seat .cards .card-p { width: 30px; height: 42px; font-size: 0.6rem; }
+  .pk-banner { font-size: 0.95rem; padding: 4px 8px; }
+}
+@media (max-width: 900px) and (max-height: 500px) {
+  .dealer { padding: 3px 8px; gap: 4px 8px; }
+  .dealer-head { width: 34px; } .dealer-hat { font-size: 0.9rem; top: -9px; }
+  .bubble { font-size: 0.72rem; padding: 3px 8px; }
+  .jackpot { display: none; }
+  #s-casino .select-head { gap: 0.4rem; } #s-casino .select-head h2 { font-size: 1rem; }
+}
 
 /* ---------- Kasyno: bandyta, szybkie, wyścigi, poker, VIP ---------- */
 .jackpot { width: 100%; background: linear-gradient(135deg, rgba(255,215,0,0.25), rgba(255,59,59,0.15)); border: 2px solid var(--gold); border-radius: 12px; padding: 6px 10px; text-align: center; font-family: var(--font-display); letter-spacing: 0.08em; font-size: 1rem; }
@@ -522,6 +562,46 @@ kbd {
 .poker-msg { font-family: var(--font-display); font-size: 1.3rem; color: #fff; text-align: center; min-height: 1.3em; letter-spacing: 0.05em; }
 .poker-msg.win { color: var(--gold); }
 @media (max-width: 700px) { .quick { grid-template-columns: 1fr; } .reel { width: 76px; height: 92px; } .reel img { width: 66px; } .poker-table { grid-template-columns: 1fr 1fr 1fr; gap: 4px; } .seat { min-height: 110px; padding: 4px; } .seat img { width: 32px; } .seat .cards .card-p { width: 32px; height: 46px; font-size: 0.65rem; } }
+
+/* ---------- Poker: czytelny stół ---------- */
+.pk-layout { display: flex; gap: 0.8rem; width: 100%; max-width: 1100px; align-items: stretch; }
+.pk-layout .poker-table { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; grid-template-columns: none; }
+.pk-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+.pk-row.me-row { grid-template-columns: 1fr; }
+.pk-log { width: 230px; flex: none; background: rgba(0,0,0,0.35); border: 2px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; min-height: 0; }
+.pk-log-title { font-family: var(--font-display); letter-spacing: 0.1em; color: var(--gold); font-size: 0.95rem; margin-bottom: 4px; }
+#pk-log { overflow: auto; font-size: 0.78rem; line-height: 1.45; flex: 1; max-height: 340px; color: rgba(255,255,255,0.85); }
+#pk-log .sys { color: var(--muted); font-style: italic; }
+#pk-log .fold { color: #aaa; } #pk-log .raise { color: #ffb020; font-weight: 700; } #pk-log .allin { color: #ff5c5c; font-weight: 800; } #pk-log .call { color: #9ecbff; } #pk-log .check { color: #a8a3c4; } #pk-log .win { color: var(--gold); font-weight: 800; }
+.pk-banner { width: 100%; max-width: 1100px; text-align: center; font-family: var(--font-display); letter-spacing: 0.12em; font-size: 1.35rem; padding: 6px 10px; border-radius: 12px; background: rgba(0,0,0,0.35); border: 2px solid rgba(255,255,255,0.12); transition: background 0.3s, border-color 0.3s; }
+.pk-banner.mine { background: rgba(255,215,0,0.2); border-color: var(--gold); color: var(--gold); animation: mocpulse 1s ease-in-out infinite; }
+.pk-banner.theirs { color: #fff; }
+.pk-banner.over { color: var(--muted); }
+.seat .seat-top { display: flex; align-items: center; gap: 8px; width: 100%; }
+.seat .seat-top .n { text-align: left; }
+.seat .marker { position: absolute; top: -10px; left: 8px; display: flex; gap: 3px; }
+.seat .mk { font-size: 0.6rem; font-weight: 900; padding: 1px 5px; border-radius: 6px; background: #fff; color: #1b1200; }
+.seat .mk.d { background: var(--gold); } .seat .mk.sb { background: #9ecbff; } .seat .mk.bb { background: #ff9de2; }
+.seat .act.fold { background: #777; color: #fff; } .seat .act.raise { background: #ffb020; } .seat .act.allin { background: #ff3b3b; color: #fff; } .seat .act.call { background: #9ecbff; } .seat .act.check { background: #ddd; } .seat .act.win { background: var(--gold); animation: mocpulse 0.8s ease-in-out infinite; }
+.seat.turn { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.35), 0 0 22px rgba(255,255,255,0.35); }
+.seat.turn::after { content: '▶ RUCH'; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); background: #fff; color: #1b1200; font-size: 0.6rem; font-weight: 900; padding: 1px 8px; border-radius: 6px; letter-spacing: 0.1em; }
+.seat.me.turn { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.4), 0 0 26px rgba(255,215,0,0.45); }
+.seat.me.turn::after { content: '▶ TWÓJ RUCH'; background: var(--gold); }
+.seat.winner { border-color: var(--gold); background: rgba(255,215,0,0.15); }
+.seat .allin-tag { background: #ff3b3b; color: #fff; font-size: 0.6rem; padding: 1px 5px; border-radius: 5px; font-family: var(--font-body); font-weight: 800; }
+.seat .bet-stack { min-height: 1.2em; font-size: 0.8rem; color: #9ecbff; font-weight: 700; }
+.seat .bet-stack.max { color: var(--gold); }
+.seat .chipstack { color: #ff4fa3; letter-spacing: -2px; }
+.seat .hand-name { font-family: var(--font-display); color: var(--gold); font-size: 0.85rem; letter-spacing: 0.1em; min-height: 1em; }
+.seat .cards.dim { opacity: 0.35; }
+.card-p.flip { animation: flipin 0.35s ease-out; }
+@keyframes flipin { from { transform: rotateY(90deg); } to { transform: none; } }
+.community .street { font-family: var(--font-display); letter-spacing: 0.2em; color: #fff; font-size: 0.95rem; }
+.community .pot b { font-size: 1.6rem; }
+.community .pot small { font-family: var(--font-body); font-size: 0.7rem; color: var(--muted); letter-spacing: 0; }
+.pk-hint { color: #fff; font-size: 0.95rem; background: rgba(0,0,0,0.3); padding: 4px 12px; border-radius: 10px; min-height: 1.6em; }
+.btn-fold { border-color: #777; } .btn-allin { border-color: #ff3b3b; background: rgba(255,59,59,0.2); }
+@media (max-width: 900px) { .pk-layout { flex-direction: column; } .pk-log { width: 100%; } #pk-log { max-height: 110px; } .seat .seat-top { flex-direction: column; gap: 2px; } .seat .seat-top .n { text-align: center; } }
 
 /* ---------- Online ---------- */
 #s-online { padding: 0.8rem 1rem; gap: 0.8rem; background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.16), transparent 60%), var(--bg); }
@@ -586,4 +666,28 @@ kbd {
   .menu { gap: 0.4rem; }
   .menu .btn { font-size: 1rem; padding: 0.4em 1em; }
   .menu-small .btn { font-size: 0.8rem; }
+  /* wynik po meczu na telefonie poziomo: zwięźle, przyciski „Dalej” blisko */
+  #s-result, #s-champion { padding: 0.5rem 0.8rem; }
+  .result-box, .champion-box { gap: 0.35rem; }
+  .kicker { font-size: 0.9rem; letter-spacing: 0.2em; }
+  #result-title { font-size: 2.2rem; text-shadow: 0 3px 0 #a06d00; }
+  #result-title.lose { text-shadow: 0 3px 0 #7a0e0e; }
+  .result-faces { gap: 0.6rem; }
+  .result-faces img { width: 56px; }
+  .result-faces .vs { font-size: 1.2rem; }
+  #result-text { font-size: 0.8rem; }
+  .progress img { width: 24px; }
+  .xpbox { padding: 0.4rem 0.8rem; font-size: 0.75rem; max-width: 520px; }
+  .xpbox .rows { display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.2rem; }
+  .xpbox .total { font-size: 1rem; margin-top: 2px; padding-top: 3px; }
+  .xpbox .lvlup { font-size: 1rem; }
+  .new-trophies .t { font-size: 0.72rem; padding: 2px 8px; }
+  #btn-next { font-size: 1.15rem; }
+  /* na niskim ekranie przyciski „Dalej / Menu” lądują nad tabelką XP, żeby zawsze były na wierzchu bez przewijania */
+  #result-xp, #result-trophies, #result-replay-menu { order: 10; }
+  .champ-head { margin-top: 0.5rem; }
+  .champ-head img { width: 90px; }
+  .crown { font-size: 2.4rem; }
+  #champ-name { font-size: 2rem; }
+  .champ-title { font-size: 1.2rem; }
 }

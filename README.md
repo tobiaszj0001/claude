@@ -44,7 +44,7 @@ Każda postać ma jedną. Pasek MOCY pod paskiem HP ładuje się od zadawania i 
 | Bianka | Neonowy Błysk | przeciwnik ma pomylone kierunki przez 3 s, 8 HP |
 | Cypis | Cień z Bytomia | teleport za plecy i cios za 22 HP |
 | Diddy | Piorun z Fryzury | piorun w miejsce przeciwnika po 0,6 s, 26 HP, da się uciec |
-| Gaździoł | Garnitur Pancerny | 6 s pancerza: 30% obrażeń, mocniejsze odrzuty |
+| Gazdziol | Garnitur Pancerny | 6 s pancerza: 30% obrażeń, mocniejsze odrzuty |
 | Miszalinaq | Buziak Zagłady | całus: 14 HP, ogłuszenie 1 s, leczy 18 HP |
 | Piotszu | Laser z Okularów | laser na wysokości głowy przez cały ring, 20 HP, unik omija |
 | Rociu | Rudy Wulkan | 3 fale ognia po 7 HP i podpalenie na 3 s |
@@ -75,18 +75,18 @@ Co kilkanaście sekund coś się dzieje: spada przedmiot na spadochronie (pizza,
 - **Powtórka K.O.**: po nokaucie ostatnie 2,5 s w zwolnionym tempie ze zbliżeniem. Gra nagrywa ją jako wideo, na ekranie wyniku jest „Udostępnij powtórkę” (na telefonie otwiera udostępnianie, na komputerze podgląd i pobranie).
 - **Krytyki** (8% ciosów, 1,6x, pęknięty ekran), **Pierwsza krew**, **PERFECT** za walkę bez obrażeń, nazwy combo od 5x.
 
-## Kasyno u Gaździoła
+## Kasyno u Gazdziola
 
 Grasz swoimi żetonami. Ruletka europejska z pełnym stołem (numer 35:1, tuziny i kolumny 2:1, kolor, parzyste i połówki 1:1),
-blackjack (krupier stoi na 17, blackjack 3:2, podwojenie, split par). Krupierem jest Gaździoł i komentuje.
+blackjack (krupier stoi na 17, blackjack 3:2, podwojenie, split par). Krupierem jest Gazdziol i komentuje.
 Przegrane żetony liczą się w „do odkucia”: możesz wyzwać krupiera na pojedynek w ringu. Wygrasz, odzyskujesz wszystko.
 Przegrasz, licznik się zeruje.
 
 Do tego: **jednoręki bandyta** z głowami ekipy (3x Król Pała = jackpot), **poker Texas hold'em** z trzema AI o różnych stylach
 (blefiarz, pasiwo, all-in), **wyścigi ekipy** z kursami według formy i komentarzem, **kości** i **wyżej/niżej** z rosnącym mnożnikiem.
 **Jackpot progresywny** rośnie o 5% każdej przegranej, do wzięcia na pojedynczym numerze w ruletce albo trzech Królach na bandycie.
-**VIP room** odblokowuje się po 10 000 żetonów obrotu (złoty stół, żetony do 10K, Gaździoł w koronie).
-**Dług**: przy pustej kieszeni Gaździoł pożycza 500, oddajesz 600 w 3 dni. Po terminie przychodzi Watol windykator:
+**VIP room** odblokowuje się po 10 000 żetonów obrotu (złoty stół, żetony do 10K, Gazdziol w koronie).
+**Dług**: przy pustej kieszeni Gazdziol pożycza 500, oddajesz 600 w 3 dni. Po terminie przychodzi Watol windykator:
 wygrasz, dług znika; przegrasz, zabiera żetony, a jak ich brakuje, jeden przedmiot z szatni. Kasyno ma 11 pucharków,
 a ranking online pokazuje bilans, rekord i jackpoty.
 

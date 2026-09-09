@@ -11,7 +11,7 @@ const ROSTER = [
   { id: 'bianka',     name: 'Bianka',     title: 'Neonowa Kobra',        glove: '#ffb020', speed: 1.10, power: 1.00, taunt: 'W tych okularach nie widzę twoich łez.' },
   { id: 'cypis',      name: 'Cypis',      title: 'Różowy Cień',          glove: '#ff6ec7', speed: 1.00, power: 1.05, taunt: 'Bytom pozdrawia.' },
   { id: 'diddy',      name: 'Diddy',      title: 'Kędzior Piorun',       glove: '#7c5cff', speed: 1.20, power: 0.85, taunt: 'Nie dotykaj fryzury.' },
-  { id: 'gazdziol',   name: 'Gaździoł',   title: 'Garnitur z Salonu',    glove: '#2ec4b6', speed: 0.90, power: 1.15, taunt: 'Elegancko cię położę.' },
+  { id: 'gazdziol',   name: 'Gazdziol',   title: 'Garnitur z Salonu',    glove: '#2ec4b6', speed: 0.90, power: 1.15, taunt: 'Elegancko cię położę.' },
   { id: 'miszalinaq', name: 'Miszalinaq', title: 'Dziubek Zagłady',      glove: '#ff3b3b', speed: 1.05, power: 1.00, taunt: 'Cmok. To był twój ostatni.' },
   { id: 'piotszu',    name: 'Piotszu',    title: 'Okularnik z Bunkra',   glove: '#3b82f6', speed: 0.95, power: 1.10, taunt: 'Mam to policzone. Przegrasz.' },
   { id: 'rociu',      name: 'Rociu',      title: 'Rudy Wulkan',          glove: '#ff7a1a', speed: 1.10, power: 1.00, taunt: 'Najpierw dymek, potem lanie.' },
@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v14';
+const VERSION = 'v16';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -1308,7 +1308,7 @@ const ONLINE = {
 };
 
 // ============================================================
-//  KASYNO U GAŹDZIOŁA: ruletka, blackjack, pojedynek z krupierem
+//  KASYNO U GAZDZIOLA: ruletka, blackjack, pojedynek z krupierem
 // ============================================================
 const ROULETTE_WHEEL = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
 const ROULETTE_RED = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
@@ -1344,11 +1344,11 @@ const CASINO = {
     const vb = $('#btn-vip'); vb.hidden = !p.vip; vb.textContent = this.vipOn ? '👑 VIP: WŁ' : '👑 VIP: WYŁ'; $('#s-casino').classList.toggle('vip', !!this.vipOn && p.vip);
     $('.dealer-hat').textContent = this.vipOn && p.vip ? '👑' : '🎩';
     const dbt = $('#debt-box');
-    if (p.debt > 0) { const left = p.debtDue - Date.now(); dbt.hidden = false; dbt.innerHTML = `<b>💸 Dług: ${p.debt} żetonów</b><span>${left > 0 ? 'Spłata za ' + fmtLeft(left) + ', inaczej Gaździoł wysyła Watola.' : '<span style="color:#ff5c5c">TERMIN MINĄŁ. Watol już idzie.</span>'}</span><button class="btn btn-sm btn-primary" id="btn-repay" ${p.chips >= p.debt ? '' : 'disabled'}>SPŁAĆ ${p.debt}</button>`; $('#btn-repay').onclick = () => { if (p.chips >= p.debt) { this.pay(-p.debt); p.debt = 0; p.debtDue = 0; PROFILE.save(); toast('💸', 'Dług spłacony', 'Gaździoł kiwa głową z uznaniem'); this.refresh(); } }; }
-    else if (p.chips < 100) { dbt.hidden = false; dbt.innerHTML = `<b>💸 Pusto w kieszeni?</b><span>Gaździoł pożyczy 500 żetonów. Oddajesz 600 w 3 dni. Nie oddasz, przyjdzie Watol.</span><button class="btn btn-sm" id="btn-borrow">POŻYCZ 500</button>`; $('#btn-borrow').onclick = () => { p.debt = 600; p.debtDue = Date.now() + 3 * 86400000; p.debtCount++; this.pay(500); toast('💸', '+500 żetonów pożyczki', 'Oddajesz 600 do ' + new Date(p.debtDue).toLocaleDateString('pl-PL')); this.say('loan'); this.refresh(); }; }
+    if (p.debt > 0) { const left = p.debtDue - Date.now(); dbt.hidden = false; dbt.innerHTML = `<b>💸 Dług: ${p.debt} żetonów</b><span>${left > 0 ? 'Spłata za ' + fmtLeft(left) + ', inaczej Gazdziol wysyła Watola.' : '<span style="color:#ff5c5c">TERMIN MINĄŁ. Watol już idzie.</span>'}</span><button class="btn btn-sm btn-primary" id="btn-repay" ${p.chips >= p.debt ? '' : 'disabled'}>SPŁAĆ ${p.debt}</button>`; $('#btn-repay').onclick = () => { if (p.chips >= p.debt) { this.pay(-p.debt); p.debt = 0; p.debtDue = 0; PROFILE.save(); toast('💸', 'Dług spłacony', 'Gazdziol kiwa głową z uznaniem'); this.refresh(); } }; }
+    else if (p.chips < 100) { dbt.hidden = false; dbt.innerHTML = `<b>💸 Pusto w kieszeni?</b><span>Gazdziol pożyczy 500 żetonów. Oddajesz 600 w 3 dni. Nie oddasz, przyjdzie Watol.</span><button class="btn btn-sm" id="btn-borrow">POŻYCZ 500</button>`; $('#btn-borrow').onclick = () => { p.debt = 600; p.debtDue = Date.now() + 3 * 86400000; p.debtCount++; this.pay(500); toast('💸', '+500 żetonów pożyczki', 'Oddajesz 600 do ' + new Date(p.debtDue).toLocaleDateString('pl-PL')); this.say('loan'); this.refresh(); }; }
     else dbt.hidden = true;
     const db = $('#duel-box'); db.hidden = p.casinoLost <= 0;
-    if (p.casinoLost > 0) { db.innerHTML = `<b>Przegrałeś ${p.casinoLost} żetonów</b><span>Wyzwij krupiera na pojedynek. Wygrasz, odzyskasz wszystko. Przegrasz, licznik się zeruje i żetony przepadają.</span><button class="btn btn-sm btn-primary" id="btn-duel">🥊 WYZWIJ GAŹDZIOŁA</button>`; $('#btn-duel').onclick = () => App.casinoDuel(); }
+    if (p.casinoLost > 0) { db.innerHTML = `<b>Przegrałeś ${p.casinoLost} żetonów</b><span>Wyzwij krupiera na pojedynek. Wygrasz, odzyskasz wszystko. Przegrasz, licznik się zeruje i żetony przepadają.</span><button class="btn btn-sm btn-primary" id="btn-duel">🥊 WYZWIJ GAZDZIOLA</button>`; $('#btn-duel').onclick = () => App.casinoDuel(); }
   },
   render() {
     $('#dealer-img').src = headSrc(ROSTER.find((c) => c.id === 'gazdziol') || ROSTER[0]);
@@ -1393,7 +1393,7 @@ const CASINO = {
       if (pair && king === 1 && pair[0] !== 'king_pala') { win = bet * 5; msg = `Para + Król: 5x`; SFX.bell(); this.say('win'); }
       else if (pair) { win = bet * 2; msg = `Para ${ROSTER.find((c) => c.id === pair[0]).name}: 2x`; SFX.jump(); }
       else if (king >= 1) { win = bet; msg = 'Król Pała ratuje stawkę'; }
-      else { msg = pick(['Nic. Głowy się nie zgadzają.', 'Pudło.', 'Gaździoł chowa żetony.']); this.say('lose'); SFX.hurt(); } }
+      else { msg = pick(['Nic. Głowy się nie zgadzają.', 'Pudło.', 'Gazdziol chowa żetony.']); this.say('lose'); SFX.hurt(); } }
     this.slotSpinning = false; this.slotState = res; this.slotMsg = msg;
     if (win) this.pay(win); this.track(win - bet, bet); this.checkTrophies(); this.renderSlots();
     if (win > bet) toast('🎰', msg, `+${win - bet} netto`);
@@ -1472,6 +1472,7 @@ const CASINO = {
   handRank(cards) { // najlepsze 5 z 5-7 kart -> [kategoria, ...tiebreak]
     const RV = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
     const combos = []; const n = cards.length;
+    if (n < 5) return [0, ...cards.map((c) => RV[c.r]).sort((a, b) => b - a)]; // przed riverem (np. wszyscy spasowali): tylko wysoka karta
     const rec = (start, pickd) => { if (pickd.length === 5) { combos.push(pickd); return; } for (let i = start; i < n; i++) rec(i + 1, pickd.concat([cards[i]])); };
     rec(0, []);
     let best = null;
@@ -1496,92 +1497,178 @@ const CASINO = {
     }
     return best;
   },
-  cmpRank(a, b) { for (let i = 0; i < Math.max(a.length, b.length); i++) { const d = (a[i] || 0) - (b[i] || 0); if (d) return d; } return 0; },
+  cmpRank(a, b) { a = a || [0]; b = b || [0]; for (let i = 0; i < Math.max(a.length, b.length); i++) { const d = (a[i] || 0) - (b[i] || 0); if (d) return d; } return 0; },
   rankName(sc) { return ['wysoka karta', 'para', 'dwie pary', 'trójka', 'strit', 'kolor', 'full', 'kareta', 'poker'][sc[0]]; },
+  // Stół budowany raz, potem aktualizowany w miejscu (karty nie skaczą przy każdym ruchu)
   renderPoker() {
     const g = $('#casino-game'); const pk = this.pk;
-    const card = (c, hidden) => hidden ? '<div class="card-p back"></div>' : `<div class="card-p ${['♥', '♦'].includes(c.su) ? 'red' : ''}"><div>${c.r}${c.su}</div><div class="s">${c.su}</div><div class="b">${c.r}${c.su}</div></div>`;
     if (!pk) {
       const opts = [200, 500, 1000, 2000].filter((v) => v <= Math.max(200, this.chips()));
       g.innerHTML = `<div class="poker"><div class="slot-title">♠️ TEXAS HOLD'EM</div><div class="t-hint">Grasz z trzema osobami z ekipy. Każda ma swój styl: jedna blefuje, jedna pasuje przy byle czym, jedna wchodzi all-in. Wybierz wpisowe (buy-in). Wychodząc od stołu, zabierasz cały stack.</div>
-        <div class="bj-ctrl">${opts.map((v) => `<button class="btn ${v === 500 ? 'btn-primary' : ''}" data-buyin="${v}" ${this.chips() < v ? 'disabled' : ''}>BUY-IN ${v}</button>`).join('')}</div></div>`;
+        <div class="bj-ctrl">${opts.map((v) => `<button class="btn ${v === 500 ? 'btn-primary' : ''}" data-buyin="${v}" ${this.chips() < v ? 'disabled' : ''}>BUY-IN ${v}</button>`).join('')}</div>
+        <div class="t-hint">Zasady: blindy, potem flop (3 karty), turn, river. Wygrywa najlepszy układ z 5 kart (własne 2 + wspólne). Podbicie = o pół puli.</div></div>`;
       $$('[data-buyin]').forEach((b) => b.onclick = () => this.pokerStart(+b.dataset.buyin));
       return;
     }
-    const me = pk.players[0]; const showdown = pk.phase === 'showdown' || pk.phase === 'over';
-    const seat = (pl, i) => `<div class="seat ${i === 0 ? 'me' : ''} ${pk.turn === i && pk.active ? 'turn' : ''} ${pl.folded ? 'folded' : ''} ${pl.stack <= 0 && !pl.inHand ? 'out' : ''}">
-      ${pl.action ? `<div class="act">${pl.action}</div>` : ''}<img src="${headSrc(pl.ch)}" alt=""><div class="n">${i === 0 ? 'TY' : pl.ch.name}<small>${pl.style}</small></div><div class="stack">🪙 ${pl.stack}</div>${pl.bet ? `<div class="bet-chip">stawia ${pl.bet}</div>` : ''}
-      <div class="cards">${pl.cards.map((c) => card(c, i !== 0 && !showdown && !pl.folded ? true : (pl.folded && i !== 0))).filter((x, k) => !(pl.folded && i !== 0 && k >= 0) || true).join('')}</div>${showdown && !pl.folded && pl.rank ? `<div class="t-hint">${this.rankName(pl.rank)}</div>` : ''}</div>`;
-    g.innerHTML = `<div class="poker"><div class="poker-table">
-      ${seat(pk.players[1], 1)}${seat(pk.players[2], 2)}${seat(pk.players[3], 3)}
-      <div class="community"><div class="pot">PULA: ${pk.pot + pk.players.reduce((a, p) => a + p.bet, 0)}</div><div class="cards">${pk.board.map((c) => card(c)).join('')}${'<div class="card-p back" style="opacity:0.25"></div>'.repeat(5 - pk.board.length)}</div><div class="t-hint">${['Pre-flop', 'Flop', 'Turn', 'River', 'Showdown'][pk.street] || ''} • blindy ${pk.sb}/${pk.bb}</div></div>
-      ${seat(me, 0)}</div>
-      <div class="poker-msg ${pk.msgWin ? 'win' : ''}">${pk.msg || ''}</div>
-      <div class="bj-ctrl">${pk.phase === 'over' ? `<button class="btn btn-primary" id="pk-next">NASTĘPNE ROZDANIE</button><button class="btn btn-ghost" id="pk-leave">Wstań od stołu (${me.stack})</button>` : pk.turn === 0 && pk.active ? `<button class="btn" id="pk-fold">PAS</button><button class="btn btn-primary" id="pk-call">${pk.toCall(0) === 0 ? 'CZEKAM' : 'SPRAWDZAM ' + Math.min(pk.toCall(0), me.stack)}</button>${me.stack > pk.toCall(0) ? `<button class="btn" id="pk-raise">PODBIJAM ${pk.raiseAmt(0)}</button>` : ''}<button class="btn" id="pk-allin">ALL-IN ${me.stack}</button>` : '<span class="t-hint">Czekaj na swoją kolej...</span>'}</div></div>`;
+    if (!pk.dom || !document.getElementById('pk-table')) this.pokerBuild();
+    this.pokerUpdate();
+  },
+  pokerBuild() {
+    const g = $('#casino-game'), pk = this.pk;
+    const seat = (i) => { const pl = pk.players[i]; return `<div class="seat ${i === 0 ? 'me' : ''}" id="pk-seat-${i}">
+      <div class="marker" id="pk-mark-${i}"></div><div class="act" id="pk-act-${i}" hidden></div>
+      <div class="seat-top"><img src="${headSrc(pl.ch)}" alt=""><div><div class="n">${i === 0 ? 'TY' : pl.ch.name}<small>${pl.style}</small></div><div class="stack" id="pk-stack-${i}"></div></div></div>
+      <div class="cards" id="pk-cards-${i}"></div><div class="hand-name" id="pk-rank-${i}"></div>
+      <div class="bet-stack" id="pk-bet-${i}"></div></div>`; };
+    g.innerHTML = `<div class="poker" id="pk-table">
+      <div class="pk-banner" id="pk-banner"></div>
+      <div class="pk-layout">
+        <div class="poker-table">
+          <div class="pk-row">${seat(1)}${seat(2)}${seat(3)}</div>
+          <div class="community"><div class="street" id="pk-street"></div><div class="pot" id="pk-pot"></div><div class="cards" id="pk-board"></div></div>
+          <div class="pk-row me-row">${seat(0)}</div>
+        </div>
+        <div class="pk-log"><div class="pk-log-title">Przebieg rozdania</div><div id="pk-log"></div></div>
+      </div>
+      <div class="poker-msg" id="pk-msg"></div>
+      <div class="pk-hint" id="pk-hint"></div>
+      <div class="bj-ctrl" id="pk-ctrl"></div></div>`;
+    pk.dom = true;
+  },
+  cardHtml(c) { return `<div>${c.r}${c.su}</div><div class="s">${c.su}</div><div class="b">${c.r}${c.su}</div>`; },
+  syncCards(el, cards, hidden) {
+    if (el.children.length > cards.length) el.innerHTML = '';
+    cards.forEach((c, i) => {
+      let d = el.children[i];
+      if (!d) { d = document.createElement('div'); d.className = 'card-p ' + (hidden ? 'back' : (['♥', '♦'].includes(c.su) ? 'red' : '')); if (!hidden) d.innerHTML = this.cardHtml(c); el.appendChild(d); }
+      else if (d.classList.contains('back') && !hidden) { d.className = 'card-p flip ' + (['♥', '♦'].includes(c.su) ? 'red' : ''); d.innerHTML = this.cardHtml(c); }
+    });
+  },
+  pokerUpdate() {
+    const pk = this.pk; if (!pk || !document.getElementById('pk-table')) return;
+    const me = pk.players[0], showdown = pk.phase === 'over' && pk.showdown;
+    const maxBet = Math.max(...pk.players.map((p) => p.bet));
+    pk.players.forEach((pl, i) => {
+      const seat = $('#pk-seat-' + i);
+      seat.classList.toggle('turn', pk.active && pk.turn === i); seat.classList.toggle('folded', pl.folded && pl.inHand); seat.classList.toggle('out', !pl.inHand && pl.stack <= 0);
+      seat.classList.toggle('winner', !!(pk.winners && pk.winners.has(pl)));
+      $('#pk-stack-' + i).innerHTML = `🪙 ${pl.stack}${pl.allin && pl.inHand ? ' <span class="allin-tag">ALL-IN</span>' : ''}`;
+      const act = $('#pk-act-' + i); act.hidden = !pl.action; act.textContent = pl.action || ''; act.className = 'act ' + (pl.actKind || '');
+      const mk = $('#pk-mark-' + i); mk.innerHTML = (pk.dealer === i ? '<span class="mk d">D</span>' : '') + (pk.sbI === i ? '<span class="mk sb">SB</span>' : '') + (pk.bbI === i ? '<span class="mk bb">BB</span>' : '');
+      const bet = $('#pk-bet-' + i); bet.innerHTML = pl.bet ? `<span class="chipstack">${'●'.repeat(Math.min(5, Math.ceil(pl.bet / Math.max(1, pk.bb))))}</span> ${pl.bet}` : ''; bet.classList.toggle('max', pl.bet > 0 && pl.bet === maxBet);
+      const hidden = i !== 0 && !showdown; const cardsEl = $('#pk-cards-' + i);
+      if (pl.folded && i !== 0) cardsEl.classList.add('dim'); else cardsEl.classList.remove('dim');
+      this.syncCards(cardsEl, pl.cards, hidden && !pl.folded ? true : (pl.folded && i !== 0 ? true : false));
+      $('#pk-rank-' + i).textContent = (showdown && !pl.folded && pl.rank) ? this.rankName(pl.rank).toUpperCase() : '';
+    });
+    this.syncCards($('#pk-board'), pk.board, false);
+    $('#pk-pot').innerHTML = `PULA <b>${pk.pot}</b>${maxBet ? ` <small>+ na stole ${pk.players.reduce((a, p) => a + p.bet, 0)}</small>` : ''}`;
+    $('#pk-street').textContent = ['PRE-FLOP', 'FLOP', 'TURN', 'RIVER', 'SHOWDOWN'][pk.street] || '';
+    const banner = $('#pk-banner');
+    if (pk.phase === 'over') { banner.textContent = 'ROZDANIE ZAKOŃCZONE'; banner.className = 'pk-banner over'; }
+    else if (pk.active && pk.turn === 0) { banner.textContent = `TWÓJ RUCH${pk.toCall(0) ? ' • do sprawdzenia ' + Math.min(pk.toCall(0), me.stack) : ' • możesz czekać'}`; banner.className = 'pk-banner mine'; }
+    else if (pk.active) { const t = pk.players[pk.turn]; banner.textContent = `RUCH: ${t ? t.ch.name.toUpperCase() : ''} myśli...`; banner.className = 'pk-banner theirs'; }
+    else { banner.textContent = pk.msg || ''; banner.className = 'pk-banner'; }
+    const msg = $('#pk-msg'); msg.textContent = pk.msg || ''; msg.className = 'poker-msg ' + (pk.msgWin ? 'win' : '');
+    const hint = $('#pk-hint');
+    if (me.cards.length === 2 && !me.folded && pk.phase !== 'over') { const r = pk.board.length >= 3 ? this.handRank(me.cards.concat(pk.board)) : null; hint.textContent = r ? `Masz teraz: ${this.rankName(r)}` : `Twoje karty: ${me.cards.map((c) => c.r + c.su).join(' ')}`; } else hint.textContent = '';
+    const ctrl = $('#pk-ctrl');
+    if (pk.phase === 'over') ctrl.innerHTML = `<button class="btn btn-primary btn-lg" id="pk-next">NASTĘPNE ROZDANIE</button><button class="btn btn-ghost" id="pk-leave">Wstań od stołu (${me.stack})</button>`;
+    else if (pk.turn === 0 && pk.active) { const tc = Math.min(pk.toCall(0), me.stack); ctrl.innerHTML = `<button class="btn btn-fold" id="pk-fold">PAS</button><button class="btn btn-primary" id="pk-call">${tc === 0 ? 'CZEKAM' : 'SPRAWDZAM ' + tc}</button>${me.stack > pk.toCall(0) ? `<button class="btn" id="pk-raise">PODBIJAM DO ${me.bet + pk.raiseAmt(0)}</button>` : ''}<button class="btn btn-allin" id="pk-allin">ALL-IN ${me.stack}</button>`; }
+    else ctrl.innerHTML = `<span class="t-hint">${pk.active ? 'Czekaj na swój ruch.' : ''}</span>`;
     const b = (id, fn) => { const el = $(id); if (el) el.onclick = fn; };
     b('#pk-next', () => this.pokerNewHand()); b('#pk-leave', () => this.pokerLeave());
     b('#pk-fold', () => this.pokerAct(0, 'fold')); b('#pk-call', () => this.pokerAct(0, 'call')); b('#pk-raise', () => this.pokerAct(0, 'raise')); b('#pk-allin', () => this.pokerAct(0, 'allin'));
+    const log = $('#pk-log'); if (log && pk.log) { log.innerHTML = pk.log.slice(-40).map((l) => `<div class="${l.cls || ''}">${l.t}</div>`).join(''); log.scrollTop = log.scrollHeight; }
   },
+  pokerLog(t, cls) { const pk = this.pk; if (!pk) return; pk.log = pk.log || []; pk.log.push({ t, cls }); if (pk.log.length > 200) pk.log.shift(); },
   pokerStart(buyin) {
     if (this.chips() < buyin) return; this.pay(-buyin);
     const others = shuffle(ROSTER.filter((c) => c.id !== 'gazdziol')).slice(0, 3);
     const styles = [['blefiarz', 'bluff'], ['pasiwo', 'tight'], ['all-in', 'maniac']];
     const players = [{ ch: this.previewChar || ROSTER[0], stack: buyin, style: 'ty', ai: null }].concat(others.map((ch, i) => ({ ch, stack: buyin, style: styles[i][0], ai: styles[i][1] })));
     players.forEach((p) => { p.cards = []; p.bet = 0; p.folded = false; p.inHand = false; p.action = ''; p.allin = false; p.total = 0; });
-    this.pk = { players, buyin, dealer: 0, sb: Math.max(5, Math.round(buyin / 100)), bb: Math.max(10, Math.round(buyin / 50)), board: [], pot: 0, street: 0, turn: -1, phase: 'over', msg: 'Siadasz do stołu. Kliknij „Następne rozdanie”.', active: false,
+    this.pk = { players, buyin, dealer: 0, sb: Math.max(5, Math.round(buyin / 100)), bb: Math.max(10, Math.round(buyin / 50)), board: [], pot: 0, street: 0, turn: -1, phase: 'over', msg: 'Siadasz do stołu. Kliknij „Następne rozdanie”.', active: false, log: [], handNo: 0,
       toCall: (i) => Math.max(0, Math.max(...this.pk.players.map((p) => p.bet)) - this.pk.players[i].bet),
       raiseAmt: (i) => { const pk = this.pk; const potNow = pk.pot + pk.players.reduce((a, p) => a + p.bet, 0); const raise = Math.max(pk.lastRaise || pk.bb, Math.round(potNow / 2 / 5) * 5); return Math.min(pk.players[i].stack, pk.toCall(i) + raise); } };
+    this.pokerLog(`Stół: ${others.map((c) => c.name).join(', ')}. Buy-in ${buyin}, blindy ${this.pk.sb}/${this.pk.bb}.`, 'sys');
+    this.pk.msg = 'Siadasz do stołu. Gazdziol tasuje…';
     this.renderPoker();
+    const pk = this.pk; setTimeout(() => { if (this.pk === pk && !pk.active && pk.handNo === 0) this.pokerNewHand(); }, 1200); // pierwsze rozdanie samo rusza
   },
-  pokerLeave() { const pk = this.pk; if (!pk || pk.active) return; const me = pk.players[0]; this.pay(me.stack); this.track(me.stack - pk.buyin, pk.buyin); PROFILE.d.pokerWon += Math.max(0, me.stack - pk.buyin); if (me.stack > pk.buyin) this.say('win'); else if (me.stack < pk.buyin) this.say('lose'); this.pk = null; this.checkTrophies(); this.renderPoker(); },
+  pokerLeave() { const pk = this.pk; if (!pk || pk.active) return; clearTimeout(this.pkWatchdog); const me = pk.players[0]; this.pay(me.stack); this.track(me.stack - pk.buyin, pk.buyin); PROFILE.d.pokerWon += Math.max(0, me.stack - pk.buyin); if (me.stack > pk.buyin) this.say('win'); else if (me.stack < pk.buyin) this.say('lose'); this.pk = null; this.checkTrophies(); this.renderPoker(); },
   async pokerNewHand() {
     const pk = this.pk; if (!pk || pk.active) return;
-    pk.players.forEach((p) => { p.cards = []; p.bet = 0; p.total = 0; p.folded = p.stack <= 0; p.inHand = p.stack > 0; p.action = ''; p.allin = false; p.rank = null; });
+    pk.players.forEach((p) => { p.cards = []; p.bet = 0; p.total = 0; p.folded = p.stack <= 0; p.inHand = p.stack > 0; p.action = ''; p.actKind = ''; p.allin = false; p.rank = null; });
+    pk.winners = null; pk.showdown = false;
     const live = pk.players.filter((p) => p.inHand);
     if (!pk.players[0].inHand) { pk.msg = 'Zero żetonów. Wstajesz od stołu.'; this.renderPoker(); this.pokerLeave(); return; }
     if (live.length < 2) { pk.msg = 'Ograłeś wszystkich! Stół się rozchodzi.'; pk.phase = 'over'; this.renderPoker(); this.pokerLeave(); return; }
-    pk.deck = this.newDeck(); pk.board = []; pk.pot = 0; pk.street = 0; pk.phase = 'play'; pk.active = true; pk.msg = ''; pk.msgWin = false; pk.lastRaise = pk.bb;
+    pk.deck = this.newDeck(); pk.board = []; pk.pot = 0; pk.street = 0; pk.phase = 'play'; pk.active = true; pk.msg = ''; pk.msgWin = false; pk.lastRaise = pk.bb; pk.handNo++;
     do { pk.dealer = (pk.dealer + 1) % 4; } while (!pk.players[pk.dealer].inHand);
     const nextLive = (i) => { let j = i; do { j = (j + 1) % 4; } while (!pk.players[j].inHand); return j; };
-    const sbI = nextLive(pk.dealer), bbI = nextLive(sbI);
-    this.pokerPost(sbI, pk.sb); this.pokerPost(bbI, pk.bb);
+    pk.sbI = nextLive(pk.dealer); pk.bbI = nextLive(pk.sbI);
+    this.pokerLog(`— Rozdanie ${pk.handNo} — dealer: ${pk.dealer === 0 ? 'ty' : pk.players[pk.dealer].ch.name}`, 'sys');
+    this.pokerPost(pk.sbI, pk.sb); this.pokerPost(pk.bbI, pk.bb);
+    pk.players[pk.sbI].action = 'SB ' + pk.sb; pk.players[pk.bbI].action = 'BB ' + pk.bb;
     PROFILE.d.pokerHands++;
-    for (let k = 0; k < 2; k++) for (const p of pk.players) if (p.inHand) { p.cards.push(pk.deck.pop()); this.flip(); this.renderPoker(); await this.wait(150); }
-    pk.turn = nextLive(bbI); pk.lastAggressor = bbI; pk.acted = new Set();
-    this.renderPoker(); this.pokerLoop();
+    this.renderPoker(); await this.wait(500);
+    for (let k = 0; k < 2; k++) for (const p of pk.players) if (p.inHand) { p.cards.push(pk.deck.pop()); this.flip(); this.pokerUpdate(); await this.wait(180); }
+    pk.turn = nextLive(pk.bbI); pk.acted = new Set();
+    this.pokerUpdate(); this.pokerLoop();
   },
   pokerPost(i, amt) { const p = this.pk.players[i]; const a = Math.min(amt, p.stack); p.stack -= a; p.bet += a; p.total += a; if (p.stack === 0) p.allin = true; },
   async pokerLoop() {
     const pk = this.pk; if (!pk || !pk.active) return;
+    try { await this.pokerLoopInner(pk); }
+    catch (e) { console.error('poker loop', e); this.pokerRecover(pk, e); }
+  },
+  // stróż: jeśli stół stoi bez ruchu (ruch AI, który nigdy nie nadszedł), popycha rozdanie dalej
+  pokerWatch(pk) {
+    clearTimeout(this.pkWatchdog);
+    this.pkWatchdog = setTimeout(() => {
+      if (this.pk !== pk || !pk.active || pk.phase === 'over') return;
+      if (pk.turn === 0) return; // czekamy na gracza, to nie zawieszenie
+      const tick = pk.tick;
+      pk.stuck = (pk.stuck || 0) + 1;
+      this.pokerLog('Gazdziol: „Halo, gramy!” (popycham stół)', 'sys');
+      if (pk.stuck > 3) { this.pokerRecover(pk, new Error('stół stanął')); return; }
+      this.pokerLoop();
+      if (pk.tick === tick) this.pokerWatch(pk);
+    }, 6000);
+  },
+  async pokerLoopInner(pk) {
+    pk.tick = (pk.tick || 0) + 1; this.pokerWatch(pk);
     const live = pk.players.filter((p) => p.inHand && !p.folded);
-    if (live.length === 1) { await this.wait(400); this.pokerShowdown(); return; }
+    if (live.length === 1) { await this.wait(700); this.pokerShowdown(); return; }
     const canAct = pk.players.filter((p) => p.inHand && !p.folded && !p.allin);
     const maxBet = Math.max(...pk.players.map((p) => p.bet));
     const roundDone = canAct.every((p) => pk.acted.has(p) && p.bet === maxBet) || canAct.length === 0;
-    if (roundDone) { await this.pokerNextStreet(); return; }
-    while (!(pk.players[pk.turn].inHand && !pk.players[pk.turn].folded && !pk.players[pk.turn].allin)) pk.turn = (pk.turn + 1) % 4;
-    this.renderPoker();
-    if (pk.turn !== 0) { await this.wait(rand(600, 1100)); this.pokerAI(pk.turn); }
+    if (roundDone) { await this.wait(650); await this.pokerNextStreet(); return; }
+    let guard = 0; while (!(pk.players[pk.turn].inHand && !pk.players[pk.turn].folded && !pk.players[pk.turn].allin)) { pk.turn = (pk.turn + 1) % 4; if (++guard > 8) { await this.pokerNextStreet(); return; } }
+    this.pokerUpdate();
+    if (pk.turn !== 0) { const t = pk.turn, tick = pk.tick; await this.wait(rand(1100, 1700)); if (this.pk === pk && pk.active && pk.turn === t && pk.tick === tick) this.pokerAI(t); }
   },
   pokerAct(i, act) {
     const pk = this.pk, p = pk.players[i]; if (!pk.active || pk.turn !== i) return;
-    const toCall = pk.toCall(i);
-    if (act === 'fold') { p.folded = true; p.action = 'PAS'; }
-    else if (act === 'call') { const a = Math.min(toCall, p.stack); this.pokerPost(i, a); p.action = a === 0 ? 'CZEKA' : (p.allin ? 'ALL-IN' : 'SPRAWDZA'); }
+    const toCall = pk.toCall(i); const who = i === 0 ? 'Ty' : p.ch.name;
+    if (act === 'fold') { p.folded = true; p.action = 'PAS'; p.actKind = 'fold'; this.pokerLog(`${who}: pas`, 'fold'); }
+    else if (act === 'call') { const a = Math.min(toCall, p.stack); this.pokerPost(i, a); p.action = a === 0 ? 'CZEKA' : (p.allin ? 'ALL-IN ' + p.bet : 'SPRAWDZA ' + a); p.actKind = a === 0 ? 'check' : (p.allin ? 'allin' : 'call'); this.pokerLog(a === 0 ? `${who}: czeka` : `${who}: sprawdza ${a}${p.allin ? ' (all-in)' : ''}`, p.actKind); }
     else if (act === 'raise' || act === 'allin') {
       const amt = act === 'allin' ? p.stack : pk.raiseAmt(i); const prevMax = Math.max(...pk.players.map((q) => q.bet));
       this.pokerPost(i, amt); const newMax = p.bet; if (newMax > prevMax) { pk.lastRaise = Math.max(pk.bb, newMax - prevMax); pk.acted = new Set(); }
-      p.action = p.allin ? 'ALL-IN' : (prevMax === 0 ? 'STAWIA ' + p.bet : 'PODBIJA ' + p.bet);
+      p.action = p.allin ? 'ALL-IN ' + p.bet : (prevMax === 0 ? 'STAWIA ' + p.bet : 'PODBIJA DO ' + p.bet); p.actKind = p.allin ? 'allin' : 'raise';
+      this.pokerLog(p.allin ? `${who}: ALL-IN za ${p.bet}!` : (prevMax === 0 ? `${who}: stawia ${p.bet}` : `${who}: podbija do ${p.bet}`), p.actKind);
+      if (p.allin || newMax >= prevMax * 2) SFX.tone(500, 0.12, 0.2, 'square', 1.4); 
     }
-    pk.acted.add(p); if (i === 0) this.flip();
-    pk.turn = (pk.turn + 1) % 4; this.renderPoker(); this.pokerLoop();
+    pk.acted.add(p); this.flip(); pk.tick = (pk.tick || 0) + 1; pk.stuck = 0;
+    pk.turn = (pk.turn + 1) % 4; this.pokerUpdate(); this.pokerLoop();
   },
   pokerStrength(i) {
     const pk = this.pk, p = pk.players[i]; const cards = p.cards.concat(pk.board);
     if (pk.board.length === 0) { const RV = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 }; const a = RV[p.cards[0].r], b = RV[p.cards[1].r]; let s = (a + b) / 28; if (a === b) s += 0.35 + a / 60; if (p.cards[0].su === p.cards[1].su) s += 0.06; if (Math.abs(a - b) <= 2) s += 0.04; if (Math.max(a, b) >= 13) s += 0.08; return clamp(s, 0.05, 1); }
     const r = this.handRank(cards); const cat = r[0]; const boardOnly = this.handRank(pk.board.length >= 5 ? pk.board : pk.board.concat([{ r: '2', su: '♠' }, { r: '3', su: '♦' }].slice(0, 5 - pk.board.length)));
     let s = [0.15, 0.4, 0.6, 0.75, 0.85, 0.9, 0.96, 0.99, 1][cat]; if (cat === 1 && r[1] >= 11) s += 0.08; if (boardOnly && boardOnly[0] === cat && cat > 0) s -= 0.2; if (cat === 0 && r[1] === 14) s += 0.08;
-    // dobicia
     const suits = {}; cards.forEach((c) => suits[c.su] = (suits[c.su] || 0) + 1); if (pk.board.length < 5 && Object.values(suits).some((n) => n === 4)) s += 0.15;
     return clamp(s, 0.05, 1);
   },
@@ -1598,39 +1685,68 @@ const CASINO = {
     this.pokerAct(i, act);
   },
   async pokerNextStreet() {
-    const pk = this.pk;
-    for (const p of pk.players) { pk.pot += p.bet; p.bet = 0; p.action = p.folded ? 'PAS' : ''; }
+    const pk = this.pk; if (!pk || !pk.active) return;
+    try { await this.pokerNextStreetInner(pk); }
+    catch (e) { console.error('poker street', e); this.pokerRecover(pk, e); }
+  },
+  async pokerNextStreetInner(pk) {
+    pk.tick = (pk.tick || 0) + 1; this.pokerWatch(pk);
+    for (const p of pk.players) { pk.pot += p.bet; p.bet = 0; if (!p.folded) { p.action = ''; p.actKind = ''; } }
     pk.acted = new Set(); pk.lastRaise = pk.bb;
     const live = pk.players.filter((p) => p.inHand && !p.folded), canAct = live.filter((p) => !p.allin);
     if (pk.street >= 3) { this.pokerShowdown(); return; }
-    pk.street++;
-    const n = pk.street === 1 ? 3 : 1; for (let k = 0; k < n; k++) { pk.board.push(pk.deck.pop()); this.flip(); this.renderPoker(); await this.wait(450); }
-    if (canAct.length <= 1) { await this.wait(500); this.pokerNextStreet(); return; }
+    pk.street++; this.pokerUpdate();
+    const n = pk.street === 1 ? 3 : 1; const names = ['', 'Flop', 'Turn', 'River'];
+    await this.wait(400);
+    const dealt = []; for (let k = 0; k < n; k++) { const c = pk.deck.pop(); pk.board.push(c); dealt.push(c.r + c.su); this.flip(); this.pokerUpdate(); await this.wait(520); }
+    this.pokerLog(`${names[pk.street]}: ${dealt.join(' ')}`, 'sys');
+    if (canAct.length <= 1) { await this.wait(700); this.pokerNextStreet(); return; }
     let t = pk.dealer; do { t = (t + 1) % 4; } while (!(pk.players[t].inHand && !pk.players[t].folded && !pk.players[t].allin)); pk.turn = t;
     this.pokerLoop();
   },
-  pokerShowdown() {
-    const pk = this.pk; for (const p of pk.players) { pk.pot += p.bet; p.bet = 0; }
+  async pokerShowdown() {
+    const pk = this.pk; if (!pk || pk.phase === 'over') return;
+    try { await this.pokerShowdownInner(pk); }
+    catch (e) { console.error('poker showdown', e); this.pokerRecover(pk, e); }
+    clearTimeout(this.pkWatchdog);
+  },
+  // awaryjne zamknięcie rozdania, żeby stół nigdy nie został „zawieszony” w stanie bez ruchu
+  pokerRecover(pk, e) {
+    if (!pk || pk.phase === 'over') return;
+    for (const p of pk.players) { pk.pot += p.bet; p.bet = 0; }
     const live = pk.players.filter((p) => p.inHand && !p.folded);
-    while (pk.board.length < 5 && live.length > 1) pk.board.push(pk.deck.pop());
-    for (const p of live) p.rank = this.handRank(p.cards.concat(pk.board));
-    // pule boczne wg wkładu
+    const n = Math.max(1, live.length); const share = Math.floor(pk.pot / n); for (const p of live) p.stack += share; if (live.length) live[0].stack += pk.pot - share * n;
+    pk.pot = 0; pk.active = false; pk.turn = -1; pk.phase = 'over'; pk.showdown = live.length > 1; pk.winners = new Set(live);
+    pk.msg = 'Krupier przerwał rozdanie i podzielił pulę' + (live.length ? ': ' + live.map((p) => p.ch.name).join(', ') : '') + '.'; pk.msgWin = live.includes(pk.players[0]);
+    this.pokerLog(pk.msg + (e ? ' (' + (e.message || e) + ')' : ''), 'sys');
+    this.pokerUpdate();
+  },
+  async pokerShowdownInner(pk) {
+    for (const p of pk.players) { pk.pot += p.bet; p.bet = 0; }
+    const live = pk.players.filter((p) => p.inHand && !p.folded);
+    pk.active = false; pk.turn = -1;
+    if (live.length > 1) { pk.showdown = true; pk.street = 4; this.pokerUpdate(); await this.wait(600);
+      while (pk.board.length < 5) { pk.board.push(pk.deck.pop()); this.flip(); this.pokerUpdate(); await this.wait(520); } }
+    for (const p of live) p.rank = live.length > 1 ? this.handRank(p.cards.concat(pk.board)) : null;
     const contrib = pk.players.map((p) => p.total); const levels = [...new Set(contrib.filter((c) => c > 0))].sort((a, b) => a - b);
-    let prev = 0; const wins = {}; let msg = [];
+    let prev = 0; const wins = {}; const msg = []; pk.winners = new Set();
+    if (live.length === 1) { const w = live[0]; w.stack += pk.pot; wins[w.ch.id] = pk.pot; pk.winners.add(w); levels.length = 0; } // wszyscy spasowali: cała pula dla ostatniego
     for (const lv of levels) {
       const potPart = pk.players.reduce((a, p) => a + Math.max(0, Math.min(p.total, lv) - prev), 0);
       const elig = live.filter((p) => p.total >= lv);
-      if (elig.length && potPart > 0) { let best = elig[0]; for (const p of elig) if (this.cmpRank(p.rank, best.rank) > 0) best = p; const winners = elig.filter((p) => this.cmpRank(p.rank, best.rank) === 0); const share = Math.floor(potPart / winners.length); for (const w of winners) { w.stack += share; wins[w.ch.id] = (wins[w.ch.id] || 0) + share; } }
+      if (elig.length && potPart > 0) { let best = elig[0]; for (const p of elig) if (this.cmpRank(p.rank, best.rank) > 0) best = p; const winners = elig.filter((p) => this.cmpRank(p.rank, best.rank) === 0); const share = Math.floor(potPart / winners.length); for (const w of winners) { w.stack += share; wins[w.ch.id] = (wins[w.ch.id] || 0) + share; pk.winners.add(w); } }
       prev = lv;
     }
     const remainder = pk.pot - Object.values(wins).reduce((a, b) => a + b, 0); if (remainder > 0) live[0].stack += remainder;
-    pk.pot = 0; pk.phase = 'over'; pk.active = false; pk.street = 4;
+    pk.pot = 0; pk.phase = 'over';
     const me = pk.players[0];
-    if (live.length === 1) msg.push(`${live[0] === me ? 'Wszyscy spasowali. Bierzesz pulę' : live[0].ch.name + ' zgarnia pulę, wszyscy spasowali'}${wins[live[0].ch.id] ? ' (' + wins[live[0].ch.id] + ')' : ''}.`);
-    else for (const [id, amt] of Object.entries(wins)) { const p = pk.players.find((q) => q.ch.id === id); msg.push(`${p === me ? 'TY' : p.ch.name}: ${this.rankName(p.rank)} +${amt}`); }
+    if (live.length === 1) msg.push(`${live[0] === me ? 'Wszyscy spasowali, bierzesz pulę' : live[0].ch.name + ' zgarnia pulę, reszta spasowała'}: +${wins[live[0].ch.id] || 0}`);
+    else for (const [id, amt] of Object.entries(wins)) { const p = pk.players.find((q) => q.ch.id === id); msg.push(`${p === me ? 'TY' : p.ch.name} wygrywa ${amt} (${this.rankName(p.rank)})`); }
     pk.msg = msg.join(' • '); pk.msgWin = !!wins[me.ch.id];
+    for (const w of pk.winners) w.action = 'WYGRYWA'; for (const w of pk.winners) w.actKind = 'win';
+    this.pokerLog(pk.msg, pk.msgWin ? 'win' : 'sys');
     if (wins[me.ch.id]) { SFX.bell(); this.say('win'); } else if (!me.folded) { SFX.hurt(); this.say('lose'); }
-    this.renderPoker();
+    this.pokerUpdate();
   },
   // ---------- SZYBKIE GRY ----------
   renderQuick() {
@@ -1943,7 +2059,7 @@ const TROPHIES = [
   { id: 'poker20', icon: '♠️', name: 'Pokerzysta', desc: 'Rozegraj 20 rozdań pokera', check: (p) => p.pokerHands >= 20, prog: (p) => [p.pokerHands, 20] },
   { id: 'vip', icon: '👑', name: 'VIP', desc: 'Odblokuj VIP room (obrót 10 000 w kasynie)', check: (p) => !!p.vip, prog: (p) => [Math.min(p.casinoWagered, 10000), 10000] },
   { id: 'bigwin', icon: '🤑', name: 'Gruba ryba', desc: 'Wygraj 2000 żetonów w jednej rundzie', check: (p) => p.casinoBiggestWin >= 2000 },
-  { id: 'debtfree', icon: '💸', name: 'Dłużnik', desc: 'Weź pożyczkę u Gaździoła', check: (p) => p.debtCount >= 1 },
+  { id: 'debtfree', icon: '💸', name: 'Dłużnik', desc: 'Weź pożyczkę u Gazdziola', check: (p) => p.debtCount >= 1 },
   { id: 'casino_duel', icon: '🥊', name: 'Odkuty', desc: 'Odzyskaj żetony w pojedynku z krupierem', check: (p) => p.casinoDuels >= 1 },
   { id: 'login7', icon: '📆', name: 'Stały bywalec', desc: 'Wejdź do gry 7 dni z rzędu', check: (p) => p.loginStreak >= 7, prog: (p) => [Math.min(p.loginStreak, 7), 7] },
 ];
@@ -2092,6 +2208,7 @@ const App = {
   show(id) {
     $$('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
     this.screen = id;
+    const scr = document.getElementById(id); if (scr) scr.scrollTop = 0; // nowy ekran zawsze od góry
     if (id === 's-title') { this.renderTitle(); setTimeout(() => this.checkDebt(), 400); }
     if (id === 's-game') { this.fitCanvas(); $('#touch').hidden = !isTouchDevice() || usingKeyboard; }
     else $('#touch').hidden = true;
@@ -2156,7 +2273,7 @@ const App = {
     const p = PROFILE.d; if (!(p.debt > 0 && Date.now() > p.debtDue)) return false;
     const watol = ROSTER.find((c) => c.id === 'watol') || ROSTER[ROSTER.length - 1];
     const ov = $('#debt-modal'); ov.hidden = false;
-    $('#debt-modal-text').innerHTML = `Gaździoł wysłał <b>Watola Wszechwładnego</b> po dług: <b style="color:#ffb020">${p.debt} żetonów</b>.<br>Masz ${p.chips}. ${p.chips >= p.debt ? 'Możesz spłacić od ręki albo' : 'Nie stać cię, więc'} walczysz.<br><small>Wygrasz: dług anulowany. Przegrasz: Watol zabiera wszystkie żetony, a jeśli to za mało, jeden przedmiot z szatni.</small>`;
+    $('#debt-modal-text').innerHTML = `Gazdziol wysłał <b>Watola Wszechwładnego</b> po dług: <b style="color:#ffb020">${p.debt} żetonów</b>.<br>Masz ${p.chips}. ${p.chips >= p.debt ? 'Możesz spłacić od ręki albo' : 'Nie stać cię, więc'} walczysz.<br><small>Wygrasz: dług anulowany. Przegrasz: Watol zabiera wszystkie żetony, a jeśli to za mało, jeden przedmiot z szatni.</small>`;
     $('#debt-pay').hidden = p.chips < p.debt;
     $('#debt-pay').onclick = () => { p.chips -= p.debt; p.debt = 0; p.debtDue = 0; PROFILE.save(); ov.hidden = true; toast('💸', 'Dług spłacony', 'Watol odchodzi bez słowa'); this.renderTitle(); };
     $('#debt-fight').onclick = () => { ov.hidden = true; this.p1 = (this.p1 && this.p1.id !== watol.id) ? this.p1 : ROSTER[0]; this.mode = 'debt'; this.startMatch({ p1: this.p1, p2: watol, mode: 'debt', diff: 0.9, boss: { id: 'windykator', name: 'WINDYKATOR', desc: 'Przyszedł po dług', hp: 160, power: 1.3 }, label: `WINDYKACJA • DŁUG ${p.debt} 🪙` }); };
@@ -2462,7 +2579,7 @@ const App = {
     const xpBox = $('#result-xp'); xpBox.hidden = !settle;
     if (settle) {
       const lvl = settle.lvl, cur = settle.after - PROFILE.xpFor(lvl), need = PROFILE.xpFor(lvl + 1) - PROFILE.xpFor(lvl);
-      xpBox.innerHTML = settle.rows.map((r) => `<div class="row"><span>${r[0]}</span><b>+${r[1]} XP</b></div>`).join('') +
+      xpBox.innerHTML = '<div class="rows">' + settle.rows.map((r) => `<div class="row"><span>${r[0]}</span><b>+${r[1]} XP</b></div>`).join('') + '</div>' +
         `<div class="total"><span>RAZEM</span><b style="color:var(--gold)">+${settle.xp} XP</b></div>
          <div class="xpbar" style="margin-top:6px"><b style="width:${Math.round(cur / need * 100)}%"></b></div>
          <div class="row"><span>Poziom ${lvl} • ${PROFILE.rank(lvl)}</span><span>${cur} / ${need} XP</span></div>
@@ -2487,20 +2604,20 @@ const App = {
     if (this.mode === 'tourney') { this.tourneyResult(winner, m); return; }
     if (this.mode === 'debt') {
       const p = PROFILE.d, debt = p.debt;
-      if (winner === 0) { p.debt = 0; p.debtDue = 0; PROFILE.save(); $('#result-kicker').textContent = 'WINDYKACJA'; title.textContent = 'DŁUG ANULOWANY!'; $('#result-text').textContent = `Watol wraca do Gaździoła z pustymi rękami. ${debt} żetonów długu znika.`; toast('💸', 'Dług anulowany', 'Watol pokonany'); }
+      if (winner === 0) { p.debt = 0; p.debtDue = 0; PROFILE.save(); $('#result-kicker').textContent = 'WINDYKACJA'; title.textContent = 'DŁUG ANULOWANY!'; $('#result-text').textContent = `Watol wraca do Gazdziola z pustymi rękami. ${debt} żetonów długu znika.`; toast('💸', 'Dług anulowany', 'Watol pokonany'); }
       else {
         const taken = Math.min(p.chips, debt); p.chips -= taken; let itemTxt = '';
         if (taken < debt) { const owned = Object.keys(p.items); if (owned.length) { const id = pick(owned); delete p.items[id]; for (const k in p.equipped) if (p.equipped[k] === id) p.equipped[k] = null; itemTxt = ` i zabiera z szatni: ${ITEM_BY_ID[id] ? ITEM_BY_ID[id].name : id}`; } }
         p.debt = 0; p.debtDue = 0; PROFILE.save();
-        $('#result-kicker').textContent = 'WINDYKACJA'; title.textContent = 'ZAJĘCIE'; title.classList.add('lose'); $('#result-text').textContent = `Watol zabiera ${taken} żetonów${itemTxt}. Dług zamknięty. Gaździoł przesyła pozdrowienia.`;
+        $('#result-kicker').textContent = 'WINDYKACJA'; title.textContent = 'ZAJĘCIE'; title.classList.add('lose'); $('#result-text').textContent = `Watol zabiera ${taken} żetonów${itemTxt}. Dług zamknięty. Gazdziol przesyła pozdrowienia.`;
       }
       $('#btn-next').textContent = 'DO MENU'; $('#btn-next').onclick = () => this.show('s-title');
       this.show('s-result'); return;
     }
     if (this.mode === 'casino') {
       const stake = this.casinoStake || 0;
-      if (winner === 0) { PROFILE.d.chips += stake; PROFILE.d.casinoLost = 0; PROFILE.d.casinoDuels++; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'ODKUTY!'; $('#result-text').textContent = `Gaździoł oddaje ${stake} żetonów. Z twarzy mu zeszło. Wracasz do stołu?`; toast('🪙', `+${stake} żetonów`, 'Krupier oddał przegrane'); }
-      else { PROFILE.d.casinoLost = 0; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'PRZEGRANA'; title.classList.add('lose'); $('#result-text').textContent = `Gaździoł zatrzymuje ${stake} żetonów i poprawia marynarkę. Licznik strat wyzerowany.`; }
+      if (winner === 0) { PROFILE.d.chips += stake; PROFILE.d.casinoLost = 0; PROFILE.d.casinoDuels++; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'ODKUTY!'; $('#result-text').textContent = `Gazdziol oddaje ${stake} żetonów. Z twarzy mu zeszło. Wracasz do stołu?`; toast('🪙', `+${stake} żetonów`, 'Krupier oddał przegrane'); }
+      else { PROFILE.d.casinoLost = 0; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'PRZEGRANA'; title.classList.add('lose'); $('#result-text').textContent = `Gazdziol zatrzymuje ${stake} żetonów i poprawia marynarkę. Licznik strat wyzerowany.`; }
       $('#btn-next').textContent = 'DO KASYNA'; $('#btn-next').onclick = () => { CASINO.render(); this.show('s-casino'); };
       this.show('s-result'); return;
     }

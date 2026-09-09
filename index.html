@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=14" />
+  <link rel="stylesheet" href="style.css?v=16" />
 </head>
 <body>
 <div id="app">
@@ -124,10 +124,10 @@
       <div id="result-progress" class="progress"></div>
       <div id="result-xp" class="xpbox" hidden></div>
       <div id="result-trophies" class="new-trophies"></div>
-      <div class="menu">
+      <div class="menu" id="result-replay-menu">
         <button class="btn btn-sm" id="btn-replay" hidden>📹 UDOSTĘPNIJ POWTÓRKĘ K.O.</button>
       </div>
-      <div class="menu">
+      <div class="menu" id="result-actions">
         <button class="btn btn-primary" id="btn-next"></button>
         <button class="btn btn-ghost" id="btn-result-menu">Menu</button>
       </div>
@@ -170,13 +170,13 @@
   <section id="s-casino" class="screen">
     <header class="select-head">
       <button class="btn btn-ghost btn-sm" id="btn-casino-back">← Wróć</button>
-      <h2>🎰 Kasyno u Gaździoła</h2>
+      <h2>🎰 Kasyno u Gazdziola</h2>
       <div class="chips-big" id="chips-casino"></div>
     </header>
     <div class="casino-body">
       <aside class="dealer">
-        <div class="dealer-head"><img id="dealer-img" alt="Gaździoł" /><span class="dealer-hat">🎩</span></div>
-        <div class="dealer-name">Gaździoł <small>krupier</small></div>
+        <div class="dealer-head"><img id="dealer-img" alt="Gazdziol" /><span class="dealer-hat">🎩</span></div>
+        <div class="dealer-name">Gazdziol <small>krupier</small></div>
         <div class="bubble" id="dealer-say">Siadaj. Żetony na stół.</div>
         <div class="jackpot" id="jackpot-box"></div>
         <button class="btn btn-sm btn-vip" id="btn-vip" hidden>👑 VIP</button>
@@ -352,6 +352,6 @@
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
 <script src="online-config.js"></script>
-<script src="game.js?v=14"></script>
+<script src="game.js?v=16"></script>
 </body>
 </html>
