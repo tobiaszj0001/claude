@@ -1,0 +1,18 @@
+# Wymusza przebudowę GitHub Pages po każdym pushu na branch gry.
+# Pushe z sesji Claude nie uruchamiają domyślnego buildu Pages, ten workflow to obchodzi.
+name: Odśwież GitHub Pages
+on:
+  push:
+    branches: [only-pantslow-gang]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poproś GitHub o nowy build Pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds"
