@@ -21,6 +21,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.20, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
+const VERSION = 'v5';
 const BASE_HP = 100;
 const LEGEND_MULT = 10;          // legendy mają 10x HP
 const W = 960, H = 540, FLOOR = 470;
@@ -82,7 +83,15 @@ function headSrc(ch) { const h = heads[ch.id]; return h instanceof HTMLCanvasEle
 // ============================================================
 const SFX = {
   ctx: null, muted: false,
-  ensure() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; } } if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
+  ensure() {
+    if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; } }
+    if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx && !this.unlocked) { // iPhone: pierwszy dźwięk musi wyjść z gestu użytkownika
+      this.unlocked = true;
+      try { const b = this.ctx.createBuffer(1, 1, 22050); const s = this.ctx.createBufferSource(); s.buffer = b; s.connect(this.ctx.destination); s.start(0); } catch (e) {}
+      VOICES.preload();
+    }
+  },
   noise(dur, freq, q, vol, type = 'lowpass') {
     if (!this.ctx || this.muted) return; const c = this.ctx; const n = c.sampleRate * dur;
     const buf = c.createBuffer(1, n, c.sampleRate); const d = buf.getChannelData(0);
@@ -113,22 +122,41 @@ const SFX = {
 //  Głosy postaci (nagrania z sounds/, lista w sounds/manifest.json)
 //  Zdarzenia: intro, cios, obrywa, blok, ko, wygrana, wybor
 // ============================================================
-const VOICES = { data: {}, muted: false, last: {}, cache: {},
+const VOICES = { data: {}, muted: false, last: {}, buffers: {}, pending: {},
   load() {
     return fetch('sounds/manifest.json?v=' + Date.now()).then((r) => (r.ok ? r.json() : {})).then((d) => { this.data = d || {}; }).catch(() => {});
   },
+  files() { const out = []; for (const id in this.data) for (const ev in this.data[id]) for (const f of this.data[id][ev]) out.push(f); return out; },
+  preload() { // dekodujemy nagrania do Web Audio; działa też na iPhonie po odblokowaniu dźwięku
+    if (!SFX.ctx) return;
+    for (const f of this.files()) {
+      if (this.buffers[f] || this.pending[f]) continue;
+      this.pending[f] = true;
+      fetch('sounds/' + f).then((r) => r.arrayBuffer()).then((ab) => new Promise((res, rej) => {
+        const p = SFX.ctx.decodeAudioData(ab, res, rej); if (p && p.then) p.then(res, rej);
+      })).then((buf) => { this.buffers[f] = buf; }).catch(() => { delete this.pending[f]; });
+    }
+  },
   has(ch, ev) { const v = this.data[ch.id]; return !!(v && v[ev] && v[ev].length); },
+  any(ch) { const v = this.data[ch.id]; return !!v && Object.keys(v).some((ev) => v[ev] && v[ev].length); },
   play(ch, ev, opts = {}) {
     if (this.muted || SFX.muted || !this.has(ch, ev)) return false;
     const key = ch.id + ':' + ev, now = performance.now();
     if (now - (this.last[key] || 0) < (opts.cooldown || 700)) return false;
     if (opts.chance !== undefined && Math.random() > opts.chance) return false;
     this.last[key] = now;
-    const files = this.data[ch.id][ev]; const src = 'sounds/' + pick(files);
-    try {
-      const a = new Audio(src); a.volume = opts.volume === undefined ? 1 : opts.volume;
-      const p = a.play(); if (p && p.catch) p.catch(() => {});
-    } catch (e) {}
+    const file = pick(this.data[ch.id][ev]); const vol = opts.volume === undefined ? 1 : opts.volume;
+    SFX.ensure();
+    const buf = this.buffers[file];
+    if (SFX.ctx && buf) {
+      try {
+        const src = SFX.ctx.createBufferSource(); src.buffer = buf;
+        const g = SFX.ctx.createGain(); g.gain.value = vol; src.connect(g); g.connect(SFX.ctx.destination); src.start();
+        return true;
+      } catch (e) {}
+    }
+    this.preload();
+    try { const a = new Audio('sounds/' + file); a.volume = vol; const p = a.play(); if (p && p.catch) p.catch(() => {}); } catch (e) {}
     return true;
   },
 };
@@ -757,11 +785,13 @@ const App = {
     $('#btn-result-menu').addEventListener('click', () => this.show('s-title'));
     $('#btn-champ-menu').addEventListener('click', () => this.show('s-title'));
     this.setupTouch();
+    for (const ev of ['pointerdown', 'touchend', 'keydown']) document.addEventListener(ev, () => SFX.ensure(), { passive: true });
     if (IS_IOS && !IS_STANDALONE) $('#btn-fs').textContent = 'PEŁNY EKRAN (iPHONE)';
     if (IS_STANDALONE) $('#btn-fs').hidden = true;
     $('#btn-ios-close').addEventListener('click', () => { $('#ios-help').hidden = true; });
     $$('button').forEach((b) => b.addEventListener('click', () => b.blur()));
     if (isTouchDevice() && !IS_STANDALONE) $('#s-game').addEventListener('pointerdown', () => { if (!IS_IOS && !document.fullscreenElement && !this._fsTried) { this._fsTried = true; this.fullscreen(); } }, { once: true });
+    $('#ver').textContent = VERSION;
     this.renderTitle();
     this.loop(0);
     if (isTouchDevice()) $('#rotate-hint').classList.add('show');
@@ -835,7 +865,7 @@ const App = {
       const hp = BASE_HP * (ch.legendary ? LEGEND_MULT : 1);
       card.innerHTML = `
         <img src="${headSrc(ch)}" alt="${ch.name}" />
-        <div class="name"><span class="glove" style="background:${ch.glove}"></span>${ch.name}</div>
+        <div class="name"><span class="glove" style="background:${ch.glove}"></span>${ch.name}${VOICES.any(ch) ? ' <span class="voice" title="ma głos">🔊</span>' : ''}</div>
         <div class="title">${ch.title}</div>
         <div class="stats">
           <div class="stat"><span>Szybk.</span><i><b style="width:${Math.round((ch.speed - 0.7) / 0.6 * 100)}%"></b></i></div>
@@ -948,6 +978,6 @@ const App = {
   },
 };
 
-window.OPG = App;
+window.OPG = App; window.OPG_VOICES = VOICES;
 Promise.all([loadHeads(), VOICES.load()]).then(() => App.init());
 })();
