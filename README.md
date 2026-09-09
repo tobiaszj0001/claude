@@ -1,71 +1,46 @@
-# Strona agencji social media
+# Strona: video dla firm z gwarancją efektów
 
-Statyczna strona (HTML + CSS + JS, bez frameworków). Działa na dowolnym hostingu:
-Netlify, Vercel, GitHub Pages, home.pl, OVH itd. Wystarczy wgrać pliki.
+Statyczna strona (HTML + CSS + JS). Wgraj pliki na dowolny hosting (Netlify, Vercel, GitHub Pages, home.pl).
 
 ## Pliki
 
 | Plik | Co zawiera |
 |---|---|
-| `index.html` | cała treść strony (teksty, sekcje, cennik, FAQ) |
+| `index.html` | treść strony: hero, Ty/Ja, opinie, realizacje, gwarancja, cennik, proces, FAQ, rezerwacja |
+| `content.js` | **Twoje video, opinie video klientów, realizacje i rolki** |
+| `script.js` | `CONFIG` (telefon, e-mail, kalendarz, formularz) + logika |
 | `style.css` | wygląd |
-| `script.js` | konfiguracja (telefon, e-mail, kalendarz, formularz) + logika |
-| `portfolio-data.js` | lista klientów i rolek w portfolio |
 
-## Przed publikacją: uzupełnij `CONFIG` w `script.js`
+## 1. Nagraj i podepnij video (`content.js`)
+
+- **Twoje video w hero** (`founder`): 60–90 s, poziome 16:9, Ty do kamery. Wpisz link w `video`, kadr w `poster`, popraw `chapters` (czas w sekundach, tytuły rozdziałów) i `duration`.
+- **Opinie klientów** (`testimonials`): pionowe 9:16, 30–60 s, nagrane telefonem. Masz 3, dodaj 4. i 5. kopiując blok. Układ działa dla 3–5.
+- **Realizacje** (`cases`): klient, wyniki, 3 rolki z linkami.
+
+Obsługiwane linki: plik `.mp4` (najlepiej, ładuje się bez logo YouTube), YouTube, Vimeo, Instagram, TikTok.
+Pliki mp4 wgraj do folderu `video/` obok `index.html` i wpisz np. `video/opinia-1.mp4`.
+
+## 2. Uzupełnij `CONFIG` w `script.js`
 
 ```js
-const CONFIG = {
-  phone: '+48 000 000 000',          // Twój numer – podmienia wszystkie przyciski "Zadzwoń"
-  email: 'kontakt@socialreach.pl',   // Twój e-mail
-  bookingUrl: '',                    // link do kalendarza (patrz niżej)
-  formEndpoint: ''                   // usługa wysyłki formularza (patrz niżej)
-};
+phone: '+48 000 000 000',
+email: 'kontakt@twojadomena.pl',
+bookingUrl: '',     // Calendly / Cal.com / Google Calendar
+formEndpoint: ''    // np. https://formspree.io/f/xxxxxxxx
 ```
 
-### Moduł rezerwacji konsultacji (`bookingUrl`)
+**Kalendarz**: załóż darmowe konto na Calendly lub Cal.com, utwórz wydarzenie „Darmowa konsultacja, 30 min”, połącz z Kalendarzem Google i wklej link. Kalendarz pokaże się w sekcji Kontakt i w oknie po kliknięciu każdego przycisku „Umów darmową konsultację”.
 
-Po kliknięciu "Umów darmową konsultację" otwiera się okno z kalendarzem.
-Obsługiwane bez dodatkowej konfiguracji:
+**Formularz**: strona jest statyczna, więc do wysyłki potrzebna jest usługa (Formspree, Web3Forms, Getform). Bez niej formularz otwiera program pocztowy.
 
-- **Calendly** – `https://calendly.com/twoja-nazwa/konsultacja-30-min`
-- **Cal.com** – `https://cal.com/twoja-nazwa/konsultacja-30-min`
-- **Google Calendar** (Harmonogram spotkań → Udostępnij → link) – `https://calendar.app.google/XXXX`
+## 3. Podmień w `index.html`
 
-Wszystkie trzy synchronizują się z Twoim Kalendarzem Google i wysyłają
-zaproszenia obu stronom. Dopóki `bookingUrl` jest puste, w oknie pokazuje się
-formularz zastępczy (imię, telefon, preferowany termin).
+- „Imię Nazwisko” w nagłówku i stopce (nazwa marki)
+- NIP i link do polityki prywatności w stopce
+- linki do profili społecznościowych w sekcji Kontakt
+- `og-image.jpg` (1200×630 px) – obrazek przy udostępnianiu linku
+- kod Meta Pixel / GA4 w `<head>` (zdarzenie Lead wysyła się automatycznie)
 
-### Formularz kontaktowy (`formEndpoint`)
+## Do potwierdzenia
 
-Strona nie ma backendu, więc do wysyłki formularza potrzebna jest usługa:
-
-1. Załóż darmowe konto na [formspree.io](https://formspree.io) (lub Web3Forms, Getform, Basin).
-2. Utwórz formularz i skopiuj adres, np. `https://formspree.io/f/abcd1234`.
-3. Wklej go do `formEndpoint`.
-
-Dopóki pole jest puste, formularz otwiera program pocztowy z gotową treścią (mailto).
-
-## Portfolio (`portfolio-data.js`)
-
-Każdy klient ma opis, wyniki i listę rolek. Każda rolka ma pole `video`,
-w które wklejasz link do Instagrama, TikToka lub YouTube. Po kliknięciu
-miniatury rolka odtwarza się w oknie na stronie. Pole `thumb` to opcjonalna
-miniatura (np. `img/glow-1.jpg`); bez niej wyświetla się kolorowy gradient.
-
-## Co jeszcze podmienić w `index.html`
-
-- nazwa marki `SocialReach` (nagłówek, stopka, `<title>`)
-- sekcja **O mnie**: imię, nazwisko, lata doświadczenia, liczby, zdjęcie
-- sekcja **Opinie**: prawdziwe opinie klientów
-- pasek **Zaufały mi firmy**: logotypy klientów
-- stopka: NIP, link do polityki prywatności
-- `og-image.jpg`: obrazek 1200×630 px pokazywany przy udostępnianiu linku
-- kod **Meta Pixel / GA4** w `<head>` (miejsce oznaczone komentarzem);
-  zdarzenie `Lead` wysyła się automatycznie po wysłaniu formularza i otwarciu rezerwacji
-
-## Cennik i gwarancja
-
-Teksty pakietów i zasady gwarancji są w `index.html` (sekcje `#cennik` i `#gwarancja`).
-Pakiety **Wzrost** i **Skala** oraz zapis „pracuję dalej bez opłat, jeśli nie dowiozę”
-to propozycje do potwierdzenia.
+Pakiety **Wzrost** i **Skala**, zapis „pracuję dalej za 0 zł” i liczby w przykładowych realizacjach to propozycje. Podmień na swoje.

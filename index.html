@@ -3,711 +3,470 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Skuteczne social media z gwarancją efektów | SocialReach</title>
-  <meta name="description" content="Kompleksowa produkcja video dla firm: strategia, pomysły, scenariusze, nagrania, montaż i publikacja. Gwarancja minimum 100 000 wyświetleń miesięcznie. Umów darmową 30-minutową konsultację." />
-
-  <!-- Open Graph: podgląd linku w Messengerze, na Facebooku, Instagramie i LinkedIn -->
+  <title>Skuteczne social media z gwarancją efektów</title>
+  <meta name="description" content="Nagrywam, montuję i publikuję video dla firm. Jeden dzień zdjęciowy w miesiącu, reszta po mojej stronie. Gwarancja 100 000 wyświetleń miesięcznie. Darmowa konsultacja 30 min." />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Skuteczne social media z gwarancją efektów" />
-  <meta property="og:description" content="Video dla firm od pomysłu po publikację. Gwarancja 100 000 wyświetleń miesięcznie. Darmowa konsultacja 30 min." />
+  <meta property="og:description" content="Video dla firm od pomysłu po publikację. Gwarancja 100 000 wyświetleń miesięcznie albo pracuję dalej za 0 zł." />
   <meta property="og:image" content="og-image.jpg" />
   <meta property="og:locale" content="pl_PL" />
+  <meta name="theme-color" content="#141110" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 
-  <!-- ===== ŚLEDZENIE REKLAM =====
-       Wklej tutaj kod Meta Pixel / TikTok Pixel / Google Analytics (GA4),
-       żeby mierzyć konwersje z reklam graficznych i social mediów.
-       Zdarzenie "Lead" jest wywoływane automatycznie w script.js po wysłaniu formularza
-       lub kliknięciu w rezerwację konsultacji (funkcja trackLead). -->
+  <!-- Tu wklej Meta Pixel / TikTok Pixel / GA4. Zdarzenie "Lead" wysyła się
+       automatycznie po otwarciu rezerwacji i wysłaniu formularza (script.js → trackLead). -->
 </head>
 <body>
+<div class="grain" aria-hidden="true"></div>
 
-  <!-- ================= NAWIGACJA ================= -->
-  <header class="nav" id="nav">
-    <div class="container nav__inner">
-      <a href="#top" class="logo">Social<span>Reach</span></a>
-
-      <nav class="nav__links" id="navLinks" aria-label="Menu główne">
-        <a href="#oferta">Jak to działa</a>
-        <a href="#portfolio">Portfolio</a>
-        <a href="#gwarancja">Gwarancja</a>
-        <a href="#cennik">Cennik</a>
-        <a href="#faq">FAQ</a>
-        <a href="#kontakt">Kontakt</a>
-        <div class="nav__mobile-cta">
-          <a class="btn btn--ghost btn--sm js-phone-link" href="tel:+48000000000">Zadzwoń</a>
-          <button class="btn btn--primary btn--sm js-book" type="button">Umów darmową konsultację</button>
-        </div>
-      </nav>
-
-      <div class="nav__cta">
-        <a class="btn btn--ghost btn--sm js-phone-link" href="tel:+48000000000">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.52 6.52l1.93-1.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-          Zadzwoń
-        </a>
-        <button class="btn btn--primary btn--sm js-book" type="button">Umów darmową konsultację</button>
-      </div>
-
-      <button class="nav__burger" id="burger" aria-label="Otwórz menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
-
-  <main id="top">
-
-    <!-- ================= HERO ================= -->
-    <section class="hero">
-      <div class="hero__glow hero__glow--1"></div>
-      <div class="hero__glow hero__glow--2"></div>
-      <div class="container hero__grid">
-        <div class="hero__copy">
-          <p class="eyebrow">
-            <span class="eyebrow__dot"></span>
-            Kompleksowa produkcja video dla firm
-          </p>
-          <h1 class="hero__title">Skuteczne social media <em>z gwarancją efektów</em></h1>
-          <p class="hero__lead">
-            Biorę na siebie wszystko: strategię, pomysły, scenariusze, nagrania, montaż i publikację.
-            Ty prowadzisz firmę, a Twoje social media rosną. Gwarantuję minimum
-            <strong>100 000 wyświetleń miesięcznie</strong>, inaczej pracuję dalej za darmo.
-          </p>
-
-          <div class="hero__actions">
-            <button class="btn btn--primary btn--lg js-book" type="button">
-              Umów darmową konsultację
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
-            <a class="btn btn--ghost btn--lg js-phone-link" href="tel:+48000000000">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.52 6.52l1.93-1.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              Zadzwoń teraz
-            </a>
-          </div>
-          <ul class="hero__trust">
-            <li>30 minut</li>
-            <li>Bez zobowiązań</li>
-            <li>Wychodzisz z konkretnym planem</li>
-          </ul>
-
-          <div class="hero__stats">
-            <div class="stat">
-              <span class="stat__num" data-count="1200000" data-format="short">1,2 mln</span>
-              <span class="stat__label">gwarantowanych wyświetleń rocznie</span>
-            </div>
-            <div class="stat">
-              <span class="stat__num" data-count="8" data-suffix="+">8+</span>
-              <span class="stat__label">materiałów video co miesiąc</span>
-            </div>
-            <div class="stat">
-              <span class="stat__num">100%</span>
-              <span class="stat__label">obsługi po mojej stronie</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stos rolek: podmień gradienty na prawdziwe miniatury (patrz README) -->
-        <div class="hero__visual" aria-hidden="true">
-          <div class="reel reel--back">
-            <div class="reel__thumb reel__thumb--a"></div>
-            <span class="reel__views">▶ 312 tys.</span>
-            <span class="reel__caption">Restauracja · kulisy kuchni</span>
-          </div>
-          <div class="reel reel--mid">
-            <div class="reel__thumb reel__thumb--b"></div>
-            <span class="reel__views">▶ 486 tys.</span>
-            <span class="reel__caption">Salon beauty · przed / po</span>
-          </div>
-          <div class="reel reel--front">
-            <div class="reel__thumb reel__thumb--c"></div>
-            <span class="reel__views">▶ 1,1 mln</span>
-            <span class="reel__caption">Ekspert B2B · 3 błędy klientów</span>
-            <span class="reel__play">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </span>
-          </div>
-          <div class="hero__float hero__float--1">
-            <strong>+38 400</strong> obserwujących w 6 mies.
-          </div>
-          <div class="hero__float hero__float--2">
-            <strong>142</strong> zapytania z rolek
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= ZAUFALI ================= -->
-    <section class="logos" aria-label="Klienci">
-      <div class="container">
-        <p class="logos__label">Zaufały mi firmy z wielu branż</p>
-        <!-- Podmień na logotypy klientów (obrazki .svg/.png). Tekst to tymczasowe zastępniki. -->
-        <ul class="logos__row">
-          <li>Smak Południa</li>
-          <li>Glow Studio</li>
-          <li>TechSolve</li>
-          <li>FashionPL</li>
-          <li>Dentica</li>
-          <li>FitZone</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ================= JAK TO DZIAŁA / OFERTA ================= -->
-    <section class="section" id="oferta">
-      <div class="container">
-        <div class="section__head">
-          <p class="eyebrow">Na czym to polega</p>
-          <h2>Jedna usługa. Cała produkcja video <em>po mojej stronie.</em></h2>
-          <p class="section__lead">
-            Nie sprzedaję „postów”. Prowadzę cały proces, który zamienia Twoją wiedzę i firmę
-            w regularne, oglądane video na Instagramie, TikToku, Facebooku i YouTube.
-          </p>
-        </div>
-
-        <div class="steps">
-          <article class="step">
-            <span class="step__num">01</span>
-            <div class="step__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/></svg>
-            </div>
-            <h3>Strategia</h3>
-            <p>Ustalamy, do kogo mówimy, co ma się wydarzyć po obejrzeniu i jak mierzymy efekt. Bez tego nawet ładne video nie sprzedaje.</p>
-          </article>
-          <article class="step">
-            <span class="step__num">02</span>
-            <div class="step__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 3z"/></svg>
-            </div>
-            <h3>Pomysły i scenariusze</h3>
-            <p>Co miesiąc dostajesz gotową listę tematów i scenariusze z hookami. Ty tylko akceptujesz, resztę robię ja.</p>
-          </article>
-          <article class="step">
-            <span class="step__num">03</span>
-            <div class="step__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></svg>
-            </div>
-            <h3>Nagranie</h3>
-            <p>Przyjeżdżam z pełnym sprzętem do Ciebie. Jeden dzień zdjęciowy w miesiącu zamieniam w cały miesiąc treści.</p>
-          </article>
-          <article class="step">
-            <span class="step__num">04</span>
-            <div class="step__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h16M4 12h16M4 17h10"/><path d="M18 15l3 3-3 3"/></svg>
-            </div>
-            <h3>Montaż</h3>
-            <p>Dynamiczne cięcia, napisy, dźwięk i formaty pod każdą platformę. Materiały zatrzymują uwagę w pierwszych 2 sekundach.</p>
-          </article>
-          <article class="step">
-            <span class="step__num">05</span>
-            <div class="step__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4z"/></svg>
-            </div>
-            <h3>Publikacja</h3>
-            <p>Opisy, hashtagi, godziny publikacji, odpowiedzi na komentarze. Profil żyje bez Twojego udziału.</p>
-          </article>
-          <article class="step">
-            <span class="step__num">06</span>
-            <div class="step__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19h16"/><path d="M6 16V9M11 16V5M16 16v-7M21 16V11"/></svg>
-            </div>
-            <h3>Analiza i optymalizacja</h3>
-            <p>Comiesięczne spotkanie strategiczne: co zadziałało, co skalujemy, co wycinamy. Liczby, nie przeczucia.</p>
-          </article>
-        </div>
-
-        <div class="inline-cta">
-          <div>
-            <h3>Nie wiesz, od czego zacząć? Zacznijmy od rozmowy.</h3>
-            <p>30 minut, podczas których przeanalizuję Twoje profile i powiem, co nagrałbym w pierwszym miesiącu.</p>
-          </div>
-          <button class="btn btn--primary js-book" type="button">Umów darmową konsultację</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= DLA KOGO ================= -->
-    <section class="section section--tint" id="dla-kogo">
-      <div class="container">
-        <div class="section__head">
-          <p class="eyebrow">Dla kogo</p>
-          <h2>Najlepsze efekty osiągam z firmami, które <em>mają co pokazać</em></h2>
-        </div>
-        <div class="audience">
-          <div class="audience__card">
-            <span class="audience__emoji">🍽️</span>
-            <h3>Gastronomia i lokale</h3>
-            <p>Restauracje, kawiarnie, cukiernie. Kulisy, produkt w akcji, ludzie. Video, które sprowadza gości.</p>
-          </div>
-          <div class="audience__card">
-            <span class="audience__emoji">💆‍♀️</span>
-            <h3>Usługi beauty i zdrowie</h3>
-            <p>Salony, kliniki, gabinety, studia fitness. Efekty przed / po i edukacja, która zapełnia kalendarz.</p>
-          </div>
-          <div class="audience__card">
-            <span class="audience__emoji">🏗️</span>
-            <h3>Firmy usługowe i lokalne</h3>
-            <p>Budowlanka, motoryzacja, nieruchomości, rzemiosło. Pokazujemy realizacje i budujemy zaufanie w regionie.</p>
-          </div>
-          <div class="audience__card">
-            <span class="audience__emoji">🎯</span>
-            <h3>Eksperci i marki osobiste</h3>
-            <p>Prawnicy, księgowi, lekarze, doradcy, trenerzy. Twoja wiedza w formacie, który ogląda się do końca.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= PORTFOLIO ================= -->
-    <section class="section" id="portfolio">
-      <div class="container">
-        <div class="section__head section__head--row">
-          <div>
-            <p class="eyebrow">Portfolio</p>
-            <h2>Realizacje i <em>wyniki</em></h2>
-            <p class="section__lead">Wybrane współprace z liczbami, które można sprawdzić na profilach klientów.</p>
-          </div>
-          <div class="tabs" role="tablist" aria-label="Widok portfolio">
-            <button class="tab is-active" role="tab" aria-selected="true" data-view="clients" type="button">Według klientów</button>
-            <button class="tab" role="tab" aria-selected="false" data-view="reels" type="button">Pojedyncze rolki</button>
-          </div>
-        </div>
-
-        <!-- Widok: klienci -->
-        <div class="portfolio__view is-active" id="view-clients" role="tabpanel"></div>
-
-        <!-- Widok: rolki -->
-        <div class="portfolio__view" id="view-reels" role="tabpanel">
-          <div class="reel-filters" id="reelFilters"></div>
-          <div class="reel-grid" id="reelGrid"></div>
-        </div>
-
-        <div class="inline-cta inline-cta--soft">
-          <div>
-            <h3>Chcesz takie wyniki u siebie?</h3>
-            <p>Na konsultacji pokażę, które formaty zadziałają w Twojej branży i dlaczego.</p>
-          </div>
-          <button class="btn btn--primary js-book" type="button">Umów darmową konsultację</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= GWARANCJA ================= -->
-    <section class="section section--dark" id="gwarancja">
-      <div class="container">
-        <div class="guarantee">
-          <div class="guarantee__badge">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
-          </div>
-          <p class="eyebrow eyebrow--light">Gwarancja efektów</p>
-          <h2>Gwarantuję minimum <em>100 000 wyświetleń miesięcznie.</em><br />Na piśmie.</h2>
-          <p class="guarantee__lead">
-            Przy rocznej współpracy średnia miesięczna liczba wyświetleń Twoich materiałów wyniesie
-            co najmniej 100 000. To <strong>1 200 000 wyświetleń w ciągu roku</strong>, zapisane w umowie,
-            nie w obietnicach.
-          </p>
-
-          <div class="guarantee__grid">
-            <div class="guarantee__item">
-              <span class="guarantee__num">100 000</span>
-              <span>wyświetleń miesięcznie, liczonych jako średnia z 12 miesięcy</span>
-            </div>
-            <div class="guarantee__item">
-              <span class="guarantee__num">1,2 mln</span>
-              <span>wyświetleń rocznie łącznie na Twoich profilach</span>
-            </div>
-            <div class="guarantee__item">
-              <span class="guarantee__num">0 zł</span>
-              <span>za każdy dodatkowy miesiąc pracy, jeśli nie dowiozę wyniku</span>
-            </div>
-          </div>
-
-          <div class="guarantee__rules">
-            <h3>Jak działa gwarancja</h3>
-            <ul>
-              <li><strong>Liczymy uczciwie.</strong> Sumujemy wyświetlenia wszystkich materiałów opublikowanych w ramach współpracy na wszystkich uzgodnionych platformach. Dostajesz do nich pełny wgląd.</li>
-              <li><strong>Warunek: ciągłość.</strong> Gwarancja obejmuje 12 kolejnych miesięcy współpracy. Algorytmy nagradzają regularność, dlatego rozliczamy średnią roczną, a nie pojedynczy miesiąc.</li>
-              <li><strong>Twoja rola.</strong> Udostępniasz jeden dzień zdjęciowy w miesiącu i akceptujesz scenariusze w ustalonym terminie. Resztą zajmuję się ja.</li>
-              <li><strong>Jeśli nie dowiozę.</strong> Pracuję dalej bez dodatkowych opłat, aż średnia osiągnie gwarantowany poziom.</li>
-            </ul>
-          </div>
-
-          <div class="guarantee__cta">
-            <button class="btn btn--light btn--lg js-book" type="button">Porozmawiajmy o gwarancji</button>
-            <a class="btn btn--ghost-light btn--lg js-phone-link" href="tel:+48000000000">Zadzwoń</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= CENNIK ================= -->
-    <section class="section" id="cennik">
-      <div class="container">
-        <div class="section__head">
-          <p class="eyebrow">Cennik</p>
-          <h2>Trzy pakiety. <em>Zero ukrytych kosztów.</em></h2>
-          <p class="section__lead">
-            Każdy pakiet to pełna obsługa: strategia, scenariusze, nagranie, montaż i publikacja.
-            Różnią się tylko skalą.
-          </p>
-        </div>
-
-        <div class="pricing">
-          <!-- PAKIET 1 -->
-          <article class="plan">
-            <header class="plan__head">
-              <h3>Start</h3>
-              <p class="plan__for">Dla firm, które chcą w końcu regularnie publikować.</p>
-              <p class="plan__price"><span class="plan__amount">2 500 zł</span><span class="plan__period">/ miesiąc</span></p>
-            </header>
-            <ul class="plan__list">
-              <li><strong>8 materiałów video</strong> miesięcznie (nagranie, scenariusz, montaż, publikacja)</li>
-              <li>1 dzień zdjęciowy w miesiącu u Ciebie</li>
-              <li><strong>1 spotkanie strategiczne</strong> w miesiącu</li>
-              <li>Strategia i lista tematów na start</li>
-              <li>Publikacja na 2 platformach</li>
-              <li>Raport wyników co miesiąc</li>
-              <li class="plan__guarantee">Gwarancja 100 000 wyświetleń / mies.</li>
-            </ul>
-            <button class="btn btn--outline btn--full js-book" type="button" data-plan="Start">Umów darmową konsultację</button>
-          </article>
-
-          <!-- PAKIET 2 -->
-          <article class="plan plan--featured">
-            <span class="plan__ribbon">Najczęściej wybierany</span>
-            <header class="plan__head">
-              <h3>Wzrost</h3>
-              <p class="plan__for">Dla firm, które chcą zdobywać klientów z social mediów co tydzień.</p>
-              <p class="plan__price"><span class="plan__amount">4 500 zł</span><span class="plan__period">/ miesiąc</span></p>
-            </header>
-            <ul class="plan__list">
-              <li><strong>16 materiałów video</strong> miesięcznie</li>
-              <li>2 dni zdjęciowe w miesiącu</li>
-              <li><strong>2 spotkania strategiczne</strong> w miesiącu</li>
-              <li>Publikacja na 3 platformach</li>
-              <li>Dodatkowe formaty: karuzele, cytaty, teasery z nagrań</li>
-              <li>Odpowiadanie na komentarze i wiadomości</li>
-              <li>Raport wyników co miesiąc</li>
-              <li class="plan__guarantee">Gwarancja 250 000 wyświetleń / mies.</li>
-            </ul>
-            <button class="btn btn--primary btn--full js-book" type="button" data-plan="Wzrost">Umów darmową konsultację</button>
-          </article>
-
-          <!-- PAKIET 3 -->
-          <article class="plan">
-            <header class="plan__head">
-              <h3>Skala</h3>
-              <p class="plan__for">Dla marek, które chcą dominować w swojej branży.</p>
-              <p class="plan__price"><span class="plan__amount">7 900 zł</span><span class="plan__period">/ miesiąc</span></p>
-            </header>
-            <ul class="plan__list">
-              <li><strong>30 materiałów video</strong> miesięcznie</li>
-              <li>Do 4 dni zdjęciowych w miesiącu</li>
-              <li><strong>Cotygodniowe spotkania</strong> strategiczne</li>
-              <li>Wszystkie platformy + YouTube Shorts</li>
-              <li>Obsługa kampanii reklamowych z Twoim budżetem</li>
-              <li>Priorytetowy kontakt i szybszy montaż</li>
-              <li>Raport wyników co tydzień</li>
-              <li class="plan__guarantee">Gwarancja 500 000 wyświetleń / mies.</li>
-            </ul>
-            <button class="btn btn--outline btn--full js-book" type="button" data-plan="Skala">Umów darmową konsultację</button>
-          </article>
-        </div>
-
-        <p class="pricing__note">
-          Ceny netto. Umowa na 12 miesięcy, dzięki której obowiązuje gwarancja wyników.
-          Nie wiesz, który pakiet? Na darmowej konsultacji dobierzemy go razem.
-        </p>
-      </div>
-    </section>
-
-    <!-- ================= OPINIE ================= -->
-    <section class="section section--tint" id="opinie">
-      <div class="container">
-        <div class="section__head">
-          <p class="eyebrow">Opinie klientów</p>
-          <h2>Co mówią właściciele firm, <em>z którymi pracuję</em></h2>
-        </div>
-        <!-- Podmień na prawdziwe opinie. Najlepiej z imieniem, firmą i zdjęciem. -->
-        <div class="testimonials">
-          <blockquote class="testimonial">
-            <div class="testimonial__stars">★★★★★</div>
-            <p>„Przez dwa lata publikowaliśmy sami i nic z tego nie było. Po trzech miesiącach współpracy mamy więcej rezerwacji z Instagrama niż z Google.”</p>
-            <footer>
-              <span class="testimonial__avatar">AK</span>
-              <div><strong>Anna Kowalczyk</strong><span>właścicielka, Glow Studio</span></div>
-            </footer>
-          </blockquote>
-          <blockquote class="testimonial">
-            <div class="testimonial__stars">★★★★★</div>
-            <p>„Największa wartość? Nie muszę o niczym pamiętać. Przyjeżdża, nagrywamy 3 godziny i przez miesiąc mam spokój, a telefon dzwoni.”</p>
-            <footer>
-              <span class="testimonial__avatar">MN</span>
-              <div><strong>Marek Nowak</strong><span>właściciel, Smak Południa</span></div>
-            </footer>
-          </blockquote>
-          <blockquote class="testimonial">
-            <div class="testimonial__stars">★★★★★</div>
-            <p>„Byłem sceptyczny wobec gwarancji. Pierwszy miesiąc: 140 tysięcy wyświetleń. Piąty: 610 tysięcy. Liczby mówią same za siebie.”</p>
-            <footer>
-              <span class="testimonial__avatar">PW</span>
-              <div><strong>Piotr Wiśniewski</strong><span>CEO, TechSolve</span></div>
-            </footer>
-          </blockquote>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= O MNIE ================= -->
-    <section class="section" id="o-mnie">
-      <div class="container about">
-        <!-- Podmień na swoje zdjęcie: <img src="zdjecie.jpg" alt="..."> zamiast .about__photo -->
-        <div class="about__photo" aria-hidden="true">
-          <span>Twoje zdjęcie</span>
-        </div>
-        <div class="about__copy">
-          <p class="eyebrow">Kto za tym stoi</p>
-          <h2>Jedna osoba odpowiedzialna <em>za cały wynik</em></h2>
-          <p>
-            Nazywam się <strong>[Imię i nazwisko]</strong>. Od [X] lat nagrywam i montuję video dla firm,
-            które chcą, żeby social media przynosiły klientów, a nie tylko lajki. Pracuję sam, dlatego
-            rozmawiasz zawsze z osobą, która trzyma kamerę, pisze scenariusze i odpowiada za liczby.
-          </p>
-          <p>
-            Nie obiecuję „viralu”. Obiecuję system: regularne nagrania, format dopasowany do Twojej branży
-            i comiesięczną analizę, która z każdym miesiącem robi wyniki lepszymi.
-          </p>
-          <ul class="about__facts">
-            <li><strong>[X]+</strong> nagranych materiałów</li>
-            <li><strong>[X]</strong> obsłużonych firm</li>
-            <li><strong>[X] mln</strong> wyświetleń łącznie</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= FAQ ================= -->
-    <section class="section section--tint" id="faq">
-      <div class="container container--narrow">
-        <div class="section__head">
-          <p class="eyebrow">Najczęstsze pytania</p>
-          <h2>Zanim zapytasz, <em>odpowiadam</em></h2>
-        </div>
-        <div class="faq">
-          <details class="faq__item" open>
-            <summary>Czy muszę występować przed kamerą?</summary>
-            <p>Nie musisz, ale warto. Właściciel przed kamerą buduje zaufanie najszybciej. Jeśli to nie dla Ciebie, nagrywamy zespół, produkt, kulisy i realizacje. Na konsultacji dobierzemy formaty, w których będziesz czuć się dobrze.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Ile mojego czasu to wymaga?</summary>
-            <p>Jeden dzień zdjęciowy w miesiącu (zwykle 3–4 godziny) plus 30-minutowe spotkanie strategiczne. Scenariusze przygotowuję ja, Ty je tylko akceptujesz.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Jak liczone są wyświetlenia w gwarancji?</summary>
-            <p>Sumujemy wyświetlenia wszystkich materiałów opublikowanych w ramach współpracy na uzgodnionych platformach, według statystyk tych platform. Liczymy średnią z 12 miesięcy. Masz stały dostęp do danych.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Co jeśli nie osiągniemy 100 000 wyświetleń?</summary>
-            <p>Pracuję dalej bez dodatkowych opłat, aż średnia miesięczna osiągnie gwarantowany poziom. To zapisujemy w umowie.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Na jakich platformach publikujesz?</summary>
-            <p>Instagram, TikTok, Facebook i YouTube Shorts. Ten sam materiał dostosowuję do każdej platformy osobno, więc z jednego nagrania wyciskamy maksimum zasięgu.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Kiedy zobaczę pierwsze efekty?</summary>
-            <p>Pierwsze materiały publikujemy w ciągu 2 tygodni od startu. Realny wzrost zasięgu widać zazwyczaj w 2–3 miesiącu, kiedy algorytm nauczy się, komu pokazywać Twoje treści.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Czy wyświetlenia przekładają się na klientów?</summary>
-            <p>Wyświetlenia to fundament, ale strategię budujemy pod konkretny cel: rezerwacje, zapytania, sprzedaż. Każdy materiał ma wezwanie do działania, a w raportach śledzimy nie tylko zasięg, ale i zapytania z social mediów.</p>
-          </details>
-          <details class="faq__item">
-            <summary>Jak wygląda darmowa konsultacja?</summary>
-            <p>30 minut online lub telefonicznie. Przeglądam Twoje profile i konkurencję, mówię, co nagrałbym w pierwszym miesiącu i jakich wyników się spodziewać. Bez zobowiązań, nawet jeśli nie zdecydujesz się na współpracę.</p>
-          </details>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= KONTAKT ================= -->
-    <section class="section" id="kontakt">
-      <div class="container contact">
-        <div class="contact__copy">
-          <p class="eyebrow">Kontakt</p>
-          <h2>Zróbmy pierwszy krok <em>dzisiaj</em></h2>
-          <p class="section__lead">
-            Najszybsza droga to darmowa 30-minutowa konsultacja. Wybierz termin, który Ci pasuje,
-            albo po prostu zadzwoń.
-          </p>
-          <div class="contact__actions">
-            <button class="btn btn--primary btn--lg js-book" type="button">Wybierz termin konsultacji</button>
-            <a class="btn btn--ghost btn--lg js-phone-link" href="tel:+48000000000">Zadzwoń</a>
-          </div>
-          <div class="contact__details">
-            <a class="contact__line js-phone-link js-phone-text" href="tel:+48000000000">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.52 6.52l1.93-1.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              <span>+48 000 000 000</span>
-            </a>
-            <a class="contact__line js-email-link" href="mailto:kontakt@socialreach.pl">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 6l-10 7L2 6"/></svg>
-              <span>kontakt@socialreach.pl</span>
-            </a>
-            <div class="contact__socials">
-              <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a>
-              <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></a>
-              <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
-              <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22.5 7.2a2.8 2.8 0 0 0-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2A29 29 0 0 0 1 12a29 29 0 0 0 .5 4.8 2.8 2.8 0 0 0 2 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2A29 29 0 0 0 23 12a29 29 0 0 0-.5-4.8z"/><path d="M10 15l5-3-5-3z" fill="currentColor"/></svg></a>
-            </div>
-          </div>
-        </div>
-
-        <form class="form" id="contactForm" novalidate>
-          <h3 class="form__title">Wolisz napisać? Odpowiem w 24 godziny.</h3>
-          <div class="form__row">
-            <label class="field">
-              <span>Imię i nazwisko *</span>
-              <input type="text" name="name" autocomplete="name" required placeholder="Jan Kowalski" />
-            </label>
-            <label class="field">
-              <span>Telefon *</span>
-              <input type="tel" name="phone" autocomplete="tel" required placeholder="+48 600 000 000" />
-            </label>
-          </div>
-          <div class="form__row">
-            <label class="field">
-              <span>E-mail</span>
-              <input type="email" name="email" autocomplete="email" placeholder="jan@firma.pl" />
-            </label>
-            <label class="field">
-              <span>Firma / branża</span>
-              <input type="text" name="company" autocomplete="organization" placeholder="np. restauracja w Krakowie" />
-            </label>
-          </div>
-          <label class="field">
-            <span>Interesujący pakiet</span>
-            <select name="plan">
-              <option value="">Jeszcze nie wiem</option>
-              <option>Start (2 500 zł)</option>
-              <option>Wzrost (4 500 zł)</option>
-              <option>Skala (7 900 zł)</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>Wiadomość</span>
-            <textarea name="message" rows="4" placeholder="Czym zajmuje się Twoja firma i jaki efekt chcesz osiągnąć?"></textarea>
-          </label>
-          <label class="field field--check">
-            <input type="checkbox" name="consent" required />
-            <span>Zgadzam się na kontakt w sprawie oferty. Dane wykorzystam wyłącznie do odpowiedzi na Twoją wiadomość.</span>
-          </label>
-          <button type="submit" class="btn btn--primary btn--lg btn--full">
-            Wyślij wiadomość
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-
-    <!-- ================= OSTATNIE CTA ================= -->
-    <section class="final-cta">
-      <div class="container final-cta__inner">
-        <h2>Twoi klienci codziennie oglądają rolki.<br />Pytanie, czy Twoje.</h2>
-        <p>Umów darmową 30-minutową konsultację i sprawdź, ile wyświetleń mogę zagwarantować Twojej firmie.</p>
-        <div class="final-cta__actions">
-          <button class="btn btn--light btn--lg js-book" type="button">Umów darmową konsultację</button>
-          <a class="btn btn--ghost-light btn--lg js-phone-link" href="tel:+48000000000">Zadzwoń</a>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ================= STOPKA ================= -->
-  <footer class="footer">
-    <div class="container footer__inner">
-      <div>
-        <a href="#top" class="logo">Social<span>Reach</span></a>
-        <p class="footer__tag">Skuteczne social media z gwarancją efektów.</p>
-      </div>
-      <nav class="footer__links" aria-label="Stopka">
-        <a href="#oferta">Jak to działa</a>
-        <a href="#portfolio">Portfolio</a>
-        <a href="#gwarancja">Gwarancja</a>
-        <a href="#cennik">Cennik</a>
-        <a href="#faq">FAQ</a>
-        <a href="#kontakt">Kontakt</a>
-      </nav>
-      <div class="footer__legal">
-        <p>© <span id="year"></span> SocialReach. Wszystkie prawa zastrzeżone.</p>
-        <p><a href="#">Polityka prywatności</a> · NIP 000-000-00-00</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- ================= PASEK MOBILNY ================= -->
-  <div class="mobile-bar" id="mobileBar">
-    <a class="btn btn--ghost js-phone-link" href="tel:+48000000000">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.52 6.52l1.93-1.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      Zadzwoń
+<!-- ================= NAWIGACJA ================= -->
+<header class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a href="#top" class="brand">
+      <span class="brand__rec" aria-hidden="true"></span>
+      <span class="brand__name">Imię Nazwisko</span>
+      <span class="brand__tag">video dla firm</span>
     </a>
-    <button class="btn btn--primary js-book" type="button">Darmowa konsultacja</button>
-  </div>
-
-  <!-- ================= MODAL: REZERWACJA KONSULTACJI ================= -->
-  <div class="modal" id="bookingModal" aria-hidden="true">
-    <div class="modal__backdrop" data-close></div>
-    <div class="modal__dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
-      <button class="modal__close" type="button" data-close aria-label="Zamknij">&times;</button>
-      <div class="modal__head">
-        <p class="eyebrow">Darmowa konsultacja · 30 min</p>
-        <h3 id="bookingTitle">Wybierz dogodny termin</h3>
-        <p>Spotkanie trafi od razu do obu kalendarzy. Dostaniesz przypomnienie przed rozmową.</p>
+    <nav class="nav__links" id="navLinks">
+      <a href="#opinie">Opinie</a>
+      <a href="#realizacje">Realizacje</a>
+      <a href="#gwarancja">Gwarancja</a>
+      <a href="#cennik">Cennik</a>
+      <a href="#faq">FAQ</a>
+      <div class="nav__mobile">
+        <a class="btn btn--ghost js-phone" href="tel:+48000000000">Zadzwoń</a>
+        <button class="btn btn--accent js-book" type="button">Umów darmową konsultację</button>
       </div>
+    </nav>
+    <div class="nav__cta">
+      <a class="nav__phone js-phone js-phone-text" href="tel:+48000000000"><span>+48 000 000 000</span></a>
+      <button class="btn btn--accent btn--sm js-book" type="button">Umów darmową konsultację</button>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  </div>
+</header>
 
-      <!-- Tu ładuje się kalendarz (Calendly / Cal.com / Google) na podstawie CONFIG.bookingUrl w script.js -->
-      <div class="modal__embed" id="bookingEmbed"></div>
+<main id="top">
 
-      <!-- Formularz zastępczy, gdy kalendarz nie jest jeszcze podpięty -->
-      <form class="form form--modal" id="bookingForm" novalidate hidden>
-        <div class="form__row">
-          <label class="field">
-            <span>Imię *</span>
-            <input type="text" name="name" required placeholder="Jan" />
-          </label>
-          <label class="field">
-            <span>Telefon *</span>
-            <input type="tel" name="phone" required placeholder="+48 600 000 000" />
-          </label>
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero__top">
+      <p class="mono hero__kicker"><span class="rec"></span> Nagrywam · montuję · publikuję. Ty prowadzisz firmę.</p>
+      <h1 class="hero__h1">Skuteczne social media <span>z gwarancją efektów</span></h1>
+      <div class="hero__side">
+        <p class="hero__lead">
+          Jeden dzień zdjęciowy w miesiącu u Ciebie w firmie. Z tego robię 8 gotowych materiałów video,
+          publikuję je i odpowiadam za wynik: <strong>minimum 100 000 wyświetleń miesięcznie</strong>, zapisane w umowie.
+        </p>
+        <div class="hero__cta">
+          <button class="btn btn--accent btn--lg js-book" type="button">Umów darmową konsultację <span class="btn__sub">30 min</span></button>
+          <a class="btn btn--ghost btn--lg js-phone" href="tel:+48000000000">Zadzwoń teraz</a>
         </div>
-        <label class="field">
-          <span>E-mail</span>
-          <input type="email" name="email" placeholder="jan@firma.pl" />
-        </label>
-        <label class="field">
-          <span>Kiedy Ci pasuje?</span>
-          <input type="text" name="time" placeholder="np. wtorek lub środa po 14:00" />
-        </label>
+      </div>
+    </div>
+
+    <!-- Video właściciela: 60–90 sekund, Ty do kamery. Źródło w content.js → founder -->
+    <figure class="stage" id="founderStage">
+      <div class="stage__frame">
+        <div class="stage__media" id="founderMedia"></div>
+        <div class="stage__hud" aria-hidden="true">
+          <span class="mono"><span class="rec"></span> REC</span>
+          <span class="mono" id="founderDuration">00:00 / 01:12</span>
+        </div>
+      </div>
+      <figcaption class="stage__caption">
+        <div class="stage__caption-head">
+          <p class="mono label">Zobacz zanim zadzwonisz</p>
+          <h2>72 sekundy o tym, jak wygląda współpraca</h2>
+        </div>
+        <ol class="chapters" id="founderChapters"></ol>
+      </figcaption>
+    </figure>
+
+    <ul class="proof">
+      <li><strong>100 000</strong><span>wyświetleń miesięcznie w gwarancji</span></li>
+      <li><strong>1 dzień</strong><span>zdjęciowy w miesiącu z Twojej strony</span></li>
+      <li><strong>8</strong><span>gotowych materiałów co miesiąc</span></li>
+      <li><strong>0 zł</strong><span>za każdy miesiąc bez wyniku</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= PROBLEM → ROZWIĄZANIE ================= -->
+<section class="sec" id="jak">
+  <div class="wrap split">
+    <div class="split__a">
+      <p class="mono label">Znasz to</p>
+      <h2 class="h2">Wiesz, że powinieneś nagrywać. <em>Tylko kiedy?</em></h2>
+      <p class="lead">
+        Masz firmę do prowadzenia. Rolka „kiedyś w wolnej chwili” nie powstaje, a jak powstaje, to
+        raz na dwa miesiące i bez planu. Algorytm tego nie nagradza. Konkurencja, która publikuje
+        co tydzień, zabiera Ci klientów, którzy Cię nawet nie znają.
+      </p>
+    </div>
+    <div class="split__b">
+      <div class="youme">
+        <div class="youme__col">
+          <p class="mono label">Ty</p>
+          <ul>
+            <li>Dajesz mi 3–4 godziny raz w miesiącu</li>
+            <li>Akceptujesz scenariusze (10 minut)</li>
+            <li>Raz w miesiącu 30 minut na spotkanie o wynikach</li>
+          </ul>
+        </div>
+        <div class="youme__col youme__col--me">
+          <p class="mono label">Ja</p>
+          <ul>
+            <li>Strategia i lista tematów pod Twoją branżę</li>
+            <li>Scenariusze z hookami na pierwsze 2 sekundy</li>
+            <li>Nagranie u Ciebie, z pełnym sprzętem i światłem</li>
+            <li>Montaż, napisy, dźwięk, formaty pod każdą platformę</li>
+            <li>Publikacja, opisy, hashtagi, odpowiedzi na komentarze</li>
+            <li>Raport i decyzje: co skalujemy, co wycinamy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= OPINIE VIDEO ================= -->
+<section class="sec sec--tint" id="opinie">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="mono label">Opinie klientów</p>
+      <h2 class="h2">Nie ja to mówię. <em>Oni.</em></h2>
+      <p class="lead">Właściciele firm, z którymi pracuję, nagrali się sami. Bez scenariusza, na telefon.</p>
+    </div>
+    <div class="testimonials" id="testimonials"></div>
+    <div class="sec__cta">
+      <button class="btn btn--accent btn--lg js-book" type="button">Chcę tak samo. Umów konsultację</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REALIZACJE ================= -->
+<section class="sec" id="realizacje">
+  <div class="wrap">
+    <div class="sec__head sec__head--row">
+      <div>
+        <p class="mono label">Realizacje</p>
+        <h2 class="h2">Liczby, które można sprawdzić <em>na profilach klientów</em></h2>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="tab is-on" role="tab" aria-selected="true" data-view="cases" type="button">Klienci</button>
+        <button class="tab" role="tab" aria-selected="false" data-view="reels" type="button">Pojedyncze rolki</button>
+      </div>
+    </div>
+    <div class="view is-on" id="view-cases"></div>
+    <div class="view" id="view-reels">
+      <div class="chips" id="reelChips"></div>
+      <div class="reelgrid" id="reelGrid"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GWARANCJA ================= -->
+<section class="sec sec--contract" id="gwarancja">
+  <div class="wrap">
+    <div class="contract">
+      <div class="contract__head">
+        <p class="mono label">§ Gwarancja efektów</p>
+        <h2 class="h2 h2--xl">1 200 000 wyświetleń w rok. <em>Albo pracuję dalej za 0 zł.</em></h2>
+      </div>
+      <div class="contract__body">
+        <ol class="clauses">
+          <li>
+            <span class="mono">§1</span>
+            <p>Przy współpracy trwającej 12 kolejnych miesięcy <strong>średnia miesięczna liczba wyświetleń</strong> materiałów opublikowanych w ramach usługi wyniesie <strong>co najmniej 100 000</strong>.</p>
+          </li>
+          <li>
+            <span class="mono">§2</span>
+            <p>Liczymy wyświetlenia wszystkich materiałów na wszystkich uzgodnionych platformach, według statystyk tych platform. Masz do nich stały wgląd.</p>
+          </li>
+          <li>
+            <span class="mono">§3</span>
+            <p>Twoje zobowiązanie: jeden dzień zdjęciowy w miesiącu i akceptacja scenariuszy w ustalonym terminie.</p>
+          </li>
+          <li>
+            <span class="mono">§4</span>
+            <p>Jeśli po 12 miesiącach średnia jest niższa, <strong>pracuję dalej bez wynagrodzenia</strong>, aż ją osiągniemy.</p>
+          </li>
+        </ol>
+        <aside class="contract__why">
+          <p class="mono label">Dlaczego mogę to obiecać</p>
+          <p>Bo regularność wygrywa z talentem. Osiem materiałów miesięcznie, przez dwanaście miesięcy, to 96 prób trafienia w algorytm. Przy takiej liczbie prób średnia 100 000 to nie szczęście, tylko statystyka. Nie znam w Polsce drugiej agencji, która wpisuje to do umowy.</p>
+          <button class="btn btn--accent js-book" type="button">Porozmawiajmy o gwarancji</button>
+        </aside>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CENNIK ================= -->
+<section class="sec" id="cennik">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="mono label">Cennik</p>
+      <h2 class="h2">Trzy pakiety. <em>W każdym cała obsługa.</em></h2>
+      <p class="lead">Różnią się tylko liczbą materiałów i wysokością gwarancji. Ceny netto, umowa na 12 miesięcy.</p>
+    </div>
+
+    <div class="plans">
+      <article class="plan">
+        <header>
+          <p class="mono label">Start</p>
+          <p class="plan__price">2 500 zł<span>/ mies.</span></p>
+          <p class="plan__for">Dla firm, które chcą w końcu publikować regularnie.</p>
+        </header>
+        <ul>
+          <li><b>8 materiałów video</b> miesięcznie</li>
+          <li>1 dzień zdjęciowy u Ciebie</li>
+          <li><b>1 spotkanie strategiczne</b> w miesiącu</li>
+          <li>Strategia, scenariusze, montaż, publikacja</li>
+          <li>2 platformy</li>
+          <li>Raport miesięczny</li>
+        </ul>
+        <p class="plan__g"><span class="mono">§ Gwarancja</span> 100 000 wyświetleń / mies.</p>
+        <button class="btn btn--ghost btn--full js-book" data-plan="Start" type="button">Umów darmową konsultację</button>
+      </article>
+
+      <article class="plan plan--hot">
+        <p class="plan__badge mono">Najczęściej wybierany</p>
+        <header>
+          <p class="mono label">Wzrost</p>
+          <p class="plan__price">4 500 zł<span>/ mies.</span></p>
+          <p class="plan__for">Dla firm, które chcą zdobywać klientów z social mediów co tydzień.</p>
+        </header>
+        <ul>
+          <li><b>16 materiałów video</b> miesięcznie</li>
+          <li>2 dni zdjęciowe u Ciebie</li>
+          <li><b>2 spotkania strategiczne</b> w miesiącu</li>
+          <li>Strategia, scenariusze, montaż, publikacja</li>
+          <li>3 platformy + formaty dodatkowe (karuzele, teasery)</li>
+          <li>Odpowiadanie na komentarze i wiadomości</li>
+          <li>Raport miesięczny</li>
+        </ul>
+        <p class="plan__g"><span class="mono">§ Gwarancja</span> 250 000 wyświetleń / mies.</p>
+        <button class="btn btn--accent btn--full js-book" data-plan="Wzrost" type="button">Umów darmową konsultację</button>
+      </article>
+
+      <article class="plan">
+        <header>
+          <p class="mono label">Skala</p>
+          <p class="plan__price">7 900 zł<span>/ mies.</span></p>
+          <p class="plan__for">Dla marek, które chcą być numerem jeden w swojej branży.</p>
+        </header>
+        <ul>
+          <li><b>30 materiałów video</b> miesięcznie</li>
+          <li>Do 4 dni zdjęciowych</li>
+          <li><b>Cotygodniowe spotkania</b> strategiczne</li>
+          <li>Wszystkie platformy + YouTube Shorts</li>
+          <li>Obsługa kampanii reklamowych (Twój budżet)</li>
+          <li>Priorytetowy kontakt, szybszy montaż</li>
+          <li>Raport tygodniowy</li>
+        </ul>
+        <p class="plan__g"><span class="mono">§ Gwarancja</span> 500 000 wyświetleń / mies.</p>
+        <button class="btn btn--ghost btn--full js-book" data-plan="Skala" type="button">Umów darmową konsultację</button>
+      </article>
+    </div>
+    <p class="plans__note">Nie wiesz, który? Na konsultacji dobieram pakiet do tego, ile masz do pokazania i ile chcesz urosnąć. Bez upsellu.</p>
+  </div>
+</section>
+
+<!-- ================= PROCES ================= -->
+<section class="sec sec--tint" id="proces">
+  <div class="wrap">
+    <div class="sec__head">
+      <p class="mono label">Od rozmowy do pierwszej publikacji</p>
+      <h2 class="h2">Dwa tygodnie. <em>Tyle mija do pierwszej rolki.</em></h2>
+    </div>
+    <ol class="timeline">
+      <li>
+        <span class="mono timeline__day">Dzień 0</span>
+        <h3>Darmowa konsultacja, 30 min</h3>
+        <p>Oglądam Twoje profile i konkurencję. Mówię, co nagrałbym w pierwszym miesiącu i ile wyświetleń mogę zagwarantować. Jeśli nie pasujemy, mówię to wprost.</p>
+      </li>
+      <li>
+        <span class="mono timeline__day">Dzień 3</span>
+        <h3>Strategia i tematy</h3>
+        <p>Dostajesz dokument: do kogo mówimy, jakie formaty, 12 pierwszych tematów ze scenariuszami. Akceptujesz albo poprawiamy.</p>
+      </li>
+      <li>
+        <span class="mono timeline__day">Dzień 10</span>
+        <h3>Pierwszy dzień zdjęciowy</h3>
+        <p>Przyjeżdżam z kamerą, światłem i mikrofonem. Trzy do czterech godzin u Ciebie. Nagrywamy materiał na cały miesiąc.</p>
+      </li>
+      <li>
+        <span class="mono timeline__day">Dzień 14</span>
+        <h3>Pierwsze publikacje</h3>
+        <p>Zmontowane, z napisami, opisane. Publikuję według harmonogramu i od tej pory Twój profil żyje bez Twojego udziału.</p>
+      </li>
+      <li>
+        <span class="mono timeline__day">Co miesiąc</span>
+        <h3>Spotkanie o wynikach</h3>
+        <p>30 minut. Co zadziałało, co skalujemy, co wycinamy. Potem kolejny dzień zdjęciowy i kolejne osiem materiałów.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= DLA KOGO / NIE DLA KOGO ================= -->
+<section class="sec" id="dla-kogo">
+  <div class="wrap fit">
+    <div class="fit__col">
+      <p class="mono label">Pracujemy, jeśli</p>
+      <ul class="fit__list fit__list--yes">
+        <li>Masz firmę z produktem lub usługą, którą da się pokazać: lokal, gabinet, warsztat, zespół, realizacje</li>
+        <li>Jesteś gotów raz w miesiącu stanąć przed kamerą albo wystawić kogoś z zespołu</li>
+        <li>Chcesz klientów z social mediów, nie tylko ładnego profilu</li>
+        <li>Możesz zobowiązać się na 12 miesięcy, bo tyle trwa budowanie zasięgu</li>
+      </ul>
+    </div>
+    <div class="fit__col">
+      <p class="mono label">Nie pracujemy, jeśli</p>
+      <ul class="fit__list fit__list--no">
+        <li>Szukasz „kilku rolek na próbę”. Jedna rolka nic nie mówi o wyniku</li>
+        <li>Chcesz, żeby ktoś publikował bez pokazywania firmy i ludzi</li>
+        <li>Potrzebujesz efektu w tym miesiącu. Algorytm potrzebuje 2–3 miesięcy</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="sec sec--tint" id="faq">
+  <div class="wrap wrap--narrow">
+    <div class="sec__head">
+      <p class="mono label">Pytania</p>
+      <h2 class="h2">Zanim zapytasz</h2>
+    </div>
+    <div class="faq">
+      <details open>
+        <summary>Czy muszę występować przed kamerą?</summary>
+        <p>Nie musisz, ale najlepsze wyniki mają firmy, w których właściciel mówi do kamery. Jeśli to nie dla Ciebie, nagrywamy zespół, produkt, kulisy i realizacje. Na konsultacji dobieramy formaty, w których będziesz czuć się dobrze.</p>
+      </details>
+      <details>
+        <summary>Ile mojego czasu to zajmuje?</summary>
+        <p>Jeden dzień zdjęciowy w miesiącu, 3–4 godziny, plus 30-minutowe spotkanie o wynikach. Scenariusze piszę ja, Ty je akceptujesz.</p>
+      </details>
+      <details>
+        <summary>Jak liczycie wyświetlenia w gwarancji?</summary>
+        <p>Sumuję wyświetlenia wszystkich materiałów opublikowanych w ramach współpracy na uzgodnionych platformach, według ich statystyk. Liczy się średnia z 12 miesięcy. Masz stały dostęp do danych.</p>
+      </details>
+      <details>
+        <summary>Co, jeśli nie dowieziesz 100 000?</summary>
+        <p>Pracuję dalej bez wynagrodzenia, aż średnia osiągnie gwarantowany poziom. Tak jest w umowie.</p>
+      </details>
+      <details>
+        <summary>Czy wyświetlenia dają klientów?</summary>
+        <p>Same z siebie nie. Dlatego każdy materiał ma cel: rezerwację, zapytanie, wejście do lokalu. W raportach śledzimy nie tylko zasięg, ale i zapytania z social mediów. Wyświetlenia gwarantuję, bo to fundament, na którym reszta się opiera.</p>
+      </details>
+      <details>
+        <summary>Na jakich platformach publikujesz?</summary>
+        <p>Instagram, TikTok, Facebook i YouTube Shorts. Ten sam materiał dostosowuję do każdej osobno, więc z jednego nagrania wyciskamy maksimum.</p>
+      </details>
+      <details>
+        <summary>Jak wygląda darmowa konsultacja?</summary>
+        <p>30 minut, online albo telefonicznie. Przeglądam Twoje profile i konkurencję, mówię, co nagrałbym w pierwszym miesiącu i jakich wyników się spodziewać. Nie ma zobowiązań, nawet jeśli nie zdecydujesz się na współpracę.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= REZERWACJA ================= -->
+<section class="sec sec--book" id="kontakt">
+  <div class="wrap book">
+    <div class="book__copy">
+      <p class="mono label"><span class="rec"></span> Wolne terminy w tym tygodniu</p>
+      <h2 class="h2 h2--xl">Wybierz termin. <em>30 minut, konkretny plan, zero zobowiązań.</em></h2>
+      <p class="lead">Rozmowa trafia od razu do naszych kalendarzy. Dostaniesz przypomnienie. Jeśli wolisz zadzwonić od razu, numer jest poniżej.</p>
+      <div class="book__lines">
+        <a class="book__line js-phone js-phone-text" href="tel:+48000000000"><span class="mono">TEL</span><span>+48 000 000 000</span></a>
+        <a class="book__line js-email" href="mailto:kontakt@twojadomena.pl"><span class="mono">MAIL</span><span>kontakt@twojadomena.pl</span></a>
+      </div>
+      <div class="book__socials">
+        <a href="#" aria-label="Instagram">Instagram</a>
+        <a href="#" aria-label="TikTok">TikTok</a>
+        <a href="#" aria-label="Facebook">Facebook</a>
+        <a href="#" aria-label="YouTube">YouTube</a>
+      </div>
+    </div>
+    <div class="book__panel">
+      <!-- Kalendarz (Calendly / Cal.com / Google) ładuje się tutaj z CONFIG.bookingUrl -->
+      <div class="book__embed" id="bookingInline"></div>
+      <form class="form" id="contactForm" novalidate>
+        <p class="mono label">Zostaw kontakt, oddzwonię</p>
+        <div class="form__row">
+          <label><span>Imię i nazwisko *</span><input type="text" name="name" required autocomplete="name" placeholder="Jan Kowalski" /></label>
+          <label><span>Telefon *</span><input type="tel" name="phone" required autocomplete="tel" placeholder="+48 600 000 000" /></label>
+        </div>
+        <div class="form__row">
+          <label><span>E-mail</span><input type="email" name="email" autocomplete="email" placeholder="jan@firma.pl" /></label>
+          <label><span>Firma / branża</span><input type="text" name="company" placeholder="np. restauracja, Kraków" /></label>
+        </div>
+        <label><span>Kiedy Ci pasuje rozmowa?</span><input type="text" name="time" placeholder="np. wtorek albo środa po 14:00" /></label>
+        <label><span>O czym chcesz porozmawiać?</span><textarea name="message" rows="3" placeholder="Czym zajmuje się firma i co chcesz osiągnąć?"></textarea></label>
         <input type="hidden" name="plan" value="" />
-        <button type="submit" class="btn btn--primary btn--lg btn--full">Zarezerwuj konsultację</button>
+        <label class="check"><input type="checkbox" name="consent" required /><span>Zgadzam się na kontakt w sprawie oferty. Danych używam tylko do odpowiedzi.</span></label>
+        <button type="submit" class="btn btn--accent btn--lg btn--full">Wyślij, oddzwonię w 24 h</button>
         <p class="form__status" role="status" aria-live="polite"></p>
-        <p class="form__hint">Oddzwonię, żeby potwierdzić termin. Zajmie to mniej niż minutę.</p>
       </form>
     </div>
   </div>
+</section>
 
-  <!-- ================= MODAL: ODTWARZACZ VIDEO ================= -->
-  <div class="modal modal--video" id="videoModal" aria-hidden="true">
-    <div class="modal__backdrop" data-close></div>
-    <div class="modal__dialog modal__dialog--video" role="dialog" aria-modal="true">
-      <button class="modal__close" type="button" data-close aria-label="Zamknij">&times;</button>
-      <div class="video-frame" id="videoFrame"></div>
-    </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <a href="#top" class="brand"><span class="brand__rec" aria-hidden="true"></span><span class="brand__name">Imię Nazwisko</span></a>
+    <p class="foot__copy mono">© <span id="year"></span> · NIP 000-000-00-00 · <a href="#">Polityka prywatności</a></p>
   </div>
+</footer>
 
-  <script src="portfolio-data.js"></script>
-  <script src="script.js"></script>
+<!-- Pasek mobilny -->
+<div class="bar" id="bar">
+  <a class="btn btn--ghost js-phone" href="tel:+48000000000">Zadzwoń</a>
+  <button class="btn btn--accent js-book" type="button">Darmowa konsultacja</button>
+</div>
+
+<!-- Modal rezerwacji -->
+<div class="modal" id="bookingModal" aria-hidden="true">
+  <div class="modal__bg" data-close></div>
+  <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+    <button class="modal__x" type="button" data-close aria-label="Zamknij">×</button>
+    <p class="mono label">Darmowa konsultacja · 30 min</p>
+    <h3 id="bookingTitle" class="modal__h">Wybierz termin</h3>
+    <div class="modal__embed" id="bookingModalEmbed"></div>
+    <form class="form form--bare" id="bookingForm" novalidate hidden>
+      <div class="form__row">
+        <label><span>Imię *</span><input type="text" name="name" required placeholder="Jan" /></label>
+        <label><span>Telefon *</span><input type="tel" name="phone" required placeholder="+48 600 000 000" /></label>
+      </div>
+      <label><span>Kiedy Ci pasuje?</span><input type="text" name="time" placeholder="np. wtorek po 14:00" /></label>
+      <input type="hidden" name="plan" value="" />
+      <button type="submit" class="btn btn--accent btn--lg btn--full">Zarezerwuj, potwierdzę telefonicznie</button>
+      <p class="form__status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</div>
+
+<!-- Modal video -->
+<div class="modal modal--video" id="videoModal" aria-hidden="true">
+  <div class="modal__bg" data-close></div>
+  <div class="modal__box modal__box--video" role="dialog" aria-modal="true">
+    <button class="modal__x" type="button" data-close aria-label="Zamknij">×</button>
+    <div class="player" id="videoPlayer"></div>
+  </div>
+</div>
+
+<script src="content.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
