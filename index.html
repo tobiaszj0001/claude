@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=9" />
+  <link rel="stylesheet" href="style.css?v=10" />
 </head>
 <body>
 <div id="app">
@@ -28,13 +28,19 @@
         <span class="logo-sub">TURNIEJ O KORONĘ</span>
       </div>
       <div id="title-faces" class="title-faces"></div>
+      <div id="profile" class="profile"></div>
       <div class="menu">
         <button class="btn btn-primary" data-mode="campaign">KAMPANIA</button>
+        <button class="btn" data-mode="survival">PRZETRWANIE</button>
         <button class="btn" data-mode="versus">2 GRACZY</button>
-        <button class="btn btn-ghost" id="btn-help">STEROWANIE</button>
-        <button class="btn btn-ghost" id="btn-fs">PEŁNY EKRAN</button>
-        <button class="btn btn-ghost" id="btn-sound">🔊 DŹWIĘK: WŁ</button>
+        <button class="btn btn-ghost" id="btn-trophies">🏆 PUCHARKI</button>
       </div>
+      <div class="menu menu-small">
+        <button class="btn btn-ghost btn-sm" id="btn-help">STEROWANIE</button>
+        <button class="btn btn-ghost btn-sm" id="btn-fs">PEŁNY EKRAN</button>
+        <button class="btn btn-ghost btn-sm" id="btn-sound">🔊 DŹWIĘK: WŁ</button>
+      </div>
+      <div id="daily" class="daily"></div>
       <div id="hall" class="hall"></div>
     </div>
     <div id="ver" class="ver"></div>
@@ -58,6 +64,8 @@
           <div class="spot-title" id="spot-title"></div>
           <div class="spot-taunt" id="spot-taunt"></div>
           <div class="spot-stats" id="spot-stats"></div>
+          <div class="spot-special" id="spot-special"></div>
+          <div class="spot-mastery" id="spot-mastery"></div>
         </div>
       </aside>
     </div>
@@ -81,6 +89,7 @@
         </div>
         <button class="tbtn tbtn-dodge" data-act="dodge">▼<small>UNIK</small></button>
       </div>
+      <button class="tbtn tbtn-special" id="tbtn-special" data-act="special">MOC</button>
       <div class="pad pad-right">
         <button class="tbtn tbtn-block" data-act="block">BLOK</button>
         <button class="tbtn tbtn-heavy" data-act="heavy">MOCNY</button>
@@ -105,6 +114,8 @@
       <div id="result-faces" class="result-faces"></div>
       <p id="result-text"></p>
       <div id="result-progress" class="progress"></div>
+      <div id="result-xp" class="xpbox" hidden></div>
+      <div id="result-trophies" class="new-trophies"></div>
       <div class="menu">
         <button class="btn btn-primary" id="btn-next"></button>
         <button class="btn btn-ghost" id="btn-result-menu">Menu</button>
@@ -130,6 +141,21 @@
     </div>
   </section>
 
+  <!-- ===== PUCHARKI ===== -->
+  <section id="s-trophies" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-trophies-back">← Wróć</button>
+      <h2>🏆 Pucharki i statystyki</h2>
+      <div class="spacer"></div>
+    </header>
+    <div class="trophies-body">
+      <div id="stats-box" class="stats-box"></div>
+      <div id="trophy-grid" class="trophy-grid"></div>
+    </div>
+  </section>
+
+  <div id="toasts" class="toasts"></div>
+
   <!-- ===== STEROWANIE ===== -->
   <div id="help" class="overlay" hidden>
     <div class="overlay-box help-box">
@@ -144,6 +170,7 @@
             <tr><td>Cios</td><td><kbd>Spacja</kbd> lub <kbd>F</kbd></td></tr>
             <tr><td>Mocny cios</td><td><kbd>G</kbd></td></tr>
             <tr><td>Blok</td><td><kbd>Shift</kbd> lub <kbd>H</kbd></td></tr>
+            <tr><td>Supermoc</td><td><kbd>E</kbd> lub <kbd>Q</kbd> (solo też <kbd>Enter</kbd>)</td></tr>
           </table>
         </div>
         <div>
@@ -155,12 +182,15 @@
             <tr><td>Cios</td><td><kbd>K</kbd></td></tr>
             <tr><td>Mocny cios</td><td><kbd>L</kbd></td></tr>
             <tr><td>Blok</td><td><kbd>;</kbd> lub prawy <kbd>Shift</kbd></td></tr>
+            <tr><td>Supermoc</td><td><kbd>O</kbd> lub <kbd>I</kbd></td></tr>
           </table>
         </div>
       </div>
       <p class="help-tips">
         Na telefonie masz przyciski na ekranie. Blok zmniejsza obrażenia do 15%, ale mocny cios go przełamuje.
         Unik daje chwilę nietykalności. Każde trafienie z rzędu podbija mnożnik combo (do 2x). Obrywasz, combo znika.
+        <br /><br /><b>Supermoc:</b> pasek MOCY pod paskiem HP ładuje się od zadawania i przyjmowania ciosów. Gdy jest pełny, wciśnij klawisz supermocy (na telefonie przycisk MOC). Każda postać ma inną, opis widać przy wyborze postaci.
+        <br /><br /><b>Nagrody:</b> za każdą walkę dostajesz XP, awansujesz na poziomy i zdobywasz pucharki. Seria zwycięstw daje bonus, a wyzwanie dnia 300 XP.
         <br /><br />Pauza: <kbd>Esc</kbd> lub <kbd>P</kbd>.
       </p>
       <button class="btn btn-primary" id="btn-help-close">Jasne</button>
@@ -183,6 +213,6 @@
 
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
-<script src="game.js?v=9"></script>
+<script src="game.js?v=10"></script>
 </body>
 </html>

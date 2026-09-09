@@ -22,9 +22,47 @@ w tym folderze i wejdź na `http://localhost:8000`.
 | Cios        | Spacja lub F                | K                        |
 | Mocny cios  | G                           | L                        |
 | Blok        | Shift lub H                 | ; lub prawy Shift        |
+| Supermoc    | E lub Q (solo też Enter)    | O lub I                  |
 | Pauza       | Esc lub P                   |                          |
 
 Na telefonie pojawiają się przyciski na ekranie. Graj poziomo.
+
+## Tryby
+
+- **Kampania**: pokonujesz po kolei całą ekipę, legendy na końcu, tytuł Króla i korona.
+- **Przetrwanie**: cała ekipa po kolei w losowej kolejności, między falami odzyskujesz tylko 30 HP. Liczy się liczba pokonanych.
+- **2 graczy**: jedna klawiatura, WASD kontra strzałki.
+
+## Supermoce
+
+Każda postać ma jedną. Pasek MOCY pod paskiem HP ładuje się od zadawania i przyjmowania ciosów
+(i powoli sam). Gdy jest pełny, wciśnij E (gracz 2: O, telefon: przycisk MOC).
+
+| Postać | Supermoc | Co robi |
+|--------|----------|---------|
+| Miśka | Słomkowa Zamrażarka | rzut napojem, trafiony zamarza na 1,5 s, 12 HP |
+| Bianka | Neonowy Błysk | przeciwnik ma pomylone kierunki przez 3 s, 8 HP |
+| Cypis | Cień z Bytomia | teleport za plecy i cios za 22 HP |
+| Diddy | Piorun z Fryzury | piorun w miejsce przeciwnika po 0,6 s, 26 HP, da się uciec |
+| Gaździoł | Garnitur Pancerny | 6 s pancerza: 30% obrażeń, mocniejsze odrzuty |
+| Miszalinaq | Buziak Zagłady | całus: 14 HP, ogłuszenie 1 s, leczy 18 HP |
+| Piotszu | Laser z Okularów | laser na wysokości głowy przez cały ring, 20 HP, unik omija |
+| Rociu | Rudy Wulkan | 3 fale ognia po 7 HP i podpalenie na 3 s |
+| Szon | Co Ty Odwalasz? | 1,5 s kontry: kto trafi, dostaje 2,5x z powrotem i ogłuszenie |
+| Zośka | Pazurki Zagłady | 5 szybkich drapnięć po 5 HP |
+| Wiczka | Uśmiech Rozbrajający | przeciwnik 3 s nie atakuje i idzie do niej |
+| Król Pała | Dekret Królewski | korona spada: 30 HP, ogłuszenie 1,2 s, Król leczy 15 HP |
+| Watol Wszechwładny | Wszechwładza | przeciwnik 4 s spowolniony |
+
+Definicje są w `SPECIALS` na górze `game.js`, nowa postać bez wpisu po prostu nie ma mocy.
+
+## Nagrody
+
+- XP za każdą walkę (K.O., zostałe HP, combo, supermoce, szybkość, legendy, seria zwycięstw), poziomy i rangi od Świeżaka do Boga Pięści.
+- 25 pucharków (osiągnięć) z paskami postępu, ekran „Pucharki” w menu ze statystykami.
+- Wyzwanie dnia: co dzień inna postać i warunek, 300 XP.
+- Gwiazdki mistrzostwa przy postaciach za wygrane (3, 10, 25) i korony za kampanie.
+- Wszystko zapisuje się w przeglądarce (localStorage), osobno na każdym urządzeniu.
 
 ## Zasady
 
@@ -66,6 +104,7 @@ Postacie mogą mieć własne nagrania. Wrzuć plik do `sounds/` pod nazwą
 | ko        | gdy postać pada                         | `cypis_ko.mp3`           |
 | wygrana   | gdy postać wygrywa walkę                | `cypis_wygrana.mp3`      |
 | wybor     | tylko po kliknięciu w menu wyboru       | `cypis_wybor.mp3`        |
+| moc       | przy użyciu supermocy                   | `cypis_moc.mp3`          |
 
 Kilka wersji tego samego zdarzenia dostaje numer: `cypis_obrywa2.mp3`, `cypis_obrywa3.mp3`,
 gra losuje jedną. Krótkie nagrania (do 2 sekund) działają najlepiej, intro może mieć 3-4 sekundy.

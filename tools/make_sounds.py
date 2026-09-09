@@ -17,7 +17,7 @@ import subprocess
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SOUNDS = os.path.join(ROOT, 'sounds')
-EVENTS = ['intro', 'cios', 'obrywa', 'blok', 'ko', 'wygrana', 'wybor']
+EVENTS = ['intro', 'cios', 'obrywa', 'blok', 'ko', 'wygrana', 'wybor', 'moc']
 CONVERT = ('.m4a', '.ogg', '.wav', '.aac', '.opus', '.webm', '.mp4', '.caf', '.3gp', '.amr')
 PAT = re.compile(r'^(?P<id>[a-z0-9_]+?)_(?P<ev>' + '|'.join(EVENTS) + r')(?P<n>\d*)$')
 
