@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css?v=11" />
 </head>
 <body>
 <div id="app">
@@ -34,6 +34,13 @@
         <button class="btn" data-mode="survival">PRZETRWANIE</button>
         <button class="btn" data-mode="versus">2 GRACZY</button>
         <button class="btn btn-ghost" id="btn-trophies">🏆 PUCHARKI</button>
+      </div>
+      <div class="menu">
+        <button class="btn btn-shop" id="btn-shop">🪙 SKLEP <span id="chips-title"></span></button>
+        <button class="btn btn-shop" id="btn-wardrobe">👕 SZATNIA</button>
+        <button class="btn btn-boss" id="btn-boss">👹 BOSS TYGODNIA</button>
+        <button class="btn" id="btn-tourney">🏟️ TURNIEJ</button>
+        <button class="btn" id="btn-online">☁️ RANKING ONLINE</button>
       </div>
       <div class="menu menu-small">
         <button class="btn btn-ghost btn-sm" id="btn-help">STEROWANIE</button>
@@ -117,6 +124,9 @@
       <div id="result-xp" class="xpbox" hidden></div>
       <div id="result-trophies" class="new-trophies"></div>
       <div class="menu">
+        <button class="btn btn-sm" id="btn-replay" hidden>📹 UDOSTĘPNIJ POWTÓRKĘ K.O.</button>
+      </div>
+      <div class="menu">
         <button class="btn btn-primary" id="btn-next"></button>
         <button class="btn btn-ghost" id="btn-result-menu">Menu</button>
       </div>
@@ -150,9 +160,96 @@
     </header>
     <div class="trophies-body">
       <div id="stats-box" class="stats-box"></div>
+      <div id="boss-badges" class="boss-badges"></div>
       <div id="trophy-grid" class="trophy-grid"></div>
     </div>
   </section>
+
+  <!-- ===== RANKING ONLINE ===== -->
+  <section id="s-online" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-online-back">← Wróć</button>
+      <h2>☁️ Ranking ekipy</h2>
+      <div class="spacer"></div>
+    </header>
+    <div id="online-body" class="tourney-body"></div>
+  </section>
+
+  <div id="replay-modal" class="overlay" hidden>
+    <div class="overlay-box">
+      <h2>POWTÓRKA</h2>
+      <video id="replay-video" controls autoplay loop playsinline style="max-width:min(90vw,720px);border-radius:12px"></video>
+      <div class="menu"><a class="btn btn-primary" id="replay-dl" href="#">POBIERZ</a><button class="btn btn-ghost" id="replay-close">Zamknij</button></div>
+    </div>
+  </div>
+
+  <!-- ===== TURNIEJ ===== -->
+  <section id="s-tourney" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-tourney-back">← Wróć</button>
+      <h2>🏟️ Turniej ekipy</h2>
+      <div class="spacer"></div>
+    </header>
+    <div id="tourney-body" class="tourney-body"></div>
+  </section>
+
+  <!-- ===== SKLEP ===== -->
+  <section id="s-shop" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-shop-back">← Wróć</button>
+      <h2>🪙 Sklep</h2>
+      <div class="chips-big" id="chips-shop"></div>
+    </header>
+    <div class="shop-body">
+      <div class="shop-section">
+        <h3>Skrzynki</h3>
+        <div class="shop-row" id="shop-crates"></div>
+      </div>
+      <div class="shop-section">
+        <h3>Oferta dnia <small>zmienia się o północy</small></h3>
+        <div class="shop-row" id="shop-daily"></div>
+      </div>
+      <div class="shop-section">
+        <h3>Tajny kod</h3>
+        <div class="code-row"><input id="code-input" type="text" placeholder="wpisz kod" autocomplete="off" maxlength="24" /><button class="btn btn-sm btn-primary" id="btn-code">UŻYJ</button></div>
+        <div id="code-msg" class="code-msg"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SZATNIA ===== -->
+  <section id="s-wardrobe" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-wardrobe-back">← Wróć</button>
+      <h2>👕 Szatnia</h2>
+      <div class="chips-big" id="chips-wardrobe"></div>
+    </header>
+    <div class="wardrobe-body">
+      <div class="wardrobe-preview">
+        <canvas id="preview-canvas" width="300" height="340"></canvas>
+        <div class="preview-pick" id="preview-pick"></div>
+      </div>
+      <div class="wardrobe-main">
+        <div class="tabs" id="wardrobe-tabs"></div>
+        <div class="item-grid" id="item-grid"></div>
+        <div class="upg-box" id="upg-box"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKRZYNKA ===== -->
+  <div id="crate" class="overlay" hidden>
+    <div class="crate-box">
+      <div class="crate-stage" id="crate-stage"><div class="crate-icon" id="crate-icon">📦</div></div>
+      <div class="crate-result" id="crate-result" hidden>
+        <div class="rarity" id="crate-rarity"></div>
+        <div class="item-big" id="crate-item"></div>
+        <div class="item-name" id="crate-name"></div>
+        <div class="item-type" id="crate-type"></div>
+      </div>
+      <div class="menu" id="crate-actions"></div>
+    </div>
+  </div>
 
   <div id="toasts" class="toasts"></div>
 
@@ -213,6 +310,7 @@
 
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
-<script src="game.js?v=10"></script>
+<script src="online-config.js"></script>
+<script src="game.js?v=11"></script>
 </body>
 </html>

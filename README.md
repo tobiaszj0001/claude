@@ -56,10 +56,34 @@ Każda postać ma jedną. Pasek MOCY pod paskiem HP ładuje się od zadawania i 
 
 Definicje są w `SPECIALS` na górze `game.js`, nowa postać bez wpisu po prostu nie ma mocy.
 
+## Żetony, skrzynki, szatnia
+
+- **Żetony** dostajesz za każdą walkę, za codzienne wejście do gry (7-dniowa drabinka, 7. dzień daje Złotą Skrzynkę) i za bossa tygodnia.
+- **Skrzynki** wypadają po wygranych (co trzecia gwarantowana, za legendy i bossów Złota) i są w Sklepie. W środku rękawice, gacie, rzeczy na głowę, efekty K.O. i teksty przed walką w czterech rzadkościach. Duplikat zwraca żetony.
+- **Sklep**: skrzynki, oferta dnia (3 przedmioty, zmienia się o północy) i pole na tajne kody.
+- **Szatnia**: zakładasz przedmioty (widać je na Twojej postaci w walce, w każdej postaci) i kupujesz **Rozwój postaci**: 3 poziomy na postać za żetony, wymagane wygrane nią (3 / 10 / 25). Poziom 3 wzmacnia jej supermoc w unikalny sposób.
+- **Tajne kody** wpisuje się w Sklepie. Kilka jest w kodzie gry (`useCode` w `game.js`), np. `PANTSLOW`.
+
+## Wydarzenia na ringu
+
+Co kilkanaście sekund coś się dzieje: spada przedmiot na spadochronie (pizza, gumowy kurczak, przepychacz, krzesło, mokra ryba, papier toaletowy, krupniok, banan, gacie, energetyk, kebab), ktoś z widowni rzuca butelką, ring się trzęsie, wchodzą podwójne obrażenia, pojawia się bomba albo deszcz jedzenia. Bronie trzyma się w ręce i zmieniają ciosy. Lista w `PICKUPS` w `game.js`.
+
+## Boss tygodnia, turniej, powtórki
+
+- **Boss tygodnia**: co poniedziałek inna postać z modyfikatorem (Gigant, Błyskawica, Pancerny, Wampir, Mocarz, Księżycowy, Chaos). Pierwsze zwycięstwo w tygodniu daje 500 żetonów, Złotą Skrzynkę i odznakę z datą w Pucharkach.
+- **Turniej**: 4 lub 8 osób na jednym urządzeniu, drabinka. Na klawiaturze pojedynki 1 na 1, na telefonie „na punkty” (każdy gra z AI postacią rywala, podajecie telefon z ręki do ręki).
+- **Powtórka K.O.**: po nokaucie ostatnie 2,5 s w zwolnionym tempie ze zbliżeniem. Gra nagrywa ją jako wideo, na ekranie wyniku jest „Udostępnij powtórkę” (na telefonie otwiera udostępnianie, na komputerze podgląd i pobranie).
+- **Krytyki** (8% ciosów, 1,6x, pęknięty ekran), **Pierwsza krew**, **PERFECT** za walkę bez obrażeń, nazwy combo od 5x.
+
+## Ranking online
+
+Wspólna tabela dla całej ekipy z kontami (ksywka + PIN) i synchronizacją profilu między urządzeniami.
+Wymaga jednorazowego podłączenia darmowej bazy: instrukcja w `online/README.md`.
+
 ## Nagrody
 
 - XP za każdą walkę (K.O., zostałe HP, combo, supermoce, szybkość, legendy, seria zwycięstw), poziomy i rangi od Świeżaka do Boga Pięści.
-- 25 pucharków (osiągnięć) z paskami postępu, ekran „Pucharki” w menu ze statystykami.
+- 36 pucharków (osiągnięć) z paskami postępu, ekran „Pucharki” w menu ze statystykami i odznakami bossów.
 - Wyzwanie dnia: co dzień inna postać i warunek, 300 XP.
 - Gwiazdki mistrzostwa przy postaciach za wygrane (3, 10, 25) i korony za kampanie.
 - Wszystko zapisuje się w przeglądarce (localStorage), osobno na każdym urządzeniu.
@@ -120,3 +144,4 @@ Bez tej listy gra nie wie o nagraniach.
 - `photos/`: oryginalne zdjęcia.
 - `tools/make_heads.py`: wycinanie głów ze zdjęć.
 - `sounds/`: głosy postaci, `tools/make_sounds.py`: budowanie listy nagrań.
+- `online-config.js`, `online/`: ranking online (konfiguracja, SQL, instrukcja).

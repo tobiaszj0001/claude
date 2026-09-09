@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v10';
+const VERSION = 'v11';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -31,44 +31,150 @@ const METER_MAX = 100;
 //  od zadawania i przyjmowania ciosów (i powoli sam z siebie).
 // ============================================================
 const SPECIALS = {
-  miska: { name: 'Słomkowa Zamrażarka', icon: '🥤', desc: 'Rzuca lodowym napojem. Trafiony zamarza na 1,5 s i traci 12 HP.', dur: 0.5,
+  miska: { up3n: 'Głębokie Mrożenie', up3: 'Zamrożenie trwa 2,5 s zamiast 1,5 s', name: 'Słomkowa Zamrażarka', icon: '🥤', desc: 'Rzuca lodowym napojem. Trafiony zamarza na 1,5 s i traci 12 HP.', dur: 0.5,
     cast(m, f, o) { m.projectile({ owner: f, x: f.x + f.facing * 40, y: f.y - 175, vx: f.facing * 540, vy: -80, g: 520, r: 18, life: 2, kind: 'cup', col: f.ch.glove,
-      onHit: (t) => { m.status(t, 'frozen', 1.5); m.damage(f, t, 12, { text: 'ZAMROŻONY!', col: '#9ecbff', knock: 60 }); } }); } },
-  bianka: { name: 'Neonowy Błysk', icon: '🕶️', desc: 'Błysk z okularów: przeciwnik przez 3 s ma pomylone kierunki i traci 8 HP.', dur: 0.6,
-    cast(m, f, o) { m.flash = 0.7; m.status(o, 'confused', 3); m.damage(f, o, 8, { text: 'OŚLEPIONY!', col: '#ffb020', knock: 120, ignoreBlock: true }); } },
-  cypis: { name: 'Cień z Bytomia', icon: '🌫️', desc: 'Znika i wyskakuje zza pleców przeciwnika z ciosem za 22 HP.', dur: 0.5,
+      onHit: (t) => { m.status(t, 'frozen', f.upg >= 3 ? 2.5 : 1.5); m.damage(f, t, 12, { text: 'ZAMROŻONY!', col: '#9ecbff', knock: 60 }); } }); } },
+  bianka: { up3n: 'Długi Błysk', up3: 'Pomylone kierunki przez 5 s zamiast 3 s', name: 'Neonowy Błysk', icon: '🕶️', desc: 'Błysk z okularów: przeciwnik przez 3 s ma pomylone kierunki i traci 8 HP.', dur: 0.6,
+    cast(m, f, o) { m.flash = 0.7; m.status(o, 'confused', f.upg >= 3 ? 5 : 3); m.damage(f, o, 8, { text: 'OŚLEPIONY!', col: '#ffb020', knock: 120, ignoreBlock: true }); } },
+  cypis: { up3n: 'Cios z Mroku', up3: 'Cios zza pleców zadaje 30 HP zamiast 22', name: 'Cień z Bytomia', icon: '🌫️', desc: 'Znika i wyskakuje zza pleców przeciwnika z ciosem za 22 HP.', dur: 0.5,
     cast(m, f, o) { f.ghost = 0.5; m.spark(f.x, f.y - 120, '#ff6ec7', 18);
       m.after(0.25, () => { const side = o.facing; f.x = clamp(o.x + side * 70, RING_L, RING_R); f.facing = -side; m.spark(f.x, f.y - 120, '#ff6ec7', 18);
-        m.damage(f, o, 22, { text: 'Z CIENIA!', col: '#ff6ec7', knock: 380, ignoreBlock: true, pop: true }); }); } },
-  diddy: { name: 'Piorun z Fryzury', icon: '⚡', desc: 'Po 0,6 s w miejsce przeciwnika wali piorun za 26 HP. Da się odskoczyć.', dur: 0.5,
+        m.damage(f, o, f.upg >= 3 ? 30 : 22, { text: 'Z CIENIA!', col: '#ff6ec7', knock: 380, ignoreBlock: true, pop: true }); }); } },
+  diddy: { up3n: 'Podwójny Piorun', up3: 'Po pierwszym piorunie uderza drugi', name: 'Piorun z Fryzury', icon: '⚡', desc: 'Po 0,6 s w miejsce przeciwnika wali piorun za 26 HP. Da się odskoczyć.', dur: 0.5,
     cast(m, f, o) { const x = o.x; m.zone({ x, kind: 'target', life: 0.6, col: '#7c5cff' });
       m.after(0.6, () => { m.zone({ x, kind: 'bolt', life: 0.35, col: '#7c5cff' }); m.shake = 14; m.flash = 0.25; SFX.punch(true);
-        if (Math.abs(o.x - x) < 65) m.damage(f, o, 26, { text: 'PIORUN!', col: '#7c5cff', knock: 300, pop: true, ignoreBlock: true }); }); } },
-  gazdziol: { name: 'Garnitur Pancerny', icon: '🛡️', desc: 'Przez 6 s przyjmuje tylko 30% obrażeń, a jego ciosy odrzucają dwa razy mocniej.', dur: 0.5,
-    cast(m, f, o) { m.status(f, 'armor', 6); m.popup(f.x, f.y - 265, 'PANCERZ!', '#2ec4b6', 30); m.spark(f.x, f.y - 120, '#2ec4b6', 14); } },
-  miszalinaq: { name: 'Buziak Zagłady', icon: '💋', desc: 'Posyła całusa: trafiony traci 14 HP i stoi ogłuszony 1 s, a ona leczy 18 HP.', dur: 0.5,
+        if (Math.abs(o.x - x) < 65) m.damage(f, o, 26, { text: 'PIORUN!', col: '#7c5cff', knock: 300, pop: true, ignoreBlock: true }); });
+      if (f.upg >= 3) m.after(1.1, () => { const x2 = o.x; m.zone({ x: x2, kind: 'target', life: 0.5, col: '#7c5cff' }); m.after(0.5, () => { m.zone({ x: x2, kind: 'bolt', life: 0.35, col: '#7c5cff' }); m.shake = 14; SFX.punch(true); if (Math.abs(o.x - x2) < 65) m.damage(f, o, 20, { text: 'DRUGI!', col: '#7c5cff', knock: 300, pop: true, ignoreBlock: true }); }); }); } },
+  gazdziol: { up3n: 'Garnitur z Tytanu', up3: 'Pancerz trwa 9 s zamiast 6 s', name: 'Garnitur Pancerny', icon: '🛡️', desc: 'Przez 6 s przyjmuje tylko 30% obrażeń, a jego ciosy odrzucają dwa razy mocniej.', dur: 0.5,
+    cast(m, f, o) { m.status(f, 'armor', f.upg >= 3 ? 9 : 6); m.popup(f.x, f.y - 265, 'PANCERZ!', '#2ec4b6', 30); m.spark(f.x, f.y - 120, '#2ec4b6', 14); } },
+  miszalinaq: { up3n: 'Buziak z Języczkiem', up3: 'Leczy 30 HP zamiast 18', name: 'Buziak Zagłady', icon: '💋', desc: 'Posyła całusa: trafiony traci 14 HP i stoi ogłuszony 1 s, a ona leczy 18 HP.', dur: 0.5,
     cast(m, f, o) { m.projectile({ owner: f, x: f.x + f.facing * 40, y: f.y - 200, vx: f.facing * 430, vy: 0, g: 0, r: 16, life: 2.2, kind: 'heart', col: '#ff3b3b',
-      onHit: (t) => { m.status(t, 'stun', 1); m.damage(f, t, 14, { text: 'CMOK!', col: '#ff6ec7', knock: 80 }); m.heal(f, 18); } }); } },
-  piotszu: { name: 'Laser z Okularów', icon: '🔴', desc: 'Laser przez cały ring na wysokości głowy za 20 HP. Unik (kucnięcie) go omija.', dur: 0.75,
+      onHit: (t) => { m.status(t, 'stun', 1); m.damage(f, t, 14, { text: 'CMOK!', col: '#ff6ec7', knock: 80 }); m.heal(f, f.upg >= 3 ? 30 : 18); } }); } },
+  piotszu: { up3n: 'Laser Przemysłowy', up3: 'Laser zadaje 28 HP zamiast 20', name: 'Laser z Okularów', icon: '🔴', desc: 'Laser przez cały ring na wysokości głowy za 20 HP. Unik (kucnięcie) go omija.', dur: 0.75,
     cast(m, f, o) { m.after(0.3, () => { m.zone({ x: f.x, dir: f.facing, y: f.y - 205, kind: 'laser', life: 0.4, col: '#ff3b3b' }); SFX.tone(1800, 0.45, 0.3, 'sawtooth', 0.3);
-      if ((o.x - f.x) * f.facing > 0 && o.state !== 'dodge') m.damage(f, o, 20, { text: 'LASER!', col: '#ff3b3b', knock: 200 }); }); } },
-  rociu: { name: 'Rudy Wulkan', icon: '🌋', desc: 'Wybuch ognia wokół niego: 3 fale po 7 HP, a przeciwnik płonie jeszcze 3 s.', dur: 1.0,
-    cast(m, f, o) { for (let i = 0; i < 3; i++) m.after(0.15 + i * 0.3, () => { m.zone({ x: f.x, kind: 'fire', life: 0.4, col: '#ff7a1a', r: 150 }); m.spark(f.x, f.y - 100, '#ff7a1a', 16); m.shake = 6; SFX.punch(i === 2);
-      if (Math.abs(o.x - f.x) < 165) { m.damage(f, o, 7, { text: i === 2 ? 'ERUPCJA!' : '', col: '#ff7a1a', knock: 260, ignoreBlock: true }); m.status(o, 'burn', 3); } }); } },
-  szon: { name: 'Co Ty Odwalasz?', icon: '🤨', desc: 'Przez 1,5 s czeka na cios. Kto go trafi, dostaje 2,5x tyle z powrotem i jest ogłuszony.', dur: 1.5,
-    cast(m, f, o) { m.status(f, 'counter', 1.5); m.popup(f.x, f.y - 265, 'NO DAWAJ.', '#a3e635', 26); } },
-  zoska: { name: 'Pazurki Zagłady', icon: '💅', desc: 'Seria pięciu błyskawicznych drapnięć po 5 HP, ostatnie odrzuca.', dur: 1.1,
-    cast(m, f, o) { for (let i = 0; i < 5; i++) m.after(0.1 + i * 0.18, () => { if (Math.abs(o.x - f.x) < 135) { m.spark(o.x, o.y - 160, '#40e0d0', 6);
-      m.damage(f, o, 5, { text: i === 4 ? 'PAZURKI!' : '', col: '#40e0d0', knock: i === 4 ? 420 : 30, stunLock: true, ignoreBlock: true }); } }); } },
-  wiczka: { name: 'Uśmiech Rozbrajający', icon: '😊', desc: 'Przeciwnik przez 3 s nie może atakować i idzie do niej jak zaczarowany.', dur: 0.6,
-    cast(m, f, o) { m.status(o, 'charm', 3); m.popup(o.x, o.y - 265, 'ZAUROCZONY!', '#00d4ff', 28); for (let i = 0; i < 8; i++) m.after(i * 0.35, () => m.spark(o.x, o.y - 225, '#ff6ec7', 3)); } },
-  king_pala: { name: 'Dekret Królewski', icon: '👑', desc: 'Korona spada na głowę przeciwnika: 30 HP i ogłuszenie 1,2 s. Król leczy 15 HP.', dur: 0.8,
+      if ((o.x - f.x) * f.facing > 0 && o.state !== 'dodge') m.damage(f, o, f.upg >= 3 ? 28 : 20, { text: 'LASER!', col: '#ff3b3b', knock: 200 }); }); } },
+  rociu: { up3n: 'Superwulkan', up3: 'Cztery fale ognia zamiast trzech', name: 'Rudy Wulkan', icon: '🌋', desc: 'Wybuch ognia wokół niego: 3 fale po 7 HP, a przeciwnik płonie jeszcze 3 s.', dur: 1.0,
+    cast(m, f, o) { const nw = f.upg >= 3 ? 4 : 3; for (let i = 0; i < nw; i++) m.after(0.15 + i * 0.3, () => { m.zone({ x: f.x, kind: 'fire', life: 0.4, col: '#ff7a1a', r: 150 }); m.spark(f.x, f.y - 100, '#ff7a1a', 16); m.shake = 6; SFX.punch(i === 2);
+      if (Math.abs(o.x - f.x) < 165) { m.damage(f, o, 7, { text: i === nw - 1 ? 'ERUPCJA!' : '', col: '#ff7a1a', knock: 260, ignoreBlock: true }); m.status(o, 'burn', 3); } }); } },
+  szon: { up3n: 'Dłuższa Cierpliwość', up3: 'Kontra czeka 2,5 s zamiast 1,5 s', name: 'Co Ty Odwalasz?', icon: '🤨', desc: 'Przez 1,5 s czeka na cios. Kto go trafi, dostaje 2,5x tyle z powrotem i jest ogłuszony.', dur: 1.5,
+    cast(m, f, o) { m.status(f, 'counter', f.upg >= 3 ? 2.5 : 1.5); m.popup(f.x, f.y - 265, 'NO DAWAJ.', '#a3e635', 26); } },
+  zoska: { up3n: 'Manicure Zagłady', up3: 'Siedem drapnięć zamiast pięciu', name: 'Pazurki Zagłady', icon: '💅', desc: 'Seria pięciu błyskawicznych drapnięć po 5 HP, ostatnie odrzuca.', dur: 1.1,
+    cast(m, f, o) { const nh = f.upg >= 3 ? 7 : 5; for (let i = 0; i < nh; i++) m.after(0.1 + i * 0.18, () => { if (Math.abs(o.x - f.x) < 135) { m.spark(o.x, o.y - 160, '#40e0d0', 6);
+      m.damage(f, o, 5, { text: i === nh - 1 ? 'PAZURKI!' : '', col: '#40e0d0', knock: i === nh - 1 ? 420 : 30, stunLock: true, ignoreBlock: true }); } }); } },
+  wiczka: { up3n: 'Uśmiech Hipnotyczny', up3: 'Zauroczenie trwa 4,5 s zamiast 3 s', name: 'Uśmiech Rozbrajający', icon: '😊', desc: 'Przeciwnik przez 3 s nie może atakować i idzie do niej jak zaczarowany.', dur: 0.6,
+    cast(m, f, o) { m.status(o, 'charm', f.upg >= 3 ? 4.5 : 3); m.popup(o.x, o.y - 265, 'ZAUROCZONY!', '#00d4ff', 28); for (let i = 0; i < 8; i++) m.after(i * 0.35, () => m.spark(o.x, o.y - 225, '#ff6ec7', 3)); } },
+  king_pala: { up3n: 'Dekret Ostateczny', up3: 'Korona zadaje 40 HP zamiast 30', name: 'Dekret Królewski', icon: '👑', desc: 'Korona spada na głowę przeciwnika: 30 HP i ogłuszenie 1,2 s. Król leczy 15 HP.', dur: 0.8,
     cast(m, f, o) { const x = o.x; m.zone({ x, kind: 'crown', life: 0.7, col: '#ffd700' });
-      m.after(0.7, () => { m.shake = 12; if (Math.abs(o.x - x) < 90) { m.damage(f, o, 30, { text: 'DEKRET!', col: '#ffd700', knock: 200, ignoreBlock: true }); m.status(o, 'stun', 1.2); } m.heal(f, 15); }); } },
-  watol: { name: 'Wszechwładza', icon: '⏳', desc: 'Zatrzymuje przeciwnikowi czas: przez 4 s porusza się jak w smole.', dur: 0.7,
-    cast(m, f, o) { m.status(o, 'slow', 4); m.flash = 0.35; m.popup(o.x, o.y - 265, 'CZAS STANĄŁ', '#9b5cff', 28); } },
+      m.after(0.7, () => { m.shake = 12; if (Math.abs(o.x - x) < 90) { m.damage(f, o, f.upg >= 3 ? 40 : 30, { text: 'DEKRET!', col: '#ffd700', knock: 200, ignoreBlock: true }); m.status(o, 'stun', 1.2); } m.heal(f, 15); }); } },
+  watol: { up3n: 'Wieczność', up3: 'Spowolnienie trwa 6 s zamiast 4 s', name: 'Wszechwładza', icon: '⏳', desc: 'Zatrzymuje przeciwnikowi czas: przez 4 s porusza się jak w smole.', dur: 0.7,
+    cast(m, f, o) { m.status(o, 'slow', f.upg >= 3 ? 6 : 4); m.flash = 0.35; m.popup(o.x, o.y - 265, 'CZAS STANĄŁ', '#9b5cff', 28); } },
 };
-const STATUS_INFO = { frozen: ['ZAMROŻONY', '#9ecbff'], stun: ['OGŁUSZONY', '#ffe45c'], confused: ['POMYLONY', '#ffb020'], burn: ['PŁONIE', '#ff7a1a'], armor: ['PANCERZ', '#2ec4b6'], charm: ['ZAUROCZONY', '#ff6ec7'], slow: ['SPOWOLNIONY', '#9b5cff'], counter: ['KONTRA', '#a3e635'] };
+// ============================================================
+//  ŻETONY, SKRZYNKI, PRZEDMIOTY (kosmetyki)
+// ============================================================
+const RARITY = { common: { name: 'Zwykły', col: '#b8b8c8', refund: 30, price: 80 }, rare: { name: 'Rzadki', col: '#3b82f6', refund: 60, price: 220 }, epic: { name: 'Epicki', col: '#9b5cff', refund: 140, price: 500 }, legendary: { name: 'Legendarny', col: '#ffd700', refund: 350, price: 1300 } };
+const ITEM_TYPES = { gloves: 'Rękawice', shorts: 'Gacie', hat: 'Na głowę', ko: 'Efekt K.O.', taunt: 'Tekst przed walką' };
+const ITEMS = [
+  { id: 'g_neon', type: 'gloves', name: 'Neonowe Rękawice', rarity: 'common', style: { color: '#39ff14' } },
+  { id: 'g_pink', type: 'gloves', name: 'Różowe Futrzaki', rarity: 'common', style: { color: '#ff9de2', pattern: 'fur' } },
+  { id: 'g_black', type: 'gloves', name: 'Czarne jak Noc', rarity: 'common', style: { color: '#222' } },
+  { id: 'g_lava', type: 'gloves', name: 'Rękawice z Lawy', rarity: 'rare', style: { color: '#ff4500', pattern: 'lava' } },
+  { id: 'g_melon', type: 'gloves', name: 'Arbuzy', rarity: 'rare', style: { color: '#2e8b57', pattern: 'melon' } },
+  { id: 'g_duck', type: 'gloves', name: 'Kaczuszki', rarity: 'rare', style: { color: '#ffe135', emoji: '🐤' } },
+  { id: 'g_flip', type: 'gloves', name: 'Klapki Kubota', rarity: 'rare', style: { emoji: '🩴' } },
+  { id: 'g_sausage', type: 'gloves', name: 'Krupnioki', rarity: 'epic', style: { emoji: '🌭' } },
+  { id: 'g_fish', type: 'gloves', name: 'Śledzie', rarity: 'epic', style: { emoji: '🐟' } },
+  { id: 'g_brick', type: 'gloves', name: 'Cegły', rarity: 'epic', style: { color: '#b22222', pattern: 'brick' } },
+  { id: 'g_rainbow', type: 'gloves', name: 'Tęczowe', rarity: 'epic', style: { rainbow: true } },
+  { id: 'g_gold', type: 'gloves', name: 'Złote Rękawice', rarity: 'legendary', style: { color: '#ffd700', shine: true } },
+  { id: 'g_diamond', type: 'gloves', name: 'Diamentowe', rarity: 'legendary', style: { color: '#b9f2ff', shine: true, sparkle: true } },
+  { id: 'g_toilet', type: 'gloves', name: 'Deski Klozetowe', rarity: 'legendary', style: { emoji: '🚽' } },
+  { id: 's_hearts', type: 'shorts', name: 'Majtki w Serduszka', rarity: 'common', style: { color: '#fff', pattern: 'hearts' } },
+  { id: 's_camo', type: 'shorts', name: 'Moro', rarity: 'common', style: { color: '#556b2f', pattern: 'camo' } },
+  { id: 's_flag', type: 'shorts', name: 'Biało-Czerwone', rarity: 'common', style: { color: '#fff', pattern: 'flag' } },
+  { id: 's_grandpa', type: 'shorts', name: 'Gacie Dziadka', rarity: 'rare', style: { color: '#d9c9a5', pattern: 'stripes', long: true } },
+  { id: 's_leopard', type: 'shorts', name: 'Panterka', rarity: 'rare', style: { color: '#e0a848', pattern: 'leopard' } },
+  { id: 's_sequins', type: 'shorts', name: 'Cekiny Disco', rarity: 'rare', style: { color: '#c0c0ff', sparkle: true } },
+  { id: 's_pampers', type: 'shorts', name: 'Pampers XXL', rarity: 'epic', style: { color: '#f5f5f5', pattern: 'diaper', long: true } },
+  { id: 's_gold', type: 'shorts', name: 'Złote Gacie', rarity: 'epic', style: { color: '#ffd700', shine: true } },
+  { id: 's_thong', type: 'shorts', name: 'Stringi Dziadka', rarity: 'legendary', style: { color: '#ff1493', pattern: 'thong' } },
+  { id: 'h_helmet', type: 'hat', name: 'Kask Budowlany', rarity: 'common', emoji: '⛑️' },
+  { id: 'h_cap', type: 'hat', name: 'Czapka z Daszkiem', rarity: 'common', emoji: '🧢' },
+  { id: 'h_grad', type: 'hat', name: 'Biret Magistra', rarity: 'common', emoji: '🎓' },
+  { id: 'h_tophat', type: 'hat', name: 'Cylinder', rarity: 'rare', emoji: '🎩' },
+  { id: 'h_halo', type: 'hat', name: 'Aureola', rarity: 'rare', draw: 'halo' },
+  { id: 'h_bucket', type: 'hat', name: 'Wiadro', rarity: 'rare', emoji: '🪣' },
+  { id: 'h_pan', type: 'hat', name: 'Patelnia', rarity: 'rare', emoji: '🍳' },
+  { id: 'h_horns', type: 'hat', name: 'Rogi Diabła', rarity: 'epic', draw: 'horns' },
+  { id: 'h_briefs', type: 'hat', name: 'Gacie na Głowie', rarity: 'epic', emoji: '🩲' },
+  { id: 'h_fire', type: 'hat', name: 'Płonąca Fryzura', rarity: 'epic', emoji: '🔥' },
+  { id: 'h_pumpkin', type: 'hat', name: 'Dynia', rarity: 'epic', emoji: '🎃' },
+  { id: 'h_poop', type: 'hat', name: 'Kupa na Głowie', rarity: 'legendary', emoji: '💩' },
+  { id: 'h_ufo', type: 'hat', name: 'UFO', rarity: 'legendary', emoji: '🛸' },
+  { id: 'h_chicken', type: 'hat', name: 'Żywy Kurczak', rarity: 'legendary', emoji: '🐔' },
+  { id: 'k_confetti', type: 'ko', name: 'Konfetti', rarity: 'common', fx: 'confetti' },
+  { id: 'k_ducks', type: 'ko', name: 'Deszcz Kaczuszek', rarity: 'rare', fx: 'rain', emoji: '🐤' },
+  { id: 'k_poop', type: 'ko', name: 'Deszcz Kup', rarity: 'rare', fx: 'rain', emoji: '💩' },
+  { id: 'k_sausage', type: 'ko', name: 'Deszcz Krupnioków', rarity: 'epic', fx: 'rain', emoji: '🌭' },
+  { id: 'k_fire', type: 'ko', name: 'Fajerwerki', rarity: 'epic', fx: 'fireworks' },
+  { id: 'k_money', type: 'ko', name: 'Deszcz Żetonów', rarity: 'legendary', fx: 'rain', emoji: '🪙' },
+  { id: 't_1', type: 'taunt', name: '„Mama mówiła, żebym nie bił słabszych. Sorry, mamo.”', rarity: 'common' },
+  { id: 't_2', type: 'taunt', name: '„Wybacz, ale mam autobus za pięć minut.”', rarity: 'common' },
+  { id: 't_3', type: 'taunt', name: '„Zaraz będziesz płakać jak na koncercie sanah.”', rarity: 'common' },
+  { id: 't_4', type: 'taunt', name: '„Nie bój się, to boli tylko przez pierwszych dziesięć lat.”', rarity: 'rare' },
+  { id: 't_5', type: 'taunt', name: '„Zadzwoń po mamę. Będzie potrzebna.”', rarity: 'rare' },
+  { id: 't_6', type: 'taunt', name: '„Pozdrawiam Świętochłowice i twoją babcię.”', rarity: 'rare' },
+  { id: 't_7', type: 'taunt', name: '„Rozwalę cię jak Kubica Ferrari.”', rarity: 'epic' },
+  { id: 't_8', type: 'taunt', name: '„Jestem przed śniadaniem, więc będzie krótko.”', rarity: 'epic' },
+  { id: 't_9', type: 'taunt', name: '„Mój tata by cię pobił, ale ja też umiem.”', rarity: 'legendary' },
+];
+const ITEM_BY_ID = Object.fromEntries(ITEMS.map((i) => [i.id, i]));
+const CRATES = { basic: { name: 'Zwykła Skrzynka', icon: '📦', price: 150, odds: { common: 60, rare: 30, epic: 9, legendary: 1 } }, gold: { name: 'Złota Skrzynka', icon: '🎁', price: 450, odds: { common: 0, rare: 50, epic: 38, legendary: 12 } } };
+const LOGIN_LADDER = [20, 30, 40, 60, 80, 100, 200];
+
+// ============================================================
+//  LOSOWE WYDARZENIA W WALCE I PRZEDMIOTY NA RINGU
+// ============================================================
+const PICKUPS = [
+  { id: 'pizza', emoji: '🍕', name: 'Pizza', desc: '+25 HP', w: 3, use(m, f) { m.heal(f, 25); } },
+  { id: 'chicken', emoji: '🐔', name: 'Gumowy Kurczak', desc: 'broń: ciosy x1.6 przez 8 s', w: 3, use(m, f) { f.weapon = { emoji: '🐔', t: 8, mult: 1.6, sfx: 'squeak' }; } },
+  { id: 'plunger', emoji: '🪠', name: 'Przepychacz', desc: 'broń: 3 ciosy ogłuszają', w: 2, use(m, f) { f.weapon = { emoji: '🪠', hits: 3, mult: 1.2, stun: 0.9 }; } },
+  { id: 'chair', emoji: '🪑', name: 'Krzesło', desc: 'broń: 3 ciosy x2 z wielkim odrzutem', w: 2, use(m, f) { f.weapon = { emoji: '🪑', hits: 3, mult: 2, knock: 2 }; } },
+  { id: 'fish', emoji: '🐟', name: 'Mokra Ryba', desc: 'broń: ciosy spowalniają przez 6 s', w: 2, use(m, f) { f.weapon = { emoji: '🐟', t: 6, mult: 1.1, slow: 2 }; } },
+  { id: 'paper', emoji: '🧻', name: 'Papier Toaletowy', desc: 'broń: ciosy mylą kierunki przez 5 s', w: 2, use(m, f) { f.weapon = { emoji: '🧻', t: 5, mult: 1, confuse: 2 }; } },
+  { id: 'sausage', emoji: '🌭', name: 'Krupniok', desc: '+50 MOCY', w: 3, use(m, f) { f.meter = Math.min(METER_MAX, f.meter + 50); m.popup(f.x, f.y - 260, '+50 MOCY', f.ch.glove, 24); } },
+  { id: 'banana', emoji: '🍌', name: 'Banan', desc: 'rzuca skórkę przed siebie: kto nadepnie, ślizga się', w: 2, use(m, f) { m.hazards.push({ kind: 'peel', emoji: '🍌', x: clamp(f.x + f.facing * 130, RING_L, RING_R), life: 20, owner: f }); m.popup(f.x, f.y - 260, 'SKÓRKA!', '#ffe135', 22); } },
+  { id: 'briefs', emoji: '🩲', name: 'Gacie', desc: 'rzuca w przeciwnika: zauroczenie 2 s', w: 2, use(m, f) { const o = m.other(f); m.projectile({ owner: f, x: f.x + f.facing * 40, y: f.y - 190, vx: f.facing * 380, vy: -60, g: 300, r: 16, life: 2, kind: 'emoji', emoji: '🩲', col: '#ff6ec7', onHit: (t) => { m.status(t, 'charm', 2); m.damage(f, t, 5, { text: 'GACIE W TWARZ!', col: '#ff6ec7', knock: 100 }); } }); } },
+  { id: 'energy', emoji: '🥤', name: 'Energetyk', desc: 'szybkość x1.5 przez 8 s', w: 2, use(m, f) { m.status(f, 'haste', 8); } },
+  { id: 'kebab', emoji: '🥙', name: 'Kebab z Bytomia', desc: '+40 HP, ale spowalnia na 3 s', w: 1, use(m, f) { m.heal(f, 40); m.status(f, 'slow', 3); } },
+];
+const RING_EVENTS = [
+  { id: 'drop', w: 6 }, { id: 'bottle', w: 3 }, { id: 'quake', w: 2 }, { id: 'double', w: 2 }, { id: 'bomb', w: 2 }, { id: 'rain', w: 1 },
+];
+function weightedPick(arr) { const tot = arr.reduce((a, x) => a + x.w, 0); let r = Math.random() * tot; for (const x of arr) { if (r < x.w) return x; r -= x.w; } return arr[arr.length - 1]; }
+
+// ============================================================
+//  BOSS TYGODNIA
+// ============================================================
+const BOSS_MODS = [
+  { id: 'gigant', name: 'GIGANT', desc: 'Dwa razy większy, 250 HP, bije mocniej', hp: 250, scale: 1.35, power: 1.3 },
+  { id: 'blyskawica', name: 'BŁYSKAWICA', desc: 'Porusza się 1,7x szybciej, 150 HP', hp: 150, speed: 1.7 },
+  { id: 'pancerny', name: 'PANCERNY', desc: 'Stały pancerz: przyjmuje 30% obrażeń, 160 HP', hp: 160, armor: true },
+  { id: 'wampir', name: 'WAMPIR', desc: 'Leczy się połową zadanych obrażeń, 180 HP', hp: 180, vamp: 0.5 },
+  { id: 'mocarz', name: 'MOCARZ', desc: 'Pasek MOCY ładuje mu się 3x szybciej, 170 HP', hp: 170, meter: 3 },
+  { id: 'ksiezyc', name: 'KSIĘŻYCOWY', desc: 'Niska grawitacja dla obu, 200 HP', hp: 200, gravity: 0.45 },
+  { id: 'chaos', name: 'CHAOS', desc: 'Wydarzenia na ringu co 4 sekundy, 180 HP', hp: 180, chaos: true },
+];
+function weeklyBoss() {
+  const SHIFT = 3 * 86400000; // epoka zaczęła się w czwartek; przesuwamy, żeby tydzień zaczynał się w poniedziałek
+  const week = Math.floor((Date.now() + SHIFT) / 604800000);
+  const ch = ROSTER[(week * 5 + 3) % ROSTER.length], mod = BOSS_MODS[(week * 3 + 1) % BOSS_MODS.length];
+  const key = 'w' + week, left = (week + 1) * 604800000 - SHIFT - Date.now();
+  return { week, ch, mod, key, left, done: !!(PROFILE.d && PROFILE.d.bosses[key]) };
+}
+function fmtLeft(ms) { const d = Math.floor(ms / 86400000), h = Math.floor(ms % 86400000 / 3600000); return d > 0 ? `${d} d ${h} h` : `${h} h`; }
+
+const STATUS_INFO = { haste: ['TURBO', '#ffe135'], double: ['PODWÓJNE OBRAŻENIA', '#ff3b3b'], frozen: ['ZAMROŻONY', '#9ecbff'], stun: ['OGŁUSZONY', '#ffe45c'], confused: ['POMYLONY', '#ffb020'], burn: ['PŁONIE', '#ff7a1a'], armor: ['PANCERZ', '#2ec4b6'], charm: ['ZAUROCZONY', '#ff6ec7'], slow: ['SPOWOLNIONY', '#9b5cff'], counter: ['KONTRA', '#a3e635'] };
 const LEGEND_MULT = 1;           // mnożnik HP legend (było 10, ekipa chciała równo)
 const W = 960, H = 540, FLOOR = 470;
 const GRAVITY = 1700;
@@ -221,6 +327,7 @@ window.addEventListener('keydown', (e) => {
   if (inGame && document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
   if (!usingKeyboard && GAME_KEYS.has(e.code)) { usingKeyboard = true; if (inGame) $('#touch').hidden = true; }
   keysHeld.add(e.code); keyBuf.set(e.code, performance.now());
+  if (inGame && App.match && App.match.phase === 'replay') { App.match.replay.skip = true; return; }
   if ((e.code === 'Escape' || e.code === 'KeyP') && inGame) App.togglePause();
 });
 window.addEventListener('keyup', (e) => { keysHeld.delete(e.code); if (App.screen === 's-game' && GAME_KEYS.has(e.code)) e.preventDefault(); });
@@ -295,8 +402,10 @@ class Fighter {
     this.onGround = true; this.hitDone = false; this.combo = 0; this.invuln = 0; this.hurtFlash = 0;
     this.airPunched = false; this.pose = null; this.stunFlash = 0;
     this.meter = 0; this.ghost = 0; this.burnTick = 0; this.match = null;
-    this.st = { frozen: 0, stun: 0, confused: 0, burn: 0, armor: 0, charm: 0, slow: 0, counter: 0 };
+    this.st = { frozen: 0, stun: 0, confused: 0, burn: 0, armor: 0, charm: 0, slow: 0, counter: 0, haste: 0, double: 0 };
+    this.scale = 1; this.speedMul = 1; this.powerMul = 1; this.meterMul = 1; this.vamp = 0; this.permArmor = false;
     this.stats = { hits: 0, blocks: 0, dodges: 0, maxCombo: 0, specials: 0, dmgDealt: 0, dmgTaken: 0 };
+    this.cos = { gloves: null, shorts: null, hat: null, ko: null }; this.upg = 0; this.weapon = null; this.bigHead = false;
   }
   get locked() { return this.st.frozen > 0 || this.st.stun > 0; }
   castSpecial(opp) {
@@ -316,7 +425,9 @@ class Fighter {
     let c = (allowInput && !this.locked) ? this.ctrl : NULL_CTRL;
     if (c !== NULL_CTRL && this.st.charm > 0) c = new CharmController(this, opp);
     else if (c !== NULL_CTRL && this.st.confused > 0) c = new ConfusedController(c);
-    if (allowInput && this.alive) this.meter = Math.min(METER_MAX, this.meter + dt * 4);
+    if (allowInput && this.alive) this.meter = Math.min(METER_MAX, this.meter + dt * 4 * this.meterMul * (this.upg >= 1 ? 1.25 : 1));
+    if (this.weapon && this.weapon.t !== undefined) { this.weapon.t -= dt; if (this.weapon.t <= 0) this.weapon = null; }
+    if (this.permArmor) this.st.armor = 1;
     this.stateT += dt; this.animT += dt;
     this.invuln = Math.max(0, this.invuln - dt); this.hurtFlash = Math.max(0, this.hurtFlash - dt);
 
@@ -348,7 +459,7 @@ class Fighter {
         }
         if (['idle', 'walk', 'jump'].includes(this.state)) {
           const mx = (c.held('right') ? 1 : 0) - (c.held('left') ? 1 : 0);
-          const sp = 250 * this.ch.speed * (this.onGround ? 1 : 0.75) * (this.st.slow > 0 ? 0.35 : 1) * (this.st.charm > 0 ? 0.55 : 1);
+          const sp = 250 * this.ch.speed * this.speedMul * (this.onGround ? 1 : 0.75) * (this.st.slow > 0 ? 0.35 : 1) * (this.st.charm > 0 ? 0.55 : 1) * (this.st.haste > 0 ? 1.5 : 1);
           this.vx = mx * sp;
           if (this.onGround) {
             if (mx !== 0) { if (this.state !== 'walk') this.setState('walk'); }
@@ -370,7 +481,7 @@ class Fighter {
 
     // fizyka
     this.x += this.vx * dt;
-    this.vy += GRAVITY * dt; this.y += this.vy * dt;
+    this.vy += GRAVITY * (this.match ? this.match.gravityMul : 1) * dt; this.y += this.vy * dt;
     if (this.y >= FLOOR) {
       this.y = FLOOR; this.vy = 0;
       if (!this.onGround) { this.onGround = true; if (this.state === 'jump') this.setState('idle'); }
@@ -379,7 +490,7 @@ class Fighter {
     this.pose = computePose(this);
   }
 
-  gloveWorld() { const P = this.pose; return { x: this.x + this.facing * P.fh.x, y: this.y + P.fh.y }; }
+  gloveWorld() { const P = this.pose; return { x: this.x + this.facing * P.fh.x * this.scale, y: this.y + P.fh.y * this.scale }; }
   attackActive() {
     if (!this.attacking || this.hitDone) return false;
     const t = TIMING[this.state]; return this.stateT >= t.a0 && this.stateT <= t.a1;
@@ -464,6 +575,7 @@ function drawFighter(ctx, f, tNow) {
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.beginPath(); ctx.ellipse(0, airH + 4, 46 * (1 - airH / 900), 9, 0, 0, Math.PI * 2); ctx.fill();
 
+  if (f.isBoss && f.alive) { const pulse = 0.5 + 0.5 * Math.sin(tNow * 6); const g = ctx.createRadialGradient(0, -110 * f.scale, 20, 0, -110 * f.scale, (150 + pulse * 25) * f.scale); g.addColorStop(0, `rgba(255,59,59,${0.25 + pulse * 0.12})`); g.addColorStop(1, 'rgba(255,59,59,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, -110 * f.scale, 180 * f.scale, 0, Math.PI * 2); ctx.fill(); }
   // aura legendy
   if (ch.legendary && f.alive) {
     const pulse = 0.5 + 0.5 * Math.sin(tNow * 4);
@@ -476,7 +588,7 @@ function drawFighter(ctx, f, tNow) {
   if (f.st.counter > 0) { ctx.strokeStyle = `rgba(163,230,53,${0.5 + 0.4 * Math.sin(tNow * 16)})`; ctx.lineWidth = 5; ctx.setLineDash([12, 8]); ctx.beginPath(); ctx.ellipse(0, -115, 66, 140, 0, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }
   if (f.st.slow > 0) { const g = ctx.createRadialGradient(0, -110, 10, 0, -110, 140); g.addColorStop(0, 'rgba(155,92,255,0.35)'); g.addColorStop(1, 'rgba(155,92,255,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, -110, 140, 0, Math.PI * 2); ctx.fill(); }
 
-  ctx.scale(f.facing, 1);
+  ctx.scale(f.facing * f.scale, f.scale);
   ctx.rotate(P.rot);
   ctx.lineCap = 'round'; ctx.lineJoin = 'round';
 
@@ -486,12 +598,18 @@ function drawFighter(ctx, f, tNow) {
 
   const limb = (a, m, b, w, col) => { ctx.strokeStyle = col; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(m.x, m.y); ctx.lineTo(b.x, b.y); ctx.stroke(); };
   const shoe = (p, col) => { ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(p.x + 4, p.y - 3, 14, 7, 0, 0, Math.PI * 2); ctx.fill(); };
+  const gs = f.cos.gloves ? f.cos.gloves.style : null;
   const drawGlove = (p, r, back) => {
-    ctx.fillStyle = back ? shade(glove, -0.25) : glove;
+    if (gs && gs.emoji) { ctx.save(); ctx.translate(p.x, p.y); ctx.scale(f.facing, 1); ctx.font = `${r * 2.6}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(gs.emoji, 0, 2); ctx.restore(); return; }
+    let col = gs && gs.color ? gs.color : glove;
+    if (gs && gs.rainbow) col = `hsl(${(tNow * 120 + (back ? 180 : 0)) % 360},100%,55%)`;
+    ctx.fillStyle = back ? shade(col, -0.25) : col;
     ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = shade(glove, -0.55); ctx.lineWidth = 2.5; ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.arc(p.x - r * 0.3, p.y - r * 0.35, r * 0.3, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = shade(glove, -0.55); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.55, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke();
+    if (gs && gs.pattern) drawPattern(ctx, gs.pattern, p.x, p.y, r, col);
+    ctx.strokeStyle = shade(col, -0.55); ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = gs && gs.shine ? 'rgba(255,255,255,0.8)' : 'rgba(255,255,255,0.45)'; ctx.beginPath(); ctx.arc(p.x - r * 0.3, p.y - r * 0.35, r * 0.3, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = shade(col, -0.55); ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(p.x, p.y, r * 0.55, Math.PI * 0.2, Math.PI * 0.8); ctx.stroke();
+    if (gs && gs.sparkle && Math.sin(tNow * 9 + p.x) > 0.6) drawStar(ctx, p.x + r * 0.5, p.y - r * 0.6, 5, '#fff');
   };
 
   // tylna noga i ręka
@@ -502,10 +620,17 @@ function drawFighter(ctx, f, tNow) {
   // tułów + spodenki
   ctx.strokeStyle = body; ctx.lineWidth = 22; ctx.beginPath(); ctx.moveTo(hip.x, hip.y + 4); ctx.lineTo(sh.x, sh.y + 8); ctx.stroke();
   ctx.strokeStyle = skin; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(sh.x - 2, sh.y + 2); ctx.lineTo(P.head.x, P.head.y + HEAD_H * 0.42); ctx.stroke();
-  ctx.fillStyle = glove;
-  ctx.beginPath(); ctx.moveTo(hip.x - 15, hip.y - 12); ctx.lineTo(hip.x + 15, hip.y - 12); ctx.lineTo(hip.x + 20, hip.y + 24); ctx.lineTo(hip.x - 20, hip.y + 24); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = shade(glove, -0.4); ctx.fillRect(hip.x - 15, hip.y - 14, 30, 5);
-  ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(hip.x - 3, hip.y - 8, 4, 30);
+  const ss = f.cos.shorts ? f.cos.shorts.style : null;
+  const scol = ss && ss.color ? ss.color : glove; const sh2 = ss && ss.long ? 40 : 24;
+  ctx.fillStyle = scol;
+  if (ss && ss.pattern === 'thong') { ctx.beginPath(); ctx.moveTo(hip.x - 16, hip.y - 12); ctx.lineTo(hip.x + 16, hip.y - 12); ctx.lineTo(hip.x + 3, hip.y + 12); ctx.lineTo(hip.x - 3, hip.y + 12); ctx.closePath(); ctx.fill(); ctx.strokeStyle = scol; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(hip.x - 16, hip.y - 12); ctx.lineTo(hip.x + 16, hip.y - 12); ctx.stroke(); }
+  else {
+    ctx.beginPath(); ctx.moveTo(hip.x - 15, hip.y - 12); ctx.lineTo(hip.x + 15, hip.y - 12); ctx.lineTo(hip.x + 20, hip.y + sh2); ctx.lineTo(hip.x - 20, hip.y + sh2); ctx.closePath(); ctx.fill();
+    if (ss && ss.pattern) { ctx.save(); ctx.beginPath(); ctx.moveTo(hip.x - 15, hip.y - 12); ctx.lineTo(hip.x + 15, hip.y - 12); ctx.lineTo(hip.x + 20, hip.y + sh2); ctx.lineTo(hip.x - 20, hip.y + sh2); ctx.closePath(); ctx.clip(); drawShortsPattern(ctx, ss.pattern, hip.x, hip.y, sh2, scol); ctx.restore(); }
+    if (ss && ss.sparkle) for (let i = 0; i < 4; i++) if (Math.sin(tNow * 7 + i * 2) > 0.5) drawStar(ctx, hip.x - 12 + i * 8, hip.y + 2 + (i % 2) * 12, 3, '#fff');
+    ctx.fillStyle = shade(scol, -0.4); ctx.fillRect(hip.x - 15, hip.y - 14, 30, 5);
+    if (!ss || !ss.pattern) { ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(hip.x - 3, hip.y - 8, 4, 30); }
+  }
 
   // przednia noga
   limb(hip, fLeg.mid, fLeg.end, 9, body); shoe(fLeg.end, shade(body, -0.3));
@@ -515,12 +640,14 @@ function drawFighter(ctx, f, tNow) {
   ctx.translate(P.head.x, P.head.y);
   ctx.rotate(P.head.rot);
   ctx.scale(f.facing, 1); // twarz nie jest lustrzana
+  if (f.bigHead) ctx.scale(1.8, 1.8);
   const img = heads[ch.id];
   ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.beginPath(); ctx.ellipse(2, 4, HEAD_W / 2 + 2, HEAD_H / 2 + 2, 0, 0, Math.PI * 2); ctx.fill();
   if (img) ctx.drawImage(img, -HEAD_W / 2, -HEAD_H / 2, HEAD_W, HEAD_H);
   if (f.hurtFlash > 0) { ctx.globalAlpha = f.hurtFlash * 2; ctx.fillStyle = '#ff2a2a'; ctx.beginPath(); ctx.ellipse(0, 0, HEAD_W / 2, HEAD_H / 2, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
   ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(0, 0, HEAD_W / 2 - 1, HEAD_H / 2 - 1, 0, 0, Math.PI * 2); ctx.stroke();
   if (ch.legendary) drawCrown(ctx, 0, -HEAD_H / 2 + 6, 0.9);
+  if (f.cos.hat) drawHat(ctx, f.cos.hat, tNow);
   if (f.state === 'ko' && f.stateT > 0.5) {
     for (let i = 0; i < 3; i++) { const a = tNow * 4 + i * Math.PI * 2 / 3; drawStar(ctx, Math.cos(a) * 44, -HEAD_H / 2 - 4 + Math.sin(a) * 12, 9, '#ffe45c'); }
   }
@@ -533,6 +660,7 @@ function drawFighter(ctx, f, tNow) {
   }
   limb({ x: sh.x + 6, y: sh.y + 4 }, fArm.mid, fArm.end, 8, skin);
   drawGlove(fArm.end, 16, false);
+  if (f.weapon) { ctx.save(); ctx.translate(fArm.end.x + 8, fArm.end.y - 8); ctx.scale(f.facing, 1); ctx.rotate(-0.5 * f.facing); ctx.font = '44px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(f.weapon.emoji, 0, 0); ctx.restore(); }
   if (f.state === 'block') {
     ctx.strokeStyle = 'rgba(120,180,255,0.55)'; ctx.lineWidth = 4;
     ctx.beginPath(); ctx.arc(24, -190, 42, -Math.PI * 0.7, Math.PI * 0.55); ctx.stroke();
@@ -577,7 +705,30 @@ function drawProjectile(ctx, pr) {
     ctx.strokeStyle = pr.col; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(4, -18); ctx.lineTo(10, -36); ctx.stroke();
     ctx.fillStyle = '#9ecbff'; for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(-8 + i * 8, -10, 3, 0, Math.PI * 2); ctx.fill(); }
   } else if (pr.kind === 'heart') { drawHeart(ctx, 0, 0, 18, pr.col); ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.beginPath(); ctx.arc(-6, -8, 4, 0, Math.PI * 2); ctx.fill(); }
+  else if (pr.kind === 'emoji') { ctx.font = '38px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(pr.emoji, 0, 0); }
   ctx.restore();
+}
+function drawPattern(ctx, kind, x, y, r, col) {
+  ctx.save(); ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.clip();
+  if (kind === 'lava') { ctx.fillStyle = '#ffd200'; for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.arc(x + Math.cos(i * 1.7) * r * 0.5, y + Math.sin(i * 1.7) * r * 0.5, r * 0.22, 0, Math.PI * 2); ctx.fill(); } }
+  if (kind === 'melon') { ctx.strokeStyle = '#145a32'; ctx.lineWidth = 3; for (let i = -1; i <= 1; i++) { ctx.beginPath(); ctx.moveTo(x + i * r * 0.5, y - r); ctx.quadraticCurveTo(x + i * r * 0.5 + 6, y, x + i * r * 0.5, y + r); ctx.stroke(); } }
+  if (kind === 'fur') { ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1.5; for (let i = 0; i < 14; i++) { const a = i * 0.45; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * r * 0.7, y + Math.sin(a) * r * 0.7); ctx.lineTo(x + Math.cos(a) * r * 1.1, y + Math.sin(a) * r * 1.1); ctx.stroke(); } }
+  if (kind === 'brick') { ctx.strokeStyle = '#f4e4d4'; ctx.lineWidth = 2; for (let yy = -r; yy < r; yy += r * 0.5) { ctx.beginPath(); ctx.moveTo(x - r, y + yy); ctx.lineTo(x + r, y + yy); ctx.stroke(); } ctx.beginPath(); ctx.moveTo(x, y - r); ctx.lineTo(x, y + r); ctx.stroke(); }
+  ctx.restore();
+}
+function drawShortsPattern(ctx, kind, x, y, h, col) {
+  if (kind === 'hearts') { ctx.fillStyle = '#ff3b6b'; for (let i = 0; i < 6; i++) drawHeart(ctx, x - 14 + (i % 3) * 14, y - 4 + Math.floor(i / 3) * 14, 4, '#ff3b6b'); }
+  if (kind === 'camo') { for (const [dx, dy, c] of [[-10, -4, '#3b4a1f'], [8, 2, '#8a7a4a'], [-2, 12, '#2b3a17'], [12, 16, '#6b7a3a']]) { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x + dx, y + dy, 9, 6, 0.5, 0, Math.PI * 2); ctx.fill(); } }
+  if (kind === 'flag') { ctx.fillStyle = '#e53935'; ctx.fillRect(x - 25, y + 6, 50, h); }
+  if (kind === 'stripes') { ctx.fillStyle = 'rgba(70,90,160,0.6)'; for (let yy = -10; yy < h; yy += 8) ctx.fillRect(x - 25, y + yy, 50, 3); }
+  if (kind === 'leopard') { ctx.fillStyle = '#4a2c0a'; for (let i = 0; i < 8; i++) { ctx.beginPath(); ctx.arc(x - 14 + (i % 4) * 9.5, y - 4 + Math.floor(i / 4) * 14 + (i % 2) * 4, 3, 0, Math.PI * 2); ctx.fill(); } }
+  if (kind === 'diaper') { ctx.fillStyle = '#9ecbff'; ctx.fillRect(x - 25, y - 12, 50, 6); ctx.fillStyle = '#ffb6c1'; ctx.beginPath(); ctx.arc(x, y + 14, 5, 0, Math.PI * 2); ctx.fill(); }
+}
+function drawHat(ctx, hat, t) {
+  const top = -HEAD_H / 2;
+  if (hat.draw === 'halo') { ctx.strokeStyle = '#ffe45c'; ctx.lineWidth = 5; ctx.shadowColor = '#ffe45c'; ctx.shadowBlur = 12; ctx.beginPath(); ctx.ellipse(0, top - 14 + Math.sin(t * 3) * 3, 34, 9, 0, 0, Math.PI * 2); ctx.stroke(); ctx.shadowBlur = 0; return; }
+  if (hat.draw === 'horns') { ctx.fillStyle = '#c0392b'; for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(s * 22, top + 10); ctx.quadraticCurveTo(s * 40, top - 10, s * 30, top - 32); ctx.quadraticCurveTo(s * 32, top - 6, s * 12, top + 4); ctx.closePath(); ctx.fill(); } return; }
+  if (hat.emoji) { ctx.font = '52px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(hat.emoji, 0, top - 8); }
 }
 function drawCrown(ctx, x, y, s) {
   ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
@@ -605,6 +756,9 @@ function aiThink(f, opp, dt) {
   const dist = Math.abs(opp.x - f.x), r = Math.random();
   const toward = opp.x > f.x ? 'right' : 'left', away = opp.x > f.x ? 'left' : 'right';
   const cornered = (f.x <= RING_L + 5 || f.x >= RING_R - 5);
+  const m = f.match;
+  if (m && m.pickups.length && r < 0.5) { const pk = m.pickups[0]; if (Math.abs(pk.x - f.x) < 260 && pk.y >= FLOOR - 40) { ai.h[pk.x > f.x ? 'right' : 'left'] = true; ai.timer = 0.2; return; } }
+  if (m && m.hazards.some((h) => (h.kind === 'bomb' && Math.abs(h.x - f.x) < 150) || (h.kind === 'bottle' && Math.abs(h.x - f.x) < 50)) && r < 0.7) { const h = m.hazards.find((h) => h.kind === 'bomb' || h.kind === 'bottle'); ai.h[h.x > f.x ? 'left' : 'right'] = true; ai.timer = 0.25; return; }
 
   if (f.meter >= METER_MAX && f.onGround && f.state !== 'special') {
     const ranged = ['miska', 'miszalinaq', 'diddy', 'piotszu', 'watol', 'bianka', 'wiczka', 'gazdziol', 'king_pala'].includes(f.ch.id);
@@ -707,15 +861,32 @@ class Match {
   constructor(opts) {
     this.opts = opts; // { p1: ch, p2: ch, mode: 'campaign'|'versus', diff, onEnd(winnerSide) }
     const touch = isTouchDevice();
-    const c1 = new KeyController(opts.mode === 'versus' ? KEYMAP.p1 : KEYMAP.solo, true);
-    const c2 = opts.mode === 'versus' ? new KeyController(KEYMAP.p2, false) : new AIController(opts.diff);
+    const human2 = opts.mode === 'versus' || opts.human2;
+    const c1 = new KeyController(human2 ? KEYMAP.p1 : KEYMAP.solo, true);
+    const c2 = human2 ? new KeyController(KEYMAP.p2, false) : new AIController(opts.diff || 0.6);
     this.f = [new Fighter(opts.p1, 0, c1), new Fighter(opts.p2, 1, c2)];
     this.f[0].match = this; this.f[1].match = this;
+    const eq = PROFILE.equipped(); this.f[0].cos = { gloves: eq.gloves, shorts: eq.shorts, hat: eq.hat, ko: eq.ko };
+    this.f[0].upg = PROFILE.d.upgrades[opts.p1.id] || 0;
+    if (opts.mode !== 'versus' && Math.random() < 0.3) this.f[1].cos.hat = pick(ITEMS.filter((i) => i.type === 'hat'));
+    if (PROFILE.d.bigHeads) { this.f[0].bigHead = true; this.f[1].bigHead = true; }
+    this.p1Taunt = eq.taunt ? eq.taunt.name : null;
+    if (opts.boss) {
+      const b = this.f[1], mod = opts.boss;
+      b.maxHp = mod.hp; b.hp = mod.hp; if (mod.scale) b.scale = mod.scale; if (mod.speed) b.speedMul = mod.speed; if (mod.power) b.powerMul = mod.power;
+      if (mod.armor) b.permArmor = true; if (mod.vamp) b.vamp = mod.vamp; if (mod.meter) b.meterMul = mod.meter; b.isBoss = true;
+      this.bossMod = mod;
+    }
     if (opts.p1Hp) { this.f[0].hp = Math.min(this.f[0].maxHp, opts.p1Hp); }
     if (opts.p1Meter) this.f[0].meter = opts.p1Meter;
     this.phase = 'intro'; this.t = 0; this.phaseT = 0; this.fightTime = 0;
     this.particles = []; this.popups = []; this.shake = 0; this.freeze = 0; this.excite = 0; this.slow = 1;
     this.projectiles = []; this.zones = []; this.timers = []; this.flash = 0; this.announce = null;
+    this.pickups = []; this.hazards = []; this.nextEvent = rand(7, 12); this.eventBanner = null; this.gravityMul = 1; this.crack = null; this.firstBlood = null; this.perfect = false;
+    this.eventsOn = opts.events !== false;
+    this.hist = []; this.histT = 0; this.replay = null; this.recorder = null; this.recChunks = [];
+    if (opts.boss && opts.boss.gravity) this.gravityMul = opts.boss.gravity;
+    if (opts.boss && opts.boss.chaos) this.nextEvent = 3;
     this.winner = null; this.ended = false;
     buildCrowd([opts.p1.id, opts.p2.id]);
     SFX.bell();
@@ -765,6 +936,23 @@ class Match {
       }
     }
     if (this.announce) { this.announce.t -= dtRaw; if (this.announce.t <= 0) this.announce = null; }
+    if (this.eventBanner) { this.eventBanner.t -= dtRaw; if (this.eventBanner.t <= 0) this.eventBanner = null; }
+    if (this.crack) { this.crack.t -= dtRaw; if (this.crack.t <= 0) this.crack = null; }
+    if (fighting && this.eventsOn) {
+      if (this.fightTime >= this.nextEvent) { this.nextEvent = this.fightTime + (this.bossMod && this.bossMod.chaos ? 4 : rand(9, 15)); this.ringEvent(); }
+      for (const pk of this.pickups) {
+        pk.life -= dt; if (pk.y < FLOOR - 18) { pk.y += 140 * dt; } else pk.y = FLOOR - 18;
+        for (const f of this.f) if (f.alive && f.onGround && pk.y >= FLOOR - 30 && Math.abs(f.x - pk.x) < 34) { pk.life = 0; f.stats.pickups = (f.stats.pickups || 0) + 1; this.popup(f.x, f.y - 265, pk.def.name.toUpperCase(), '#ffe135', 22); this.spark(pk.x, pk.y, '#ffe135', 10); SFX.jump(); pk.def.use(this, f); break; }
+      }
+      this.pickups = this.pickups.filter((pk) => pk.life > 0);
+      for (const hz of this.hazards) {
+        hz.life -= dt;
+        if (hz.kind === 'peel') for (const f of this.f) if (f.alive && f.onGround && Math.abs(f.vx) > 20 && Math.abs(f.x - hz.x) < 24 && hz.life > 0) { hz.life = 0; this.status(f, 'stun', 1); f.setState('hit', 1); f.vx = (f.vx > 0 ? 1 : -1) * 260; f.vy = -200; f.onGround = false; this.popup(f.x, f.y - 265, 'ŚLIZG!', '#ffe135', 28); SFX.whiff(); }
+        if (hz.kind === 'bomb' && hz.life <= 0) { this.zone({ x: hz.x, kind: 'fire', life: 0.45, col: '#ff3b3b', r: 170 }); this.shake = 16; this.flash = 0.3; SFX.punch(true); SFX.noise(0.4, 200, 1, 0.8); for (const f of this.f) if (f.alive && Math.abs(f.x - hz.x) < 150) this.damage(this.other(f), f, 15, { text: 'BUM!', col: '#ff3b3b', knock: 420, pop: true, ignoreBlock: true, noMeter: true }); }
+        if (hz.kind === 'bottle') { hz.y += hz.vy * dt; hz.vy += 1400 * dt; if (hz.y >= FLOOR - 10) { hz.life = 0; this.spark(hz.x, FLOOR - 10, '#9ecbff', 14); SFX.block(); for (const f of this.f) if (f.alive && Math.abs(f.x - hz.x) < 45 && f.onGround) this.damage(this.other(f), f, 8, { text: 'BUTELKA!', col: '#9ecbff', knock: 150, ignoreBlock: true }); } }
+      }
+      this.hazards = this.hazards.filter((hz) => hz.life > 0 || hz.kind === 'bottle' && hz.y < FLOOR - 10);
+    }
     this.flash = Math.max(0, this.flash - dtRaw * 1.6);
 
     // rozpychanie
@@ -774,16 +962,25 @@ class Match {
     }
     if (fighting) { this.resolveHit(a, b); this.resolveHit(b, a); }
 
+    if (this.phase === 'fight' || (this.phase === 'ko' && this.phaseT < 1.2)) {
+      this.histT += dtRaw;
+      if (this.histT >= 1 / 30) { this.histT = 0; this.hist.push(this.snapshot()); if (this.hist.length > 80) this.hist.shift(); }
+    }
     if (this.phase === 'ko') {
       this.slow = this.phaseT < 0.9 ? 0.3 : 1;
-      if (this.phaseT > 3.2 && !this.ended) { this.ended = true; this.opts.onEnd(this.winner); }
+      if (this.phaseT > 3.0 && !this.ended && this.hist.length > 20 && this.opts.replay !== false) { this.startReplay(); }
+      else if (this.phaseT > 3.2 && !this.ended) { this.ended = true; this.opts.onEnd(this.winner); }
+    }
+    if (this.phase === 'replay') {
+      this.replay.idx += dtRaw * 30 * 0.5; this.replay.t += dtRaw;
+      if (this.replay.idx >= this.hist.length - 1 || this.replay.skip) this.endReplay();
     }
     this.excite = Math.max(0, this.excite - dt * 0.5);
     this.updateFx(dt);
   }
   updateFx(dt) {
     this.shake = Math.max(0, this.shake - dt * 30);
-    for (const p of this.particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.float ? -200 : 900) * dt; p.life -= dt; }
+    for (const p of this.particles) { p.x += p.vx * dt; p.y += p.vy * dt; p.vy += (p.float ? -200 : 900) * dt; p.life -= dt; if (p.spin) p.rot = (p.rot || 0) + p.spin * dt; }
     this.particles = this.particles.filter((p) => p.life > 0);
     for (const p of this.popups) { p.y += p.vy * dt; p.life -= dt; p.vy *= 0.95; }
     this.popups = this.popups.filter((p) => p.life > 0);
@@ -791,11 +988,18 @@ class Match {
   resolveHit(att, def) {
     if (!att.attackActive() || !def.alive) return;
     const G = att.gloveWorld(); const heavy = att.state === 'heavy';
-    const top = def.state === 'dodge' ? def.y - 150 : def.y - 228;
-    if (!(G.x > def.x - 36 && G.x < def.x + 36 && G.y > top && G.y < def.y)) return;
+    const top = def.y - (def.state === 'dodge' ? 150 : 228) * def.scale, hw = 36 * def.scale;
+    if (!(G.x > def.x - hw && G.x < def.x + hw && G.y > top && G.y < def.y)) return;
     att.hitDone = true;
-    const base = (heavy ? 15 : 6) * att.ch.power * rand(0.9, 1.15) * (1 + Math.min(att.combo, 10) * 0.1);
-    this.damage(att, def, base, { heavy, punch: true, at: G });
+    let base = (heavy ? 15 : 6) * att.ch.power * att.powerMul * rand(0.9, 1.15) * (1 + Math.min(att.combo, 10) * 0.1);
+    const o = { heavy, punch: true, at: G };
+    if (att.weapon) {
+      const wpn = att.weapon; base *= wpn.mult || 1; o.text = pick(['ŁUBUDU!', 'PRASK!', 'BĘC!']); o.col = '#ffe135'; if (wpn.knock) o.knock = (heavy ? 460 : 220) * wpn.knock;
+      o.onHit = () => { if (wpn.stun) this.status(def, 'stun', wpn.stun); if (wpn.slow) this.status(def, 'slow', wpn.slow); if (wpn.confuse) this.status(def, 'confused', wpn.confuse); };
+      if (wpn.sfx === 'squeak') SFX.tone(900, 0.15, 0.3, 'square', 1.6);
+      if (wpn.hits !== undefined) { wpn.hits--; if (wpn.hits <= 0) { att.weapon = null; this.popup(att.x, att.y - 270, 'BROŃ ZNISZCZONA', '#aaa', 18); } }
+    }
+    this.damage(att, def, base, o);
   }
   // Jedno miejsce od obrażeń: ciosy, supermoce, ogień. Zwraca zadane obrażenia.
   damage(att, def, base, o = {}) {
@@ -813,7 +1017,11 @@ class Match {
     const facingAtt = (att.x - def.x) * def.facing > 0;
     const blocked = def.state === 'block' && facingAtt && !o.ignoreBlock;
     if (def.st.armor > 0) dmg *= 0.3;
-    const heavy = !!o.heavy;
+    if (att.st.double > 0) dmg *= 2;
+    if (!o.punch && !o.silent && !o.isCounter && att.upg >= 2) dmg *= 1.3;
+    let crit = false;
+    if (o.punch && !blocked && Math.random() < 0.08) { crit = true; dmg *= 1.6; att.stats.crits = (att.stats.crits || 0) + 1; o.text = 'KRYTYK!'; o.col = '#ff3b3b'; this.crack = { x: G.x, y: G.y, t: 0.5 }; this.freeze = Math.max(this.freeze, 0.1); this.shake = Math.max(this.shake, 10); }
+    const heavy = !!o.heavy || crit;
     if (blocked) {
       dmg *= 0.15; def.vx = dir * 160; def.stats.blocks++; SFX.block(); this.spark(G.x, G.y, '#9ecbff', 6);
       if (heavy) { def.setState('hit', 0.24); this.popup(def.x, def.y - 240, 'PRZEŁAMANY!', '#ffb020', 24); this.shake = 6; VOICES.play(def.ch, 'obrywa', { chance: 0.6 }); }
@@ -836,16 +1044,81 @@ class Match {
       const txt = o.text !== undefined ? o.text : pick(heavy ? ['ŁOMOT!', 'KABOOM!', 'BUM!'] : ['ŁUP!', 'BACH!', 'PRASK!', 'TRZASK!', 'PAC!']);
       if (txt) this.popup(G.x + dir * 10, G.y - 40, txt, o.col || (heavy ? '#ffb020' : '#fff'), (heavy || !o.punch) ? 40 : 28);
       this.popup(def.x, def.y - 250, '-' + Math.round(dmg), '#ff5c5c', 22);
-      if (o.punch && att.combo >= 3) this.popup(att.x, att.y - 260, att.combo + 'x COMBO', att.ch.glove, 20);
+      if (o.punch && att.combo >= 3) this.popup(att.x, att.y - 260, att.combo + 'x COMBO' + (att.combo >= 10 ? ' BOSKIE!' : att.combo >= 8 ? ' MASAKRA!' : att.combo >= 5 ? ' SZALEŃSTWO!' : ''), att.ch.glove, att.combo >= 5 ? 26 : 20);
+      if (!this.firstBlood) { this.firstBlood = att; this.popup(W / 2, 150, 'PIERWSZA KREW!', '#ff3b3b', 36); }
+      if (o.onHit) o.onHit();
       this.shake = Math.max(this.shake, heavy ? 12 : 5); this.freeze = Math.max(this.freeze, heavy ? 0.08 : 0.03); this.excite = Math.min(1, this.excite + (heavy ? 0.5 : 0.2));
     }
     if (!o.silent) {
-      att.meter = Math.min(METER_MAX, att.meter + (o.isCounter ? 0 : (blocked ? 4 : (heavy ? 14 : 9))));
-      def.meter = Math.min(METER_MAX, def.meter + (blocked ? 3 : 7));
+      att.meter = Math.min(METER_MAX, att.meter + (o.isCounter ? 0 : (blocked ? 4 : (heavy ? 14 : 9))) * att.meterMul * (att.upg >= 1 ? 1.25 : 1));
+      def.meter = Math.min(METER_MAX, def.meter + (blocked ? 3 : 7) * def.meterMul);
     }
     def.hp = Math.max(0, def.hp - dmg); att.stats.dmgDealt += dmg; def.stats.dmgTaken += dmg;
+    if (att.vamp && dmg > 0 && att.alive) { att.hp = Math.min(att.maxHp, att.hp + dmg * att.vamp); }
     if (def.hp <= 0) this.knockout(att, def);
     return dmg;
+  }
+  other(f) { return f === this.f[0] ? this.f[1] : this.f[0]; }
+  snapshot() {
+    const fs = this.f.map((f) => ({ x: f.x, y: f.y, vy: f.vy, facing: f.facing, state: f.state, stateT: f.stateT, stateDur: f.stateDur, animT: f.animT, hp: f.hp, ghost: f.ghost, hurtFlash: f.hurtFlash, st: Object.assign({}, f.st), weapon: f.weapon, scale: f.scale, bigHead: f.bigHead, isBoss: f.isBoss, cos: f.cos, ch: f.ch, upg: f.upg, meter: f.meter }));
+    return { fs, particles: this.particles.map((p) => ({ x: p.x, y: p.y, r: p.r, col: p.col, emoji: p.emoji, rot: p.rot, life: p.life })), zones: this.zones.map((z) => Object.assign({}, z)), projectiles: this.projectiles.map((p) => Object.assign({}, p)), pickups: this.pickups.map((p) => Object.assign({}, p)), hazards: this.hazards.map((h) => Object.assign({}, h)), popups: this.popups.map((p) => Object.assign({}, p)) };
+  }
+  startReplay() {
+    this.phase = 'replay'; this.replay = { idx: 0, t: 0, skip: false };
+    const last = this.hist[this.hist.length - 1]; this.replay.cx = (last.fs[0].x + last.fs[1].x) / 2; this.replay.cy = 330;
+    try {
+      const cv = $('#c'); if (window.MediaRecorder && cv.captureStream) {
+        const mime = ['video/mp4;codecs=avc1', 'video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm', 'video/mp4'].find((m) => MediaRecorder.isTypeSupported(m));
+        this.recChunks = []; this.recorder = new MediaRecorder(cv.captureStream(30), mime ? { mimeType: mime } : undefined);
+        this.recorder.ondataavailable = (e) => { if (e.data && e.data.size) this.recChunks.push(e.data); };
+        this.recorder.start(250);
+      }
+    } catch (e) { this.recorder = null; }
+  }
+  endReplay() {
+    if (this.ended) return; this.ended = true;
+    const finish = () => this.opts.onEnd(this.winner);
+    if (this.recorder && this.recorder.state !== 'inactive') {
+      const rec = this.recorder; rec.onstop = () => { try { const blob = new Blob(this.recChunks, { type: rec.mimeType || 'video/webm' }); if (blob.size > 1000) App.lastReplay = { blob, type: rec.mimeType || 'video/webm', name: `opg-ko-${Date.now()}.${/mp4/.test(rec.mimeType || '') ? 'mp4' : 'webm'}` }; } catch (e) {} finish(); };
+      try { rec.stop(); } catch (e) { finish(); }
+    } else finish();
+  }
+  drawReplay(ctx) {
+    const i = Math.min(this.hist.length - 1, Math.floor(this.replay.idx)), snap = this.hist[i];
+    const zoom = 1.55, cx = clamp(this.replay.cx, W / (2 * zoom) + 0, W - W / (2 * zoom)), cy = clamp(this.replay.cy, H / (2 * zoom), H - H / (2 * zoom));
+    ctx.save(); ctx.translate(W / 2, H / 2); ctx.scale(zoom, zoom); ctx.translate(-cx, -cy);
+    drawArena(ctx, this.t, 1);
+    for (const z of snap.zones) if (z.kind === 'target' || z.kind === 'fire') drawZone(ctx, z, this.t);
+    const proxies = snap.fs.map((sf, k) => { const pr = Object.assign(Object.create(Fighter.prototype), this.f[k], sf); pr.pose = computePose(pr); return pr; });
+    const order = (proxies[0].state === 'hit' || proxies[0].state === 'ko') ? [proxies[0], proxies[1]] : [proxies[1], proxies[0]];
+    for (const f of order) drawFighter(ctx, f, this.t);
+    for (const z of snap.zones) if (z.kind !== 'target' && z.kind !== 'fire') drawZone(ctx, z, this.t);
+    for (const pr of snap.projectiles) drawProjectile(ctx, pr);
+    ctx.font = '40px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const pk of snap.pickups) ctx.fillText(pk.def.emoji, pk.x, pk.y);
+    for (const hz of snap.hazards) if (hz.kind === 'peel') ctx.fillText('🍌', hz.x, FLOOR - 8); else if (hz.kind === 'bomb') ctx.fillText('💣', hz.x, FLOOR - 22);
+    ctx.textBaseline = 'alphabetic';
+    for (const p of snap.particles) { ctx.globalAlpha = Math.min(1, p.life * 3); if (p.emoji) { ctx.font = `${p.r * 6}px sans-serif`; ctx.textAlign = 'center'; ctx.fillText(p.emoji, p.x, p.y); } else { ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); } }
+    ctx.globalAlpha = 1;
+    for (const p of snap.popups) { ctx.save(); ctx.globalAlpha = Math.min(1, p.life * 2); ctx.font = `${p.size}px Bangers, Impact, sans-serif`; ctx.textAlign = 'center'; ctx.lineWidth = 5; ctx.strokeStyle = 'rgba(0,0,0,0.8)'; ctx.strokeText(p.text, p.x, p.y); ctx.fillStyle = p.col; ctx.fillText(p.text, p.x, p.y); ctx.restore(); }
+    ctx.restore();
+    // pasy kinowe + napis
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, 46); ctx.fillRect(0, H - 46, W, 46);
+    ctx.save(); ctx.textAlign = 'left'; ctx.font = '26px Bangers, Impact, sans-serif'; ctx.fillStyle = '#ff3b3b'; ctx.fillText('● POWTÓRKA', 24, 32);
+    ctx.textAlign = 'right'; ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '600 13px Rubik, sans-serif'; ctx.fillText('ZWOLNIONE TEMPO • dotknij / wciśnij klawisz, żeby pominąć', W - 24, 30);
+    ctx.textAlign = 'center'; ctx.font = '22px Bangers, Impact, sans-serif'; ctx.fillStyle = '#ffd700'; ctx.fillText(`${this.f[this.winner].ch.name.toUpperCase()} • K.O.`, W / 2, H - 16);
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1; for (let y = 50; y < H - 46; y += 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  }
+  banner(text, col, sub) { this.eventBanner = { text, col, sub, t: 2 }; SFX.bell(); }
+  ringEvent() {
+    const ev = weightedPick(RING_EVENTS);
+    if (ev.id === 'drop') { const def = weightedPick(PICKUPS); this.pickups.push({ def, x: rand(RING_L + 40, RING_R - 40), y: -40, life: 12 }); this.banner(`${def.emoji} ${def.name.toUpperCase()}!`, '#ffe135', def.desc); }
+    if (ev.id === 'bottle') { const tgt = pick(this.f); const x = clamp(tgt.x + rand(-30, 30), RING_L, RING_R); this.zone({ x, kind: 'target', life: 0.8, col: '#9ecbff' }); this.banner('🍾 KTOŚ Z WIDOWNI RZUCA BUTELKĄ!', '#9ecbff', 'uciekaj spod znaku'); this.after(0.8, () => this.hazards.push({ kind: 'bottle', emoji: '🍾', x, y: -30, vy: 300, life: 3 })); }
+    if (ev.id === 'quake') { this.banner('🌍 TRZĘSIENIE RINGU!', '#ff7a1a', 'obaj tracą równowagę'); this.shake = 20; for (const f of this.f) { this.status(f, 'stun', 0.7); f.vy = -250; f.onGround = false; } }
+    if (ev.id === 'double') { this.banner('💥 PODWÓJNE OBRAŻENIA!', '#ff3b3b', 'przez 8 sekund, dla obu'); for (const f of this.f) f.st.double = 8; }
+    if (ev.id === 'bomb') { const x = rand(RING_L + 60, RING_R - 60); this.hazards.push({ kind: 'bomb', emoji: '💣', x, life: 3 }); this.banner('💣 BOMBA NA RINGU!', '#ff3b3b', 'wybuchnie za 3 sekundy'); }
+    if (ev.id === 'rain') { this.banner('🍕 DESZCZ JEDZENIA!', '#ffe135', 'zbieraj, ile zdążysz'); for (let i = 0; i < 4; i++) this.after(i * 0.4, () => { const def = pick(PICKUPS.filter((p) => ['pizza', 'sausage', 'energy', 'kebab'].includes(p.id))); this.pickups.push({ def, x: rand(RING_L + 40, RING_R - 40), y: -40, life: 10 }); }); }
   }
   heal(f, n) { if (!f.alive) return; const before = f.hp; f.hp = Math.min(f.maxHp, f.hp + n); this.popup(f.x, f.y - 250, '+' + Math.round(f.hp - before), '#7cff9b', 24); this.spark(f.x, f.y - 140, '#7cff9b', 10); }
   status(f, k, dur) {
@@ -865,15 +1138,23 @@ class Match {
   knockout(att, def) {
     def.setState('ko'); def.vx = att.facing * 380; def.vy = -300; def.onGround = false;
     this.phase = 'ko'; this.phaseT = 0; this.winner = att.side; this.shake = 18; this.freeze = 0.18; this.excite = 1;
+    this.perfect = att.stats.dmgTaken <= 0;
     SFX.ko(); setTimeout(() => SFX.cheer(), 400);
     VOICES.play(def.ch, 'ko', { cooldown: 0 });
     setTimeout(() => VOICES.play(att.ch, 'wygrana', { cooldown: 0 }), 1400);
     this.spark(def.x, def.y - 150, '#ffd700', 30);
+    const kofx = att.cos.ko;
+    if (kofx) {
+      if (kofx.fx === 'rain') for (let i = 0; i < 40; i++) this.particles.push({ x: rand(60, W - 60), y: rand(-400, -20), vx: rand(-20, 20), vy: rand(50, 200), life: rand(2, 3.4), r: rand(4, 7), emoji: kofx.emoji, spin: rand(-4, 4) });
+      if (kofx.fx === 'confetti') for (let i = 0; i < 90; i++) this.particles.push({ x: rand(0, W), y: rand(-300, -10), vx: rand(-40, 40), vy: rand(60, 220), life: rand(2, 3.4), r: rand(2, 4), col: pick(['#ffd700', '#ff4fa3', '#7c5cff', '#2ec4b6', '#ff3b3b', '#fff']) });
+      if (kofx.fx === 'fireworks') for (let k = 0; k < 5; k++) this.after(0.3 + k * 0.4, () => { const x = rand(120, W - 120), y = rand(80, 260), col = pick(['#ffd700', '#ff4fa3', '#7c5cff', '#2ec4b6', '#fff']); for (let i = 0; i < 36; i++) { const a = i / 36 * Math.PI * 2, sp = rand(140, 260); this.particles.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: rand(0.8, 1.4), r: 3, col, float: true }); } SFX.punch(true); });
+    }
   }
   spark(x, y, col, n) { for (let i = 0; i < n; i++) { const a = rand(0, Math.PI * 2), s = rand(120, 460); this.particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 100, life: rand(0.25, 0.6), col, r: rand(2, 5) }); } }
   popup(x, y, text, col, size) { this.popups.push({ x, y, text, col, size, life: 0.9, vy: -70 }); }
 
   draw(ctx) {
+    if (this.phase === 'replay') { this.drawReplay(ctx); return; }
     ctx.save();
     if (this.shake > 0) ctx.translate(rand(-this.shake, this.shake), rand(-this.shake, this.shake));
     drawArena(ctx, this.t, this.excite);
@@ -883,8 +1164,16 @@ class Match {
     for (const f of order) drawFighter(ctx, f, this.t);
     for (const z of this.zones) if (z.kind !== 'target' && z.kind !== 'fire') drawZone(ctx, z, this.t);
     for (const pr of this.projectiles) drawProjectile(ctx, pr);
+    ctx.font = '40px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const pk of this.pickups) { const bob = pk.y >= FLOOR - 18 ? Math.sin(this.t * 5) * 4 : 0; if (pk.y < FLOOR - 18) { ctx.font = '36px sans-serif'; ctx.fillText('🪂', pk.x, pk.y - 40); ctx.font = '40px sans-serif'; } ctx.globalAlpha = pk.life < 2 ? (Math.sin(this.t * 14) > 0 ? 1 : 0.3) : 1; ctx.fillText(pk.def.emoji, pk.x, pk.y + bob); ctx.globalAlpha = 1; }
+    for (const hz of this.hazards) { if (hz.kind === 'peel') { ctx.font = '34px sans-serif'; ctx.fillText('🍌', hz.x, FLOOR - 8); } if (hz.kind === 'bomb') { ctx.font = (hz.life < 1 && Math.sin(this.t * 30) > 0) ? '54px sans-serif' : '44px sans-serif'; ctx.fillText('💣', hz.x, FLOOR - 22); } if (hz.kind === 'bottle') { ctx.save(); ctx.translate(hz.x, hz.y); ctx.rotate(this.t * 10); ctx.font = '36px sans-serif'; ctx.fillText('🍾', 0, 0); ctx.restore(); } }
+    ctx.textBaseline = 'alphabetic';
 
-    for (const p of this.particles) { ctx.globalAlpha = Math.min(1, p.life * 3); ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    for (const p of this.particles) {
+      ctx.globalAlpha = Math.min(1, p.life * 3);
+      if (p.emoji) { ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot || 0); ctx.font = `${p.r * 6}px sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(p.emoji, 0, 0); ctx.restore(); }
+      else { ctx.fillStyle = p.col; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
+    }
     ctx.globalAlpha = 1;
     for (const p of this.popups) {
       ctx.save(); ctx.globalAlpha = Math.min(1, p.life * 2); ctx.font = `${p.size}px Bangers, Impact, sans-serif`; ctx.textAlign = 'center';
@@ -892,7 +1181,14 @@ class Match {
     }
     ctx.restore();
     if (this.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${Math.min(0.85, this.flash)})`; ctx.fillRect(0, 0, W, H); }
+    if (this.crack) { ctx.save(); ctx.globalAlpha = Math.min(1, this.crack.t * 3); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; for (let i = 0; i < 9; i++) { const a = i / 9 * Math.PI * 2 + 0.3; ctx.beginPath(); ctx.moveTo(this.crack.x, this.crack.y); let x = this.crack.x, y = this.crack.y; for (let k = 0; k < 4; k++) { x += Math.cos(a + (k % 2 ? 0.3 : -0.3)) * 60; y += Math.sin(a + (k % 2 ? 0.3 : -0.3)) * 60; ctx.lineTo(x, y); } ctx.stroke(); } ctx.restore(); }
     this.drawHUD(ctx);
+    if (this.eventBanner) {
+      const eb = this.eventBanner, p = 1 - eb.t / 2, a = p < 0.1 ? p * 10 : p > 0.8 ? (1 - p) * 5 : 1;
+      ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fillRect(0, 118, W, 54);
+      ctx.textAlign = 'center'; ctx.font = '30px Bangers, Impact, sans-serif'; ctx.fillStyle = eb.col; ctx.fillText(eb.text, W / 2, 146);
+      ctx.font = '600 13px Rubik, sans-serif'; ctx.fillStyle = '#fff'; ctx.fillText(eb.sub || '', W / 2, 164); ctx.restore();
+    }
     if (this.announce) {
       const an = this.announce, p = 1 - an.t / 1.5, sc = 1 + Math.max(0, 0.25 - p) * 5;
       ctx.save(); ctx.globalAlpha = p > 0.8 ? (1 - p) * 5 : 1;
@@ -913,7 +1209,8 @@ class Match {
       ctx.fillStyle = '#3a0d0d'; ctx.fillRect(x0, y, w, h);
       const frac = f.hp / f.maxHp;
       const grad = ctx.createLinearGradient(x0, 0, x0 + w, 0);
-      if (f.ch.legendary) { grad.addColorStop(0, '#ffd700'); grad.addColorStop(1, '#ff8c00'); }
+      if (f.isBoss) { grad.addColorStop(0, '#ff3b3b'); grad.addColorStop(1, '#7a0e0e'); }
+      else if (f.ch.legendary) { grad.addColorStop(0, '#ffd700'); grad.addColorStop(1, '#ff8c00'); }
       else { grad.addColorStop(0, '#2ec4b6'); grad.addColorStop(0.6, '#7cff9b'); grad.addColorStop(1, '#ffe45c'); }
       ctx.fillStyle = frac < 0.25 && !f.ch.legendary ? '#ff3b3b' : grad;
       const fw = w * frac;
@@ -925,7 +1222,7 @@ class Match {
       const img = heads[f.ch.id];
       ctx.save(); ctx.translate(right ? W - 8 : 8, hy); if (img) ctx.drawImage(img, right ? -hw : 0, 0, hw, hh); ctx.restore();
       ctx.font = '26px Bangers, Impact, sans-serif'; ctx.textAlign = right ? 'right' : 'left';
-      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,0.8)'; const nm = f.ch.name.toUpperCase() + (f.ch.legendary ? ' ★' : '');
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(0,0,0,0.8)'; const nm = (f.isBoss ? '👹 ' : '') + f.ch.name.toUpperCase() + (f.ch.legendary ? ' ★' : '') + (f.isBoss && this.bossMod ? ' ' + this.bossMod.name : '');
       const nx = right ? x0 + w : x0; ctx.strokeText(nm, nx, y + h + 26); ctx.fillStyle = f.ch.legendary ? '#ffd700' : '#fff'; ctx.fillText(nm, nx, y + h + 26);
       ctx.font = '600 12px Rubik, sans-serif'; ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.fillText(`${Math.ceil(f.hp)} / ${f.maxHp} HP`, nx, y + h + 44);
@@ -961,14 +1258,14 @@ class Match {
       if (t < 1.5) {
         const s = 1 + Math.max(0, 0.4 - t) * 3;
         ctx.save(); ctx.translate(W / 2, 250); ctx.scale(s, s); ctx.translate(-W / 2, -250);
-        big(`${a.ch.name.toUpperCase()}  vs  ${b.ch.name.toUpperCase()}`, 250, '#ffd700', 56, `„${b.ch.taunt}”`);
+        big(`${a.ch.name.toUpperCase()}  vs  ${b.ch.name.toUpperCase()}`, 250, '#ffd700', 56, this.p1Taunt && t > 0.75 ? this.p1Taunt : `„${b.ch.taunt}”`);
         ctx.restore();
       } else { const s = 1 + Math.max(0, 1.8 - t) * 2; ctx.save(); ctx.translate(W / 2, 260); ctx.scale(s, s); ctx.translate(-W / 2, -260); big('WALCZ!', 260, '#ff4fa3', 96); ctx.restore(); }
     }
     if (this.phase === 'ko') {
       const t = this.phaseT; const s = 1 + Math.max(0, 0.5 - t) * 4;
       ctx.save(); ctx.translate(W / 2, 250); ctx.scale(s, s); ctx.translate(-W / 2, -250);
-      big('K.O.!', 250, '#ff3b3b', 110, t > 1 ? `${this.f[this.winner].ch.name.toUpperCase()} WYGRYWA` : '');
+      big('K.O.!', 250, '#ff3b3b', 110, t > 1 ? `${this.f[this.winner].ch.name.toUpperCase()} WYGRYWA${this.perfect ? ' • PERFECT!' : ''}` : '');
       ctx.restore();
     }
   }
@@ -978,11 +1275,72 @@ class Match {
 //  Aplikacja (ekrany, kampania, pętla)
 // ============================================================
 // ============================================================
+//  RANKING ONLINE (Supabase, konfiguracja w online-config.js)
+// ============================================================
+const ONLINE = {
+  cfg: window.OPG_ONLINE || null, nick: '', pin: '', board: [], busy: false, lastSync: 0,
+  enabled() { return !!(this.cfg && this.cfg.url && this.cfg.key); },
+  loadSession() { try { const s = JSON.parse(localStorage.getItem('opg_online') || 'null'); if (s) { this.nick = s.nick; this.pin = s.pin; } } catch (e) {} },
+  saveSession() { try { localStorage.setItem('opg_online', JSON.stringify({ nick: this.nick, pin: this.pin })); } catch (e) {} },
+  logout() { this.nick = ''; this.pin = ''; try { localStorage.removeItem('opg_online'); } catch (e) {} },
+  async rpc(name, params) {
+    const r = await fetch(this.cfg.url.replace(/\/$/, '') + '/rest/v1/rpc/' + name, { method: 'POST', headers: { apikey: this.cfg.key, Authorization: 'Bearer ' + this.cfg.key, 'Content-Type': 'application/json' }, body: JSON.stringify(params || {}) });
+    if (!r.ok) { let msg = r.statusText; try { msg = (await r.json()).message || msg; } catch (e) {} throw new Error(msg); }
+    return r.json();
+  },
+  summary() { const p = PROFILE.d; return { xp: p.xp, level: PROFILE.level(), wins: p.wins, fights: p.fights, best_streak: p.bestStreak, max_combo: p.maxCombo, survival_best: p.survivalBest, crowns: Object.values(p.crowns).reduce((a, b) => a + b, 0), trophies: Object.keys(p.trophies).length, fastest_win: p.fastestWin || null, chips: p.chips, bosses: Object.keys(p.bosses).length }; },
+  async login(nick, pin) {
+    const res = await this.rpc('opg_login', { p_nick: nick, p_pin: pin });
+    if (!res || !res.ok) throw new Error(res && res.error ? res.error : 'Błąd logowania');
+    this.nick = nick; this.pin = pin; this.saveSession();
+    if (res.profile && res.profile.fights > PROFILE.d.fights) { PROFILE.d = Object.assign(PROFILE.defaults(), res.profile); PROFILE.save(); return 'pulled'; }
+    await this.sync(true); return 'pushed';
+  },
+  async sync(force) {
+    if (!this.enabled() || !this.nick || this.busy) return; if (!force && Date.now() - this.lastSync < 15000) return;
+    this.busy = true; try { await this.rpc('opg_save', { p_nick: this.nick, p_pin: this.pin, p_summary: this.summary(), p_profile: PROFILE.d }); this.lastSync = Date.now(); } catch (e) { console.warn('sync', e.message); } finally { this.busy = false; }
+  },
+  async fetchBoard() { this.board = await this.rpc('opg_board', {}); return this.board; },
+};
+
+// ============================================================
 //  Profil gracza: XP, poziomy, pucharki, seria, wyzwanie dnia
 // ============================================================
 const PROFILE = {
   d: null,
-  defaults() { return { xp: 0, fights: 0, wins: 0, losses: 0, streak: 0, bestStreak: 0, maxCombo: 0, specials: 0, blocks: 0, dodges: 0, versusFights: 0, charWins: {}, charPlays: {}, crowns: {}, trophies: {}, survivalBest: 0, fastestWin: 0, dailyDone: '', dailies: 0, lostTo: {}, wonAfterLoss: 0, kos: 0 }; },
+  defaults() { return { xp: 0, fights: 0, wins: 0, losses: 0, streak: 0, bestStreak: 0, maxCombo: 0, specials: 0, blocks: 0, dodges: 0, versusFights: 0, charWins: {}, charPlays: {}, crowns: {}, trophies: {}, survivalBest: 0, fastestWin: 0, dailyDone: '', dailies: 0, lostTo: {}, wonAfterLoss: 0, kos: 0,
+    chips: 0, items: {}, equipped: { gloves: null, shorts: null, hat: null, ko: null, taunt: null }, crates: { basic: 0, gold: 0 }, cratesOpened: 0, lastLogin: '', loginStreak: 0, codes: {}, upgrades: {}, bigHeads: false, bosses: {}, winsSinceCrate: 0, crits: 0, pickups: 0, tourneyWins: 0, nick: '' }; },
+  addChips(n) { this.d.chips = Math.max(0, Math.round(this.d.chips + n)); this.save(); },
+  owns(id) { return !!this.d.items[id]; },
+  giveItem(id) { const it = ITEM_BY_ID[id]; if (!it) return { dup: true, refund: 0 }; if (this.d.items[id]) { const r = RARITY[it.rarity].refund; this.d.chips += r; this.save(); return { dup: true, refund: r }; } this.d.items[id] = Date.now(); this.save(); return { dup: false }; },
+  rollCrate(tier) {
+    const odds = CRATES[tier].odds; let r = Math.random() * 100, rarity = 'common';
+    for (const k of ['legendary', 'epic', 'rare', 'common']) { if (r < odds[k]) { rarity = k; break; } r -= odds[k]; }
+    const pool = ITEMS.filter((i) => i.rarity === rarity); const fresh = pool.filter((i) => !this.d.items[i.id]);
+    return pick(fresh.length ? fresh : pool);
+  },
+  equipped() { const e = this.d.equipped; return { gloves: e.gloves ? ITEM_BY_ID[e.gloves] : null, shorts: e.shorts ? ITEM_BY_ID[e.shorts] : null, hat: e.hat ? ITEM_BY_ID[e.hat] : null, ko: e.ko ? ITEM_BY_ID[e.ko] : null, taunt: e.taunt ? ITEM_BY_ID[e.taunt] : null }; },
+  dailyOffer() { const day = Math.floor(Date.now() / 86400000); const arr = ITEMS.filter((i) => i.type !== 'taunt'); const out = []; let seed = day * 7919; for (let k = 0; k < 3 && out.length < 3; k++) { seed = (seed * 1103515245 + 12345) % 2147483648; const it = arr[seed % arr.length]; if (!out.includes(it)) out.push(it); } return out; },
+  checkLogin() {
+    const today = this.todayKey(); if (this.d.lastLogin === today) return null;
+    const y = new Date(); y.setDate(y.getDate() - 1); const yKey = `${y.getFullYear()}-${y.getMonth() + 1}-${y.getDate()}`;
+    this.d.loginStreak = this.d.lastLogin === yKey ? this.d.loginStreak + 1 : 1; this.d.lastLogin = today;
+    const day = Math.min(this.d.loginStreak, LOGIN_LADDER.length); const chips = LOGIN_LADDER[day - 1];
+    this.d.chips += chips; if (day === 7) this.d.crates.gold++; this.save();
+    return { day, chips, gold: day === 7 };
+  },
+  useCode(raw) {
+    const code = (raw || '').trim().toUpperCase().replace(/\s+/g, '');
+    const CODES = { 'PANTSLOW': { chips: 500 }, 'GANG': { crate: 'basic' }, 'KRUPNIOK': { item: 'g_sausage' }, 'WIELKIEGLOWY': { toggle: 'bigHeads' }, 'SWIETOCHLOWICE': { item: 'h_poop' }, 'DZIADEK': { item: 's_thong' }, 'KACZKA': { item: 'k_ducks' }, 'KORONA': { crate: 'gold' }, 'BYTOM': { chips: 250, item: 't_6' } };
+    const c = CODES[code]; if (!c) return { ok: false, msg: 'Nieznany kod.' };
+    if (c.toggle) { this.d[c.toggle] = !this.d[c.toggle]; this.save(); return { ok: true, msg: c.toggle === 'bigHeads' ? (this.d.bigHeads ? 'Tryb WIELKICH GŁÓW włączony!' : 'Wielkie głowy wyłączone.') : 'OK' }; }
+    if (this.d.codes[code]) return { ok: false, msg: 'Ten kod już był użyty.' };
+    this.d.codes[code] = Date.now(); const parts = [];
+    if (c.chips) { this.d.chips += c.chips; parts.push('+' + c.chips + ' żetonów'); }
+    if (c.crate) { this.d.crates[c.crate]++; parts.push(CRATES[c.crate].name.toLowerCase()); }
+    if (c.item) { const r = this.giveItem(c.item); parts.push(r.dup ? 'duplikat, +' + r.refund + ' żetonów' : ITEM_BY_ID[c.item].name); }
+    this.save(); return { ok: true, msg: 'Kod przyjęty: ' + parts.join(', ') + '!' };
+  },
   load() {
     try { this.d = Object.assign(this.defaults(), JSON.parse(localStorage.getItem('opg_profile') || '{}')); } catch (e) { this.d = this.defaults(); }
     try { const hall = JSON.parse(localStorage.getItem('opg_hall') || '{}'); for (const id in hall) if (!this.d.crowns[id]) this.d.crowns[id] = hall[id]; } catch (e) {}
@@ -1028,6 +1386,17 @@ const TROPHIES = [
   { id: 'surviveall', icon: '🏰', name: 'Ostatni na nogach', desc: 'Pokonaj całą ekipę w Przetrwaniu', check: (p) => p.survivalBest >= ROSTER.length - 1, prog: (p) => [p.survivalBest, ROSTER.length - 1] },
   { id: 'daily', icon: '📅', name: 'Codzienny', desc: 'Ukończ wyzwanie dnia', check: (p) => p.dailies >= 1 },
   { id: 'lvl10', icon: '🔟', name: 'Dziesiątka', desc: 'Osiągnij 10. poziom', check: (p) => PROFILE.level(p.xp) >= 10, prog: (p) => [PROFILE.level(p.xp), 10] },
+  { id: 'boss', icon: '👹', name: 'Pogromca bossa', desc: 'Pokonaj bossa tygodnia', check: (p) => Object.keys(p.bosses).length >= 1 },
+  { id: 'boss5', icon: '🐲', name: 'Łowca bossów', desc: 'Pokonaj bossów z 5 różnych tygodni', check: (p) => Object.keys(p.bosses).length >= 5, prog: (p) => [Object.keys(p.bosses).length, 5] },
+  { id: 'tourney', icon: '🏟️', name: 'Organizator', desc: 'Rozegraj turniej do końca', check: (p) => p.tourneyWins >= 1 },
+  { id: 'crit10', icon: '💢', name: 'Szczęściarz', desc: 'Zadaj 10 ciosów krytycznych', check: (p) => p.crits >= 10, prog: (p) => [p.crits, 10] },
+  { id: 'pickup10', icon: '🍕', name: 'Zbieracz', desc: 'Podnieś 10 przedmiotów z ringu', check: (p) => p.pickups >= 10, prog: (p) => [p.pickups, 10] },
+  { id: 'crates10', icon: '📦', name: 'Rozpakowywacz', desc: 'Otwórz 10 skrzynek', check: (p) => p.cratesOpened >= 10, prog: (p) => [p.cratesOpened, 10] },
+  { id: 'rich', icon: '💰', name: 'Bogacz', desc: 'Miej 2000 żetonów naraz', check: (p) => p.chips >= 2000, prog: (p) => [Math.min(p.chips, 2000), 2000] },
+  { id: 'items10', icon: '👕', name: 'Szafiarz', desc: 'Zdobądź 10 przedmiotów', check: (p) => Object.keys(p.items).length >= 10, prog: (p) => [Object.keys(p.items).length, 10] },
+  { id: 'legendary', icon: '💎', name: 'Legendarny drop', desc: 'Zdobądź przedmiot legendarny', check: (p) => Object.keys(p.items).some((id) => ITEM_BY_ID[id] && ITEM_BY_ID[id].rarity === 'legendary') },
+  { id: 'upg3', icon: '⬆️', name: 'Maksymalny rozwój', desc: 'Rozwiń postać do 3. poziomu', check: (p) => Object.values(p.upgrades).some((v) => v >= 3) },
+  { id: 'login7', icon: '📆', name: 'Stały bywalec', desc: 'Wejdź do gry 7 dni z rzędu', check: (p) => p.loginStreak >= 7, prog: (p) => [Math.min(p.loginStreak, 7), 7] },
 ];
 function masteryStars(id) { const w = (PROFILE.d.charWins[id] || 0); return w >= 25 ? 3 : w >= 10 ? 2 : w >= 3 ? 1 : 0; }
 function toast(icon, title, text) {
@@ -1041,7 +1410,7 @@ function settleFight(sum) {
   const p = PROFILE.d, before = p.xp, lvlBefore = PROFILE.level();
   p.fights++;
   p.charPlays[sum.player.id] = (p.charPlays[sum.player.id] || 0) + 1;
-  p.maxCombo = Math.max(p.maxCombo, sum.maxCombo); p.specials += sum.specials; p.blocks += sum.blocks; p.dodges += sum.dodges;
+  p.maxCombo = Math.max(p.maxCombo, sum.maxCombo); p.specials += sum.specials; p.blocks += sum.blocks; p.dodges += sum.dodges; p.crits += sum.crits || 0; p.pickups += sum.pickups || 0;
   if (sum.mode === 'versus') p.versusFights++;
   const rows = [];
   if (sum.won) {
@@ -1055,6 +1424,9 @@ function settleFight(sum) {
     if (sum.specials) rows.push(['Supermoce x' + sum.specials, sum.specials * 10]);
     if (sum.time < 20) rows.push(['Błyskawiczna walka', 30]);
     if (sum.oppLegendary) rows.push(['Pokonana legenda', 60]);
+    if (sum.perfect) rows.push(['PERFECT: bez obrażeń', 80]);
+    if (sum.crits) rows.push(['Krytyki x' + sum.crits, sum.crits * 8]);
+    if (sum.pickups) rows.push(['Przedmioty z ringu x' + sum.pickups, sum.pickups * 6]);
     if (sum.wave) rows.push(['Przetrwanie: fala ' + sum.wave, sum.wave * 15]);
     if (p.streak >= 2) rows.push(['Seria ' + p.streak + ' zwycięstw', Math.min(p.streak, 10) * 10]);
   } else {
@@ -1069,14 +1441,36 @@ function settleFight(sum) {
   if (sum.mode === 'versus') rows.length = 0;
   const xp = rows.reduce((a, r) => a + r[1], 0);
   p.xp += xp;
+  // żetony i skrzynki
+  let chips = 0, crate = null;
+  if (sum.mode !== 'versus') {
+    chips = sum.won ? 40 + Math.round(sum.hpEnd / sum.hpMax * 20) + Math.min(p.streak, 10) * 3 + (sum.oppLegendary ? 30 : 0) + (sum.wave ? sum.wave * 5 : 0) : 10;
+    if (sum.crits) chips += sum.crits * 3;
+    p.chips += chips;
+    if (sum.won) {
+      p.winsSinceCrate++;
+      if (sum.oppLegendary || sum.boss) crate = 'gold';
+      else if (p.winsSinceCrate >= 3 || Math.random() < 0.45) crate = 'basic';
+      if (crate) { p.crates[crate]++; p.winsSinceCrate = 0; }
+    } else if (Math.random() < 0.15) { crate = 'basic'; p.crates.basic++; }
+  }
   const newTrophies = TROPHIES.filter((t) => !p.trophies[t.id] && t.check(p, sum));
   for (const t of newTrophies) p.trophies[t.id] = Date.now();
-  PROFILE.save();
+  PROFILE.save(); ONLINE.sync();
   const lvlAfter = PROFILE.level();
   if (dailyHit) toast('📅', 'Wyzwanie dnia!', '+300 XP');
   newTrophies.forEach((t, i) => setTimeout(() => toast(t.icon, 'Pucharek: ' + t.name, t.desc), 600 + i * 900));
   if (lvlAfter > lvlBefore) setTimeout(() => toast('⬆️', 'Poziom ' + lvlAfter + '!', PROFILE.rank(lvlAfter)), 300);
-  return { xp, rows, newTrophies, levelUp: lvlAfter > lvlBefore, lvl: lvlAfter, before, after: p.xp };
+  return { xp, rows, newTrophies, levelUp: lvlAfter > lvlBefore, lvl: lvlAfter, before, after: p.xp, chips, crate };
+}
+
+function itemIcon(it, big) {
+  if (it.type === 'gloves') { const st = it.style; if (st.emoji) return st.emoji; if (st.rainbow) return `<span class="sw" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red)"></span>`; return `<span class="sw" style="background:${st.color}"></span>`; }
+  if (it.type === 'shorts') { const st = it.style; return `<span class="sw" style="background:${st.color};border-radius:8px${st.pattern === 'hearts' ? ';background-image:radial-gradient(#ff3b6b 3px,transparent 4px);background-size:12px 12px' : ''}${st.pattern === 'camo' ? ';background-image:radial-gradient(#3b4a1f 6px,transparent 7px);background-size:16px 14px' : ''}${st.pattern === 'leopard' ? ';background-image:radial-gradient(#4a2c0a 3px,transparent 4px);background-size:10px 10px' : ''}${st.pattern === 'flag' ? ';background:linear-gradient(#fff 50%,#e53935 50%)' : ''}${st.pattern === 'stripes' ? ';background-image:repeating-linear-gradient(0deg,transparent 0 6px,#465aa0 6px 9px)' : ''}"></span>`; }
+  if (it.type === 'hat') return it.emoji || (it.draw === 'halo' ? '😇' : '😈');
+  if (it.type === 'ko') return it.emoji || (it.fx === 'fireworks' ? '🎆' : '🎊');
+  if (it.type === 'taunt') return '💬';
+  return '🎁';
 }
 
 function statsHtml(ch) {
@@ -1100,6 +1494,21 @@ const App = {
     $$('[data-mode]').forEach((b) => b.addEventListener('click', () => { SFX.ensure(); this.mode = b.dataset.mode; this.openSelect(); }));
     $('#btn-help').addEventListener('click', () => { $('#help').hidden = false; });
     $('#btn-trophies').addEventListener('click', () => { this.renderTrophies(); this.show('s-trophies'); });
+    $('#btn-shop').addEventListener('click', () => { this.renderShop(); this.show('s-shop'); });
+    $('#btn-boss').addEventListener('click', () => { SFX.ensure(); this.mode = 'boss'; this.openSelect(); });
+    $('#btn-tourney').addEventListener('click', () => { SFX.ensure(); this.tourney = null; this.renderTourney(); this.show('s-tourney'); });
+    $('#btn-tourney-back').addEventListener('click', () => this.show('s-title'));
+    $('#btn-online').addEventListener('click', () => { ONLINE.loadSession(); this.renderOnline(); this.show('s-online'); });
+    $('#btn-online-back').addEventListener('click', () => this.show('s-title'));
+    $('#replay-close').addEventListener('click', () => { $('#replay-modal').hidden = true; const v = $('#replay-video'); v.pause(); });
+    ONLINE.loadSession();
+    $('#btn-shop-back').addEventListener('click', () => this.show('s-title'));
+    $('#btn-wardrobe').addEventListener('click', () => { this.wardrobeTab = this.wardrobeTab || 'gloves'; this.renderWardrobe(); this.show('s-wardrobe'); });
+    $('#btn-wardrobe-back').addEventListener('click', () => this.show('s-title'));
+    $('#btn-code').addEventListener('click', () => { const r = PROFILE.useCode($('#code-input').value); $('#code-msg').textContent = r.msg; $('#code-msg').style.color = r.ok ? 'var(--gold)' : '#ff5c5c'; if (r.ok) { SFX.ensure(); SFX.bell(); $('#code-input').value = ''; this.renderShop(); } });
+    $('#code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#btn-code').click(); e.stopPropagation(); });
+    const login = PROFILE.checkLogin();
+    if (login) setTimeout(() => toast('🪙', `Dzień ${login.day} z rzędu: +${login.chips} żetonów`, login.gold ? 'Bonus: Złota Skrzynka za 7 dni!' : (login.day < 7 ? `Jutro: +${LOGIN_LADDER[login.day]}` : 'Tak trzymaj!')), 800);
     $('#btn-trophies-back').addEventListener('click', () => this.show('s-title'));
     const sndBtn = $('#btn-sound');
     const applySound = () => { sndBtn.textContent = SFX.muted ? '🔇 DŹWIĘK: WYŁ' : '🔊 DŹWIĘK: WŁ'; };
@@ -1117,6 +1526,7 @@ const App = {
     $('#btn-champ-menu').addEventListener('click', () => this.show('s-title'));
     this.setupTouch();
     for (const ev of ['pointerdown', 'touchend', 'keydown']) document.addEventListener(ev, () => SFX.ensure(), { passive: true });
+    $('#s-game').addEventListener('pointerdown', () => { if (this.match && this.match.phase === 'replay') this.match.replay.skip = true; });
     if (IS_IOS && !IS_STANDALONE) $('#btn-fs').textContent = 'PEŁNY EKRAN (iPHONE)';
     if (IS_STANDALONE) $('#btn-fs').hidden = true;
     $('#btn-ios-close').addEventListener('click', () => { $('#ios-help').hidden = true; });
@@ -1174,10 +1584,13 @@ const App = {
     const faces = $('#title-faces'); faces.innerHTML = '';
     ROSTER.forEach((ch) => { const img = document.createElement('img'); img.src = headSrc(ch); img.alt = ch.name; faces.appendChild(img); });
     const p = PROFILE.d, lvl = PROFILE.level(), cur = p.xp - PROFILE.xpFor(lvl), need = PROFILE.xpFor(lvl + 1) - PROFILE.xpFor(lvl);
-    $('#profile').innerHTML = `<div class="lvl">POZIOM <b>${lvl}</b></div><div class="rank">${PROFILE.rank(lvl)}</div>
+    $('#chips-title').textContent = p.chips;
+    $('#profile').innerHTML = `<div class="lvl">POZIOM <b>${lvl}</b> <span style="color:var(--gold);margin-left:10px">🪙 ${p.chips}</span></div><div class="rank">${PROFILE.rank(lvl)}</div>
       <div class="xpbar"><b style="width:${Math.round(cur / need * 100)}%"></b></div>
       <div class="xptxt">${cur} / ${need} XP do następnego poziomu • ${p.wins} wygranych • ${Object.keys(p.trophies).length}/${TROPHIES.length} pucharków${p.survivalBest ? ' • Przetrwanie: ' + p.survivalBest : ''}</div>
       ${p.streak >= 2 ? `<div class="streak">🔥 Seria ${p.streak} zwycięstw</div>` : ''}`;
+    const wb = weeklyBoss();
+    $('#btn-boss').innerHTML = `👹 BOSS TYGODNIA: ${wb.ch.name.toUpperCase()} <small style="font-family:var(--font-body);font-size:0.65em;opacity:0.8">${wb.mod.name} • ${wb.done ? '✅ pokonany' : 'zostało ' + fmtLeft(wb.left)}</small>`;
     const dl = PROFILE.daily(); const dEl = $('#daily'); dEl.classList.toggle('done', dl.done);
     dEl.innerHTML = `📅 Wyzwanie dnia: <img src="${headSrc(dl.ch)}" alt="">${PROFILE.dailyText(dl)} ${dl.done ? '✅ zrobione' : '<b>+300 XP</b>'}`;
     const hall = p.crowns; const el = $('#hall');
@@ -1187,12 +1600,192 @@ const App = {
       : 'Nikt jeszcze nie zdobył korony. Będziesz pierwszy?';
   },
   loadHall() { try { return JSON.parse(localStorage.getItem('opg_hall') || '{}'); } catch (e) { return {}; } },
+  // ---------- Ranking online ----------
+  async renderOnline() {
+    const box = $('#online-body');
+    if (!ONLINE.enabled()) {
+      box.innerHTML = `<div class="online-setup"><h3>Ranking jeszcze niepodłączony</h3>
+        <p>Żeby cała ekipa widziała nawzajem swoje wyniki, potrzebna jest darmowa baza. Instrukcja krok po kroku jest w pliku <b>online/README.md</b> w repo (5 minut: konto na supabase.com, wklejenie jednego pliku SQL i dwóch wartości do <b>online-config.js</b>).</p>
+        <p>Po podłączeniu każdy z ekipy zakłada tu konto (ksywka + PIN), a wyniki zapisują się w chmurze. Można wtedy grać na telefonie i komputerze z tym samym profilem.</p></div>`;
+      return;
+    }
+    if (!ONLINE.nick) {
+      box.innerHTML = `<div class="online-login"><h3>Zaloguj się albo załóż konto</h3>
+        <input id="on-nick" type="text" maxlength="16" placeholder="ksywka" autocomplete="off" value="${PROFILE.d.nick || ''}">
+        <input id="on-pin" type="password" inputmode="numeric" maxlength="8" placeholder="PIN (4-8 cyfr)" autocomplete="off">
+        <div class="menu"><button class="btn btn-primary" id="on-login">WCHODZĘ</button></div>
+        <div id="on-msg" class="code-msg"></div>
+        <p class="t-hint">Nowa ksywka = nowe konto z tym PIN-em. Jeśli grałeś już na tym urządzeniu, twój postęp wjeżdża na konto. Na innym urządzeniu zaloguj się tą samą ksywką i PIN-em, a profil się zsynchronizuje.</p></div>`;
+      $$('#on-nick, #on-pin').forEach((i) => i.addEventListener('keydown', (e) => { e.stopPropagation(); if (e.key === 'Enter') $('#on-login').click(); }));
+      $('#on-login').onclick = async () => {
+        const nick = $('#on-nick').value.trim(), pin = $('#on-pin').value.trim(); const msg = $('#on-msg');
+        if (nick.length < 2) { msg.textContent = 'Ksywka za krótka.'; return; } if (!/^\d{4,8}$/.test(pin)) { msg.textContent = 'PIN to 4-8 cyfr.'; return; }
+        msg.textContent = 'Łączę...'; $('#on-login').disabled = true;
+        try { const how = await ONLINE.login(nick, pin); PROFILE.d.nick = nick; PROFILE.save(); toast('☁️', 'Zalogowano: ' + nick, how === 'pulled' ? 'Wczytano profil z chmury' : 'Profil zapisany w chmurze'); this.renderOnline(); this.renderTitle(); }
+        catch (e) { msg.textContent = 'Nie udało się: ' + e.message; $('#on-login').disabled = false; }
+      };
+      return;
+    }
+    box.innerHTML = `<div class="online-top"><div>Zalogowany jako <b>${ONLINE.nick}</b></div><div class="menu"><button class="btn btn-sm" id="on-sync">🔄 Synchronizuj</button><button class="btn btn-sm btn-ghost" id="on-logout">Wyloguj</button></div></div><div id="on-board" class="board">Ładuję ranking...</div>`;
+    $('#on-logout').onclick = () => { ONLINE.logout(); this.renderOnline(); };
+    $('#on-sync').onclick = async () => { await ONLINE.sync(true); this.renderOnline(); };
+    try {
+      const rows = await ONLINE.fetchBoard(); const sortKey = this.boardSort || 'xp';
+      const cols = [['xp', 'XP'], ['wins', 'Wygrane'], ['best_streak', 'Seria'], ['max_combo', 'Combo'], ['survival_best', 'Przetrwanie'], ['crowns', 'Korony'], ['trophies', 'Pucharki'], ['bosses', 'Bossy']];
+      rows.sort((a, b) => (b[sortKey] || 0) - (a[sortKey] || 0));
+      $('#on-board').innerHTML = `<div class="tabs">${cols.map(([k, n]) => `<button class="tab ${sortKey === k ? 'on' : ''}" data-bs="${k}">${n}</button>`).join('')}</div>
+        <table class="board-table"><thead><tr><th>#</th><th>Ksywka</th><th>Poziom</th>${cols.map(([k, n]) => `<th class="${sortKey === k ? 'on' : ''}">${n}</th>`).join('')}</tr></thead><tbody>
+        ${rows.map((r, i) => `<tr class="${(r.nick || '').toLowerCase() === ONLINE.nick.toLowerCase() ? 'me' : ''}"><td>${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td><td>${r.nick}</td><td>${r.level || 1}</td>${cols.map(([k]) => `<td class="${sortKey === k ? 'on' : ''}">${r[k] || 0}</td>`).join('')}</tr>`).join('')}</tbody></table>
+        <p class="t-hint">${rows.length} ${rows.length === 1 ? 'gracz' : 'graczy'} w rankingu. Wyniki aktualizują się po każdej walce.</p>`;
+      $$('[data-bs]').forEach((b) => b.onclick = () => { this.boardSort = b.dataset.bs; this.renderOnline(); });
+    } catch (e) { $('#on-board').innerHTML = `<div class="code-msg" style="color:#ff5c5c">Nie mogę pobrać rankingu: ${e.message}</div>`; }
+  },
+  // ---------- Turniej ----------
+  renderTourney() {
+    const box = $('#tourney-body');
+    if (!this.tourney) {
+      const n = this.tourneySize || 4;
+      box.innerHTML = `<div class="t-setup"><div class="t-size">${[4, 8].map((k) => `<button class="tab ${n === k ? 'on' : ''}" data-tsize="${k}">${k} graczy</button>`).join('')}</div>
+        <div class="t-slots">${Array.from({ length: n }, (_, i) => { const prev = (this.tourneySlots || [])[i] || {}; return `<div class="t-slot"><span class="t-num">${i + 1}</span><input type="text" maxlength="14" placeholder="Gracz ${i + 1}" value="${prev.name || ''}" data-tname="${i}"><select data-tch="${i}">${ROSTER.map((c) => `<option value="${c.id}" ${prev.ch === c.id || (!prev.ch && ROSTER[i % ROSTER.length].id === c.id) ? 'selected' : ''}>${c.name}</option>`).join('')}</select></div>`; }).join('')}</div>
+        <p class="t-hint">${isTouchDevice() && !usingKeyboard ? 'Na telefonie każdy pojedynek to walka na punkty: obaj gracze po kolei walczą z AI (postacią rywala), lepszy wynik wygrywa. Podawajcie telefon z ręki do ręki.' : 'Na klawiaturze każdy pojedynek to walka 1 na 1: gracz po lewej WASD, po prawej strzałki.'}</p>
+        <div class="menu"><button class="btn btn-primary" id="btn-tourney-start">START TURNIEJU</button></div></div>`;
+      $$('[data-tsize]').forEach((b) => b.onclick = () => { this.tourneySize = +b.dataset.tsize; this.renderTourney(); });
+      $$('[data-tname]').forEach((i) => i.addEventListener('keydown', (e) => e.stopPropagation()));
+      $('#btn-tourney-start').onclick = () => {
+        const slots = Array.from({ length: n }, (_, i) => ({ name: ($(`[data-tname="${i}"]`).value.trim() || `Gracz ${i + 1}`).slice(0, 14), ch: ROSTER.find((c) => c.id === $(`[data-tch="${i}"]`).value) }));
+        this.tourneySlots = slots;
+        const players = shuffle(slots);
+        const rounds = []; let cur = players.map((p) => ({ p })); 
+        while (cur.length > 1) { const ms = []; for (let i = 0; i < cur.length; i += 2) ms.push({ a: cur[i].p || null, b: cur[i + 1].p || null, winner: null, score: null }); rounds.push(ms); cur = ms.map(() => ({ p: null })); }
+        this.tourney = { rounds, ri: 0, mi: 0, touch: isTouchDevice() && !usingKeyboard };
+        this.renderTourney();
+      };
+      return;
+    }
+    const t = this.tourney; const names = ['Ćwierćfinały', 'Półfinały', 'FINAŁ']; const rn = t.rounds.length === 3 ? names : t.rounds.length === 2 ? names.slice(1) : ['FINAŁ'];
+    const cur = t.rounds[t.ri] && t.rounds[t.ri][t.mi];
+    box.innerHTML = `<div class="bracket">${t.rounds.map((ms, ri) => `<div class="round"><div class="round-name">${rn[ri]}</div>${ms.map((m, mi) => { const live = ri === t.ri && mi === t.mi && !m.winner; const ent = (p, won) => p ? `<div class="ent ${won ? 'won' : ''} ${m.winner && !won ? 'lost' : ''}"><img src="${headSrc(p.ch)}" alt=""><span>${p.name}</span></div>` : '<div class="ent tbd">?</div>'; return `<div class="match ${live ? 'live' : ''} ${m.winner ? 'done' : ''}">${ent(m.a, m.winner === m.a)}<div class="vs">vs</div>${ent(m.b, m.winner === m.b)}${m.score ? `<div class="score">${m.score}</div>` : ''}</div>`; }).join('')}</div>`).join('')}
+      ${t.champion ? `<div class="round"><div class="round-name">MISTRZ</div><div class="match champ"><div class="ent won"><img src="${headSrc(t.champion.ch)}" alt=""><span>🏆 ${t.champion.name}</span></div></div></div>` : ''}</div>
+      <div class="menu">${cur && !t.champion ? `<button class="btn btn-primary btn-lg" id="btn-tourney-play">${t.touch && t.pending ? `TERAZ GRA: ${t.pending.name.toUpperCase()}` : `GRAJ: ${cur.a.name} vs ${cur.b.name}`}</button>` : ''}<button class="btn btn-ghost" id="btn-tourney-new">Nowy turniej</button></div>`;
+    const play = $('#btn-tourney-play'); if (play) play.onclick = () => this.playTourneyMatch();
+    $('#btn-tourney-new').onclick = () => { this.tourney = null; this.renderTourney(); };
+  },
+  playTourneyMatch() {
+    const t = this.tourney, m = t.rounds[t.ri][t.mi]; this.mode = 'tourney';
+    if (!t.touch) { this.startMatch({ p1: m.a.ch, p2: m.b.ch, mode: 'tourney', human2: true, label: `${m.a.name.toUpperCase()} vs ${m.b.name.toUpperCase()}` }); return; }
+    // telefon: na punkty, każdy po kolei z AI
+    t.pending = t.pending || m.a; const me = t.pending, opp = me === m.a ? m.b : m.a;
+    this.startMatch({ p1: me.ch, p2: opp.ch, mode: 'tourney', diff: 0.7, label: `${me.name.toUpperCase()} (na punkty) vs ${opp.name.toUpperCase()}` });
+  },
+  tourneyResult(winner, match) {
+    const t = this.tourney, m = t.rounds[t.ri][t.mi];
+    if (!t.touch) { m.winner = winner === 0 ? m.a : m.b; }
+    else {
+      const me = t.pending, f = match.f[0];
+      const score = winner === 0 ? 1000 + Math.round(f.hp) * 5 + Math.max(0, Math.round(90 - match.fightTime)) : Math.round(f.stats.dmgDealt);
+      m.scores = m.scores || {}; m.scores[me === m.a ? 'a' : 'b'] = score;
+      toast('🏟️', `${me.name}: ${score} pkt`, winner === 0 ? 'wygrana z AI' : 'przegrana z AI, liczą się zadane obrażenia');
+      if (m.scores.a === undefined || m.scores.b === undefined) { t.pending = me === m.a ? m.b : m.a; this.renderTourney(); this.show('s-tourney'); return; }
+      m.winner = m.scores.a >= m.scores.b ? m.a : m.b; m.score = `${m.scores.a} : ${m.scores.b}`; t.pending = null;
+    }
+    // przenieś zwycięzcę dalej
+    if (t.ri + 1 < t.rounds.length) { const nm = t.rounds[t.ri + 1][Math.floor(t.mi / 2)]; if (t.mi % 2 === 0) nm.a = m.winner; else nm.b = m.winner; }
+    t.mi++; if (t.mi >= t.rounds[t.ri].length) { t.mi = 0; t.ri++; }
+    if (t.ri >= t.rounds.length) { t.champion = m.winner; PROFILE.d.tourneyWins++; PROFILE.d.chips += 200; PROFILE.save(); toast('🏆', `Mistrz turnieju: ${m.winner.name}`, '+200 żetonów dla właściciela telefonu'); SFX.cheer(); SFX.bell(); }
+    this.renderTourney(); this.show('s-tourney');
+  },
+  // ---------- Sklep ----------
+  renderShop() {
+    const p = PROFILE.d;
+    $('#chips-shop').textContent = '🪙 ' + p.chips; $('#chips-title').textContent = p.chips;
+    $('#shop-crates').innerHTML = Object.entries(CRATES).map(([k, c]) => `
+      <div class="shop-card"><div class="big">${c.icon}</div><div class="n">${c.name}</div>
+        <div class="d">${Object.entries(c.odds).filter(([, v]) => v).map(([r, v]) => `${RARITY[r].name} ${v}%`).join(' • ')}</div>
+        <div class="own">Masz: ${p.crates[k]}</div>
+        <div class="menu"><button class="btn btn-sm" data-buy="${k}" ${p.chips < c.price ? 'disabled' : ''}>KUP <span class="price">🪙 ${c.price}</span></button>
+        <button class="btn btn-sm btn-primary" data-open="${k}" ${p.crates[k] ? '' : 'disabled'}>OTWÓRZ</button></div></div>`).join('');
+    $('#shop-daily').innerHTML = PROFILE.dailyOffer().map((it) => { const owned = PROFILE.owns(it.id); const price = RARITY[it.rarity].price; return `
+      <div class="shop-card ${owned ? 'owned' : ''}" style="border-color:${RARITY[it.rarity].col}55"><div class="big">${itemIcon(it)}</div><div class="n">${it.name}</div>
+        <div class="d" style="color:${RARITY[it.rarity].col}">${RARITY[it.rarity].name} • ${ITEM_TYPES[it.type]}</div>
+        ${owned ? '<div class="own">✅ Masz</div>' : `<button class="btn btn-sm btn-primary" data-buyitem="${it.id}" ${p.chips < price ? 'disabled' : ''}>KUP <span style="color:#1b1200">🪙 ${price}</span></button>`}</div>`; }).join('');
+    $$('[data-buy]').forEach((b) => b.onclick = () => { const k = b.dataset.buy; if (p.chips >= CRATES[k].price) { p.chips -= CRATES[k].price; p.crates[k]++; PROFILE.save(); SFX.ensure(); SFX.jump(); this.renderShop(); } });
+    $$('[data-open]').forEach((b) => b.onclick = () => this.openCrate(b.dataset.open, () => this.renderShop()));
+    $$('[data-buyitem]').forEach((b) => b.onclick = () => { const it = ITEM_BY_ID[b.dataset.buyitem]; const price = RARITY[it.rarity].price; if (p.chips >= price && !PROFILE.owns(it.id)) { p.chips -= price; PROFILE.giveItem(it.id); toast(itemIcon(it), it.name, 'Kupione! Załóż w Szatni.'); this.renderShop(); } });
+  },
+  openCrate(tier, done) {
+    const p = PROFILE.d; if (!p.crates[tier]) return; p.crates[tier]--; p.cratesOpened++; PROFILE.save();
+    const item = PROFILE.rollCrate(tier); const res = PROFILE.giveItem(item.id); const rc = RARITY[item.rarity].col;
+    const ov = $('#crate'), icon = $('#crate-icon'), stage = $('#crate-stage'), result = $('#crate-result'), actions = $('#crate-actions');
+    ov.hidden = false; result.hidden = true; actions.innerHTML = ''; stage.classList.remove('legendary');
+    icon.textContent = CRATES[tier].icon; icon.className = 'crate-icon'; icon.hidden = false; void icon.offsetWidth; icon.classList.add('shake');
+    SFX.ensure(); SFX.noise(0.9, 400, 1, 0.3, 'bandpass');
+    setTimeout(() => { icon.classList.add('burst'); SFX.punch(true); }, 900);
+    setTimeout(() => {
+      icon.hidden = true; result.hidden = false; stage.classList.toggle('legendary', item.rarity === 'legendary');
+      result.style.setProperty('--rc', rc);
+      $('#crate-rarity').textContent = RARITY[item.rarity].name.toUpperCase(); $('#crate-rarity').style.color = rc;
+      $('#crate-item').innerHTML = itemIcon(item, true);
+      $('#crate-name').textContent = item.type === 'taunt' ? 'Nowy tekst' : item.name;
+      $('#crate-type').innerHTML = (item.type === 'taunt' ? item.name + '<br>' : '') + ITEM_TYPES[item.type] + (res.dup ? `<div class="dup">Duplikat: +${res.refund} żetonów</div>` : '');
+      if (item.rarity === 'legendary') { SFX.bell(); SFX.cheer(); } else if (item.rarity === 'epic') SFX.bell(); else SFX.jump();
+      actions.innerHTML = `${!res.dup ? `<button class="btn btn-primary" id="crate-equip">ZAŁÓŻ</button>` : ''}${p.crates[tier] ? `<button class="btn" id="crate-again">OTWÓRZ KOLEJNĄ (${p.crates[tier]})</button>` : ''}<button class="btn btn-ghost" id="crate-close">Zamknij</button>`;
+      const close = () => { ov.hidden = true; if (done) done(); };
+      $('#crate-close').onclick = close;
+      const eqb = $('#crate-equip'); if (eqb) eqb.onclick = () => { p.equipped[item.type] = item.id; PROFILE.save(); toast(itemIcon(item), 'Założone!', item.type === 'taunt' ? 'Usłyszysz to przed walką' : item.name); close(); };
+      const ag = $('#crate-again'); if (ag) ag.onclick = () => this.openCrate(tier, done);
+    }, 1350);
+  },
+  // ---------- Szatnia ----------
+  renderWardrobe() {
+    const p = PROFILE.d; $('#chips-wardrobe').textContent = '🪙 ' + p.chips;
+    const tabs = Object.keys(ITEM_TYPES).concat(['upg']);
+    $('#wardrobe-tabs').innerHTML = tabs.map((t) => `<button class="tab ${this.wardrobeTab === t ? 'on' : ''}" data-tab="${t}">${t === 'upg' ? '⬆️ Rozwój' : ITEM_TYPES[t]}</button>`).join('');
+    $$('[data-tab]').forEach((b) => b.onclick = () => { this.wardrobeTab = b.dataset.tab; this.renderWardrobe(); });
+    const grid = $('#item-grid'), upg = $('#upg-box');
+    this.previewChar = this.previewChar || ROSTER[0];
+    $('#preview-pick').innerHTML = ROSTER.map((ch) => `<img src="${headSrc(ch)}" data-pv="${ch.id}" class="${ch.id === this.previewChar.id ? 'on' : ''}" alt="${ch.name}">`).join('');
+    $$('[data-pv]').forEach((img) => img.onclick = () => { this.previewChar = ROSTER.find((c) => c.id === img.dataset.pv); this.renderWardrobe(); });
+    if (this.wardrobeTab === 'upg') {
+      grid.hidden = true; upg.hidden = false; this.renderUpgrades();
+    } else {
+      grid.hidden = false; upg.hidden = true;
+      const type = this.wardrobeTab; const list = ITEMS.filter((i) => i.type === type);
+      const owned = list.filter((i) => PROFILE.owns(i.id)).length;
+      grid.innerHTML = `<div class="item none ${!p.equipped[type] ? 'on' : ''}" data-eq=""><div class="ic">🚫</div><div class="n">Bez niczego</div><div class="r" style="color:var(--muted)">${owned}/${list.length} zdobytych</div></div>` +
+        list.map((it) => { const has = PROFILE.owns(it.id); return `<div class="item ${has ? '' : 'locked'} ${p.equipped[type] === it.id ? 'on' : ''}" data-eq="${it.id}" title="${it.name}"><div class="ic">${itemIcon(it)}</div><div class="n">${has || it.type !== 'taunt' ? it.name : '???'}</div><div class="r" style="color:${RARITY[it.rarity].col}">${RARITY[it.rarity].name}</div></div>`; }).join('');
+      $$('[data-eq]').forEach((el) => el.onclick = () => { const id = el.dataset.eq; if (id && !PROFILE.owns(id)) { toast('🔒', 'Nie masz tego', 'Zdobądź w skrzynce albo kup w sklepie'); return; } p.equipped[type] = id || null; PROFILE.save(); SFX.ensure(); SFX.jump(); this.renderWardrobe(); });
+    }
+    this.drawPreview();
+  },
+  drawPreview() {
+    const cv = $('#preview-canvas'); const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, cv.width, cv.height);
+    const eq = PROFILE.equipped();
+    const f = new Fighter(this.previewChar, 0, NULL_CTRL); f.cos = { gloves: eq.gloves, shorts: eq.shorts, hat: eq.hat, ko: eq.ko }; f.bigHead = PROFILE.d.bigHeads;
+    f.x = 150; f.y = 300; f.animT = performance.now() / 1000; f.pose = computePose(f);
+    ctx.save(); ctx.translate(0, 0); ctx.scale(1.05, 1.05); drawFighter(ctx, f, performance.now() / 1000); ctx.restore();
+    if (this.screen === 's-wardrobe') requestAnimationFrame(() => this.drawPreview());
+  },
+  renderUpgrades() {
+    const p = PROFILE.d, ch = this.previewChar, lvl = p.upgrades[ch.id] || 0, sp = SPECIALS[ch.id], wins = p.charWins[ch.id] || 0;
+    const tiers = [
+      { name: 'Szybsze ładowanie', desc: 'Pasek MOCY ładuje się o 25% szybciej', cost: 300, req: 3 },
+      { name: 'Mocniejsza moc', desc: 'Supermoc zadaje 30% więcej obrażeń', cost: 600, req: 10 },
+      { name: sp ? sp.up3n : 'Ulepszenie', desc: sp ? sp.up3 : '', cost: 1000, req: 25 },
+    ];
+    $('#upg-box').innerHTML = `<h3>⬆️ Rozwój: ${ch.name} ${'★'.repeat(lvl)}${'☆'.repeat(3 - lvl)}</h3><div class="t" style="color:var(--muted);font-size:0.8rem">Wygrane tą postacią: ${wins}. Ulepszenia kupujesz za żetony, po kolei.</div>` +
+      tiers.map((t, i) => { const done = lvl > i, next = lvl === i, can = next && wins >= t.req && p.chips >= t.cost;
+        return `<div class="upg-row ${done ? 'done' : ''}"><div><b>${i + 1}. ${t.name}</b><span class="t">${t.desc}</span>${next && wins < t.req ? `<div class="req">Wymaga ${t.req} wygranych tą postacią (masz ${wins})</div>` : ''}</div>
+          <div>${done ? '✅' : next ? `<button class="btn btn-sm ${can ? 'btn-primary' : ''}" data-upg="${i}" ${can ? '' : 'disabled'}>🪙 ${t.cost}</button>` : '🔒'}</div></div>`; }).join('');
+    $$('[data-upg]').forEach((b) => b.onclick = () => { const i = +b.dataset.upg; const t = tiers[i]; if (p.chips >= t.cost && (p.upgrades[ch.id] || 0) === i) { p.chips -= t.cost; p.upgrades[ch.id] = i + 1; PROFILE.save(); toast('⬆️', ch.name + ': ' + t.name, t.desc); SFX.ensure(); SFX.bell(); this.renderWardrobe(); } });
+  },
   saveHall(id) { PROFILE.d.crowns[id] = (PROFILE.d.crowns[id] || 0) + 1; PROFILE.save(); },
   renderTrophies() {
     const p = PROFILE.d, lvl = PROFILE.level();
     const fav = Object.entries(p.charPlays).sort((a, b) => b[1] - a[1])[0];
     const tiles = [['Poziom', lvl], ['Walki', p.fights], ['Wygrane', p.wins], ['Przegrane', p.losses], ['Najlepsza seria', p.bestStreak], ['Najdłuższe combo', p.maxCombo + 'x'], ['Supermoce', p.specials], ['Bloki', p.blocks], ['Uniki', p.dodges], ['Korony', Object.values(p.crowns).reduce((a, b) => a + b, 0)], ['Przetrwanie', p.survivalBest], ['Najszybsze K.O.', p.fastestWin ? p.fastestWin.toFixed(1) + ' s' : '–'], ['Ulubiona postać', fav ? (ROSTER.find((c) => c.id === fav[0]) || {}).name || '–' : '–']];
     $('#stats-box').innerHTML = tiles.map(([l, v]) => `<div class="stat-tile"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+    const bosses = Object.entries(p.bosses).sort((a, b) => b[1].date - a[1].date);
+    $('#boss-badges').innerHTML = bosses.length ? '<h3>👹 Pokonani bossowie tygodnia</h3><div class="badges-row">' + bosses.map(([k, b]) => { const ch = ROSTER.find((c) => c.id === b.ch) || {}; const mod = BOSS_MODS.find((m) => m.id === b.mod) || {}; return `<div class="badge"><img src="${ch.id ? headSrc(ch) : ''}" alt=""><b>${ch.name || '?'}</b><span>${mod.name || ''}</span><small>${new Date(b.date).toLocaleDateString('pl-PL')}</small></div>`; }).join('') + '</div>' : '';
     $('#trophy-grid').innerHTML = TROPHIES.map((t) => {
       const done = !!p.trophies[t.id]; const pr = t.prog ? t.prog(p) : null;
       return `<div class="trophy ${done ? 'done' : ''}"><div class="ic">${t.icon}</div><div><div class="n">${t.name}</div><div class="d">${t.desc}</div>${pr && !done ? `<div class="p"><b style="width:${Math.min(100, Math.round(pr[0] / pr[1] * 100))}%"></b></div><div class="pt">${Math.min(pr[0], pr[1])} / ${pr[1]}</div>` : ''}${done ? '<div class="pt">✅ zdobyty</div>' : ''}</div></div>`;
@@ -1206,7 +1799,8 @@ const App = {
   },
   renderGrid() {
     const grid = $('#grid'); grid.innerHTML = '';
-    $('#select-title').textContent = this.mode === 'versus' ? (this.pickingP2 ? 'Gracz 2: wybierz wojownika' : 'Gracz 1: wybierz wojownika') : 'Wybierz wojownika';
+    const wbx = weeklyBoss();
+    $('#select-title').textContent = this.mode === 'versus' ? (this.pickingP2 ? 'Gracz 2: wybierz wojownika' : 'Gracz 1: wybierz wojownika') : this.mode === 'boss' ? `Boss: ${wbx.ch.name} ${wbx.mod.name}. Kim walczysz?` : this.mode === 'tourney' ? 'Wybierz wojownika' : 'Wybierz wojownika';
     $('#btn-fight').textContent = this.mode === 'versus' && !this.pickingP2 ? 'DALEJ' : 'WALCZ!';
     ROSTER.forEach((ch) => {
       const card = document.createElement('div'); card.className = 'card' + (ch.legendary ? ' legendary' : '');
@@ -1225,7 +1819,7 @@ const App = {
     });
     $('#btn-fight').disabled = true;
     $('#spotlight').querySelector('.spot-empty').hidden = false; $('#spotlight').querySelector('.spot-card').hidden = true;
-    $('#sel-info').innerHTML = this.mode === 'versus' ? 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.' : this.mode === 'survival' ? 'Przetrwanie: walczysz z całą ekipą po kolei, HP nie odnawia się w pełni. Ile fal wytrzymasz?' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy czekają na końcu.';
+    $('#sel-info').innerHTML = this.mode === 'boss' ? `👹 <b>${wbx.ch.name}</b> jako <em>${wbx.mod.name}</em>: ${wbx.mod.desc}. Nagroda za pierwsze zwycięstwo w tygodniu: 500 żetonów i Złota Skrzynka.` : this.mode === 'versus' ? 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.' : this.mode === 'survival' ? 'Przetrwanie: walczysz z całą ekipą po kolei, HP nie odnawia się w pełni. Ile fal wytrzymasz?' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy czekają na końcu.';
   },
   fillSpotlight(ch) {
     const sp = $('#spotlight'); sp.querySelector('.spot-empty').hidden = true;
@@ -1259,6 +1853,9 @@ const App = {
     if (this.mode === 'versus') {
       if (!this.pickingP2) { this.pickingP2 = true; this.renderGrid(); return; }
       this.startMatch({ p1: this.p1, p2: this.p2, mode: 'versus', label: 'GRACZ 1 vs GRACZ 2' });
+    } else if (this.mode === 'boss') {
+      const wb = weeklyBoss();
+      this.startMatch({ p1: this.p1, p2: wb.ch, mode: 'boss', diff: 0.9, boss: wb.mod, label: `BOSS TYGODNIA • ${wb.mod.name}` });
     } else if (this.mode === 'survival') {
       this.campaign = { player: this.p1, order: shuffle(ROSTER.filter((c) => c.id !== this.p1.id)), idx: 0, hp: BASE_HP, meter: 0, survival: true };
       this.startCampaignFight();
@@ -1286,9 +1883,9 @@ const App = {
     const m = this.match; const wf = m.f[winner], lf = m.f[1 - winner];
     this.match = null;
     const me = m.f[0], opp = m.f[1];
-    const sum = { mode: this.mode, won: winner === 0, player: me.ch, opp: opp.ch, hpEnd: me.hp, hpMax: me.maxHp, dmgTaken: me.stats.dmgTaken, maxCombo: me.stats.maxCombo, specials: me.stats.specials, blocks: me.stats.blocks, dodges: me.stats.dodges, time: m.fightTime, oppLegendary: !!opp.ch.legendary, wave: (this.campaign && this.campaign.survival && winner === 0) ? this.campaign.idx + 1 : 0 };
-    if (this.mode === 'versus') { const p = PROFILE.d; p.fights++; p.versusFights++; p.charPlays[me.ch.id] = (p.charPlays[me.ch.id] || 0) + 1; p.charPlays[opp.ch.id] = (p.charPlays[opp.ch.id] || 0) + 1; p.maxCombo = Math.max(p.maxCombo, me.stats.maxCombo, opp.stats.maxCombo); p.specials += me.stats.specials + opp.stats.specials; const nt = TROPHIES.filter((t) => !p.trophies[t.id] && t.check(p, null)); nt.forEach((t, i) => { p.trophies[t.id] = Date.now(); setTimeout(() => toast(t.icon, 'Pucharek: ' + t.name, t.desc), 500 + i * 900); }); PROFILE.save(); }
-    const settle = this.mode === 'versus' ? null : settleFight(sum);
+    const sum = { mode: this.mode, won: winner === 0, player: me.ch, opp: opp.ch, hpEnd: me.hp, hpMax: me.maxHp, dmgTaken: me.stats.dmgTaken, maxCombo: me.stats.maxCombo, specials: me.stats.specials, blocks: me.stats.blocks, dodges: me.stats.dodges, time: m.fightTime, oppLegendary: !!opp.ch.legendary, wave: (this.campaign && this.campaign.survival && winner === 0) ? this.campaign.idx + 1 : 0, crits: me.stats.crits || 0, pickups: me.stats.pickups || 0, perfect: m.perfect && winner === 0, boss: !!m.opts.boss };
+    if (this.mode === 'versus' || this.mode === 'tourney') { const p = PROFILE.d; p.fights++; p.versusFights++; p.charPlays[me.ch.id] = (p.charPlays[me.ch.id] || 0) + 1; p.charPlays[opp.ch.id] = (p.charPlays[opp.ch.id] || 0) + 1; p.maxCombo = Math.max(p.maxCombo, me.stats.maxCombo, opp.stats.maxCombo); p.specials += me.stats.specials + opp.stats.specials; const nt = TROPHIES.filter((t) => !p.trophies[t.id] && t.check(p, null)); nt.forEach((t, i) => { p.trophies[t.id] = Date.now(); setTimeout(() => toast(t.icon, 'Pucharek: ' + t.name, t.desc), 500 + i * 900); }); PROFILE.save(); }
+    const settle = (this.mode === 'versus' || this.mode === 'tourney') ? null : settleFight(sum);
     const xpBox = $('#result-xp'); xpBox.hidden = !settle;
     if (settle) {
       const lvl = settle.lvl, cur = settle.after - PROFILE.xpFor(lvl), need = PROFILE.xpFor(lvl + 1) - PROFILE.xpFor(lvl);
@@ -1296,14 +1893,41 @@ const App = {
         `<div class="total"><span>RAZEM</span><b style="color:var(--gold)">+${settle.xp} XP</b></div>
          <div class="xpbar" style="margin-top:6px"><b style="width:${Math.round(cur / need * 100)}%"></b></div>
          <div class="row"><span>Poziom ${lvl} • ${PROFILE.rank(lvl)}</span><span>${cur} / ${need} XP</span></div>
-         ${settle.levelUp ? `<div class="lvlup">⬆️ NOWY POZIOM ${lvl}!</div>` : ''}`;
+         ${settle.levelUp ? `<div class="lvlup">⬆️ NOWY POZIOM ${lvl}!</div>` : ''}
+         <div class="row"><span class="chips">🪙 +${settle.chips} żetonów</span>${settle.crate ? `<span class="cratewon">${CRATES[settle.crate].icon} ${CRATES[settle.crate].name}!</span>` : ''}</div>
+         ${settle.crate ? `<div class="menu" style="margin-top:6px"><button class="btn btn-sm btn-primary" id="btn-open-won">OTWÓRZ SKRZYNKĘ</button></div>` : ''}`;
+      const ob = $('#btn-open-won'); if (ob) ob.onclick = () => this.openCrate(settle.crate, () => { ob.remove(); });
     }
     $('#result-trophies').innerHTML = settle ? settle.newTrophies.map((t) => `<span class="t">${t.icon} <b>${t.name}</b></span>`).join('') : '';
+    const rb = $('#btn-replay'); rb.hidden = !this.lastReplay;
+    rb.onclick = async () => {
+      const r = this.lastReplay; if (!r) return;
+      const file = new File([r.blob], r.name, { type: r.type });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: 'K.O. w Only Pantslow Gang' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+      const url = URL.createObjectURL(r.blob); const v = $('#replay-video'); v.src = url; $('#replay-modal').hidden = false; $('#replay-dl').href = url; $('#replay-dl').download = r.name;
+    };
     const faces = $('#result-faces');
     faces.innerHTML = `<img src="${headSrc(wf.ch)}" alt=""><span class="vs">pokonuje</span><img class="loser" src="${headSrc(lf.ch)}" alt="">`;
     const title = $('#result-title'); title.classList.remove('lose');
     $('#result-progress').innerHTML = '';
 
+    if (this.mode === 'tourney') { this.tourneyResult(winner, m); return; }
+    if (this.mode === 'boss') {
+      const wb = weeklyBoss();
+      if (winner === 0) {
+        $('#result-kicker').textContent = 'BOSS TYGODNIA POKONANY';
+        title.textContent = 'BOSS PADŁ!';
+        if (!PROFILE.d.bosses[wb.key]) { PROFILE.d.bosses[wb.key] = { ch: wb.ch.id, mod: wb.mod.id, date: Date.now() }; PROFILE.d.chips += 500; PROFILE.d.crates.gold++; PROFILE.save(); toast('👹', 'Boss tygodnia pokonany!', '+500 żetonów i Złota Skrzynka'); $('#result-text').textContent = `${wb.ch.name} ${wb.mod.name} leży. Odznaka bossa zapisana w Pucharkach. +500 żetonów, Złota Skrzynka w Sklepie.`; }
+        else $('#result-text').textContent = `${wb.ch.name} ${wb.mod.name} znowu leży. Nagroda tygodnia już odebrana, wpadnij po nowego bossa za ${fmtLeft(wb.left)}.`;
+        $('#btn-next').textContent = 'JESZCZE RAZ';
+      } else {
+        $('#result-kicker').textContent = 'BOSS TYGODNIA'; title.textContent = 'PRZEGRANA'; title.classList.add('lose');
+        $('#result-text').textContent = `${wb.ch.name} ${wb.mod.name}: ${wb.mod.desc}. Spróbuj inną postacią albo z ulepszeniami.`;
+        $('#btn-next').textContent = 'REWANŻ';
+      }
+      $('#btn-next').onclick = () => this.startMatch({ p1: this.p1, p2: wb.ch, mode: 'boss', diff: 0.9, boss: wb.mod, label: `BOSS TYGODNIA • ${wb.mod.name}` });
+      this.show('s-result'); return;
+    }
     if (this.mode === 'versus') {
       $('#result-kicker').textContent = 'KONIEC WALKI';
       title.textContent = `${wf.ch.name.toUpperCase()} WYGRYWA!`;
@@ -1386,7 +2010,7 @@ const App = {
   },
 };
 
-window.OPG = App; window.OPG_VOICES = VOICES;
+window.OPG = App; window.OPG_VOICES = VOICES; window.OPG_PICKUPS = PICKUPS;
 PROFILE.load();
 Promise.all([loadHeads(), VOICES.load()]).then(() => App.init());
 })();
