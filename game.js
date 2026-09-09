@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v16';
+const VERSION = 'v17';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -328,6 +328,7 @@ window.addEventListener('keydown', (e) => {
   if (!usingKeyboard && GAME_KEYS.has(e.code)) { usingKeyboard = true; if (inGame) $('#touch').hidden = true; }
   keysHeld.add(e.code); keyBuf.set(e.code, performance.now());
   if (inGame && App.match && App.match.phase === 'replay') { App.match.replay.skip = true; return; }
+  if (typeof TUTORIAL !== 'undefined' && TUTORIAL.isOpen()) { if (TUTORIAL.key(e.code)) e.preventDefault(); return; }
   if ((e.code === 'Space' || e.code === 'Enter') && !['INPUT', 'SELECT', 'TEXTAREA'].includes((document.activeElement || {}).tagName)) {
     const primary = { 's-result': '#btn-next', 's-champion': '#btn-champ-menu', 's-select': '#btn-fight' }[App.screen];
     if (primary) { const b = $(primary); if (b && !b.disabled && !b.hidden) { e.preventDefault(); b.click(); return; } }
@@ -349,7 +350,9 @@ document.addEventListener('touchend', (e) => {
   const now = Date.now(); const t = e.changedTouches && e.changedTouches[0];
   const x = t ? t.clientX : 0, y = t ? t.clientY : 0;
   // podwójne tapnięcie w to samo miejsce = przeglądarka chce przybliżyć; nie pozwalamy
-  if (now - lastTap.t < 350 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60) e.preventDefault();
+  // przyciski i pola do klikania mają touch-action: manipulation, więc zoom im nie grozi, a szybkie dwa tapnięcia (Dalej, Dalej) muszą działać
+  const onControl = e.target && e.target.closest && e.target.closest('button, .card, .cell, .chip, .tab, .racer, .seat, .tut-dots, [data-bet], input, select');
+  if (!onControl && now - lastTap.t < 350 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60) e.preventDefault();
   lastTap = { t: now, x, y };
 }, { passive: false });
 document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 || App.screen === 's-game') e.preventDefault(); }, { passive: false });
@@ -1345,14 +1348,14 @@ const CASINO = {
     $('.dealer-hat').textContent = this.vipOn && p.vip ? '👑' : '🎩';
     const dbt = $('#debt-box');
     if (p.debt > 0) { const left = p.debtDue - Date.now(); dbt.hidden = false; dbt.innerHTML = `<b>💸 Dług: ${p.debt} żetonów</b><span>${left > 0 ? 'Spłata za ' + fmtLeft(left) + ', inaczej Gazdziol wysyła Watola.' : '<span style="color:#ff5c5c">TERMIN MINĄŁ. Watol już idzie.</span>'}</span><button class="btn btn-sm btn-primary" id="btn-repay" ${p.chips >= p.debt ? '' : 'disabled'}>SPŁAĆ ${p.debt}</button>`; $('#btn-repay').onclick = () => { if (p.chips >= p.debt) { this.pay(-p.debt); p.debt = 0; p.debtDue = 0; PROFILE.save(); toast('💸', 'Dług spłacony', 'Gazdziol kiwa głową z uznaniem'); this.refresh(); } }; }
-    else if (p.chips < 100) { dbt.hidden = false; dbt.innerHTML = `<b>💸 Pusto w kieszeni?</b><span>Gazdziol pożyczy 500 żetonów. Oddajesz 600 w 3 dni. Nie oddasz, przyjdzie Watol.</span><button class="btn btn-sm" id="btn-borrow">POŻYCZ 500</button>`; $('#btn-borrow').onclick = () => { p.debt = 600; p.debtDue = Date.now() + 3 * 86400000; p.debtCount++; this.pay(500); toast('💸', '+500 żetonów pożyczki', 'Oddajesz 600 do ' + new Date(p.debtDue).toLocaleDateString('pl-PL')); this.say('loan'); this.refresh(); }; }
+    else if (p.chips < 100) { dbt.hidden = false; dbt.innerHTML = `<b>💸 Pusto w kieszeni?</b><span class="d">Gazdziol pożyczy 500 żetonów. Oddajesz 600 w 3 dni. Nie oddasz, przyjdzie Watol.</span><button class="btn btn-sm" id="btn-borrow">POŻYCZ 500</button>`; $('#btn-borrow').onclick = () => { p.debt = 600; p.debtDue = Date.now() + 3 * 86400000; p.debtCount++; this.pay(500); toast('💸', '+500 żetonów pożyczki', 'Oddajesz 600 do ' + new Date(p.debtDue).toLocaleDateString('pl-PL')); this.say('loan'); this.refresh(); }; }
     else dbt.hidden = true;
     const db = $('#duel-box'); db.hidden = p.casinoLost <= 0;
-    if (p.casinoLost > 0) { db.innerHTML = `<b>Przegrałeś ${p.casinoLost} żetonów</b><span>Wyzwij krupiera na pojedynek. Wygrasz, odzyskasz wszystko. Przegrasz, licznik się zeruje i żetony przepadają.</span><button class="btn btn-sm btn-primary" id="btn-duel">🥊 WYZWIJ GAZDZIOLA</button>`; $('#btn-duel').onclick = () => App.casinoDuel(); }
+    if (p.casinoLost > 0) { db.innerHTML = `<b>Przegrałeś ${p.casinoLost} żetonów</b><span class="d">Wyzwij krupiera na pojedynek. Wygrasz, odzyskasz wszystko. Przegrasz, licznik się zeruje i żetony przepadają.</span><button class="btn btn-sm btn-primary" id="btn-duel">🥊 WYZWIJ GAZDZIOLA</button>`; $('#btn-duel').onclick = () => App.casinoDuel(); }
   },
   render() {
     $('#dealer-img').src = headSrc(ROSTER.find((c) => c.id === 'gazdziol') || ROSTER[0]);
-    $$('[data-ctab]').forEach((b) => { b.classList.toggle('on', b.dataset.ctab === this.tab); b.onclick = () => { if (this.spinning || (this.bj && this.bj.phase === 'play') || this.slotSpinning || this.racing || (this.pk && this.pk.active)) return; this.tab = b.dataset.ctab; this.render(); }; });
+    $$('[data-ctab]').forEach((b) => { b.classList.toggle('on', b.dataset.ctab === this.tab); b.onclick = () => { if (this.spinning || (this.bj && this.bj.phase === 'play') || this.slotSpinning || this.racing || (this.pk && this.pk.active)) { toast('✋', 'Chwila', this.pk && this.pk.active ? 'Dokończ rozdanie pokera' : this.bj && this.bj.phase === 'play' ? 'Dokończ rozdanie blackjacka' : 'Poczekaj na koniec gry'); return; } this.tab = b.dataset.ctab; this.render(); }; });
     this.refresh();
     const vb = $('#btn-vip'); vb.onclick = () => { this.vipOn = !this.vipOn; if (this.vipOn) this.say('vip'); this.render(); };
     if (this.tab === 'roulette') this.renderRoulette(); else if (this.tab === 'blackjack') this.renderBlackjack(); else if (this.tab === 'slots') this.renderSlots(); else if (this.tab === 'quick') this.renderQuick(); else if (this.tab === 'race') this.renderRace(); else if (this.tab === 'poker') this.renderPoker();
@@ -2064,6 +2067,146 @@ const TROPHIES = [
   { id: 'login7', icon: '📆', name: 'Stały bywalec', desc: 'Wejdź do gry 7 dni z rzędu', check: (p) => p.loginStreak >= 7, prog: (p) => [Math.min(p.loginStreak, 7), 7] },
 ];
 function masteryStars(id) { const w = (PROFILE.d.charWins[id] || 0); return w >= 25 ? 3 : w >= 10 ? 2 : w >= 3 ? 1 : 0; }
+// ---------- Samouczek dla nowych ----------
+const TUTORIAL = {
+  i: 0,
+  steps() {
+    const touch = isTouchDevice();
+    const item = (i, b, t, cls = '') => `<div class="tut-item ${cls}"><div class="i">${i}</div><div><b>${b}</b><span>${t}</span></div></div>`;
+    const keys = `<div class="tut-keys">
+      <div><span>Ruch</span><span><kbd>A</kbd> <kbd>D</kbd> lub <kbd>←</kbd> <kbd>→</kbd></span></div>
+      <div><span>Skok</span><span><kbd>W</kbd> lub <kbd>↑</kbd></span></div>
+      <div><span>Unik</span><span><kbd>S</kbd> lub <kbd>↓</kbd></span></div>
+      <div><span>Cios</span><span><kbd>Spacja</kbd> lub <kbd>F</kbd></span></div>
+      <div><span>Mocny cios</span><span><kbd>G</kbd></span></div>
+      <div><span>Blok</span><span><kbd>Shift</kbd> lub <kbd>H</kbd></span></div>
+      <div><span>Supermoc</span><span><kbd>E</kbd> / <kbd>Q</kbd> / <kbd>Enter</kbd></span></div>
+      <div><span>Pauza</span><span><kbd>Esc</kbd> lub <kbd>P</kbd></span></div>
+    </div>`;
+    const touchBtns = `<div class="tut-touch">
+      <div class="tb"><i>◀ ▶</i>ruch</div><div class="tb"><i>▲</i>skok</div><div class="tb"><i>▼</i>unik</div>
+      <div class="tb"><i>CIOS</i>szybki</div><div class="tb"><i class="p">MOC. CIOS</i>przełamuje blok</div><div class="tb"><i>BLOK</i>trzymaj</div><div class="tb"><i class="g">MOC</i>gdy pasek pełny</div>
+    </div>`;
+    return [
+      { icon: '🥊', title: 'Witaj w Only Pantslow Gang', body: `
+        <p class="lead">Bijatyka bokserska z całą ekipą w rolach głównych. Patyczaki, prawdziwe głowy i jeden cel: <b>zostać Królem Only Pantslow Gang</b>.</p>
+        <div class="tut-grid">
+          ${item('👑', 'Cel gry', 'Pokonaj po kolei całą ekipę w Kampanii. Na końcu czekają dwie legendy: Król Pała i Watol Wszechwładny.')}
+          ${item('🧍', 'Wybierz postać', 'Każda ma inną szybkość, siłę i własną supermoc. Zaczynasz od kliknięcia KAMPANIA w menu.')}
+          ${item('📱', 'Telefon czy komputer', touch ? 'Grasz na dotyk: przyciski pojawiają się na ekranie. Trzymaj telefon poziomo.' : 'Grasz na klawiaturze. Na telefonie ta sama gra ma przyciski na ekranie.')}
+          ${item('💾', 'Wszystko się zapisuje', 'Postępy, żetony i pucharki zostają w tej przeglądarce. Z kontem online masz je też na innych urządzeniach.')}
+        </div>` },
+      { icon: '🎮', title: 'Sterowanie', body: touch
+        ? `<p class="lead">Na ekranie masz przyciski. Lewa strona to ruch, prawa to akcje.</p>${touchBtns}<p class="muted">Przycisk BLOK trzymasz, dopóki chcesz się osłaniać. Unik daje chwilę nietykalności, więc wciskaj go, gdy leci mocny cios. Na komputerze działa klawiatura:</p>${keys}`
+        : `<p class="lead">Gracz 1 (albo solo) gra na WASD i klawiszach obok. W trybie 2 graczy drugi gra strzałkami i K, L, ; oraz O.</p>${keys}<p class="muted">W menu Spacja albo Enter klika główny przycisk (Walcz, Dalej, Rewanż), więc nie musisz sięgać po mysz. Na telefonie są przyciski na ekranie:</p>${touchBtns}` },
+      { icon: '👊', title: 'Jak się bić', body: `
+        <div class="tut-grid">
+          ${item('👊', 'Cios', 'Szybki, mało obrażeń, buduje combo. Kolejne trafienia bez oberwania podbijają mnożnik aż do 2x.')}
+          ${item('💥', 'Mocny cios', 'Wolniejszy, ale boli i przełamuje blok. Idealny, gdy rywal stoi w bloku.')}
+          ${item('🛡️', 'Blok', 'Zmniejsza obrażenia do 15%. Nie pomaga na mocny cios i nie działa wiecznie.')}
+          ${item('💨', 'Unik', 'Krótka nietykalność. Wciśnij, gdy widzisz zamach. Pozwala wejść za plecy.')}
+          ${item('🦘', 'Skok', 'Przeskakujesz fale ognia, pioruny i laser, kombinujesz z ciosem z góry.')}
+          ${item('⚡', 'Krytyki i PERFECT', '8% ciosów to krytyk (1,6x, pęka ekran). Wygraj bez obrażeń, dostaniesz PERFECT i bonus XP.')}
+        </div>
+        <p class="muted">Pasek HP na górze, pod nim pasek MOCY. Po nokaucie zobaczysz powtórkę w zwolnionym tempie.</p>` },
+      { icon: '🌟', title: 'Supermoce', body: `
+        <p class="lead">Każda postać ma jedną supermoc. Pasek <b>MOCY</b> pod HP ładuje się od zadawania i przyjmowania ciosów. Gdy jest pełny, wciśnij ${touch ? 'przycisk <b>MOC</b>' : '<kbd>E</kbd> (gracz 2: <kbd>O</kbd>)'}.</p>
+        <div class="tut-grid">
+          ${item('🧊', 'Miśka: Słomkowa Zamrażarka', 'Rzut napojem, trafiony zamarza na 1,5 s.')}
+          ${item('👤', 'Cypis: Cień z Bytomia', 'Teleport za plecy i cios za 22 HP.')}
+          ${item('🔥', 'Rociu: Rudy Wulkan', 'Trzy fale ognia i podpalenie. Przeskocz je!')}
+          ${item('👑', 'Król Pała: Dekret Królewski', 'Korona spada na głowę, ogłuszenie i leczenie Króla.')}
+        </div>
+        <p class="muted">Pełną listę znajdziesz w menu wyboru postaci (opis pod każdą kartą). Rozwój postaci na 3. poziomie wzmacnia jej moc.</p>` },
+      { icon: '🪂', title: 'Wydarzenia na ringu', body: `
+        <p class="lead">Co kilkanaście sekund coś się dzieje. Bądź czujny, bo publiczność nie śpi.</p>
+        <div class="tut-grid">
+          ${item('🍕', 'Przedmioty na spadochronie', 'Pizza, gumowy kurczak, przepychacz, krzesło, mokra ryba, kebab… Podejdź, żeby podnieść. Bronie zmieniają ciosy, jedzenie leczy.')}
+          ${item('🍾', 'Butelka z widowni', 'Ktoś rzuca. Uskocz albo zablokuj.')}
+          ${item('💣', 'Bomba', 'Odsuń się od niej, zanim wybuchnie. Może być też deszcz jedzenia.')}
+          ${item('⚡', 'Podwójne obrażenia i trzęsienie', 'Chwilowy chaos dla obu stron. Wykorzystaj albo przeczekaj w bloku.')}
+        </div>` },
+      { icon: '🏆', title: 'Tryby gry', body: `
+        <div class="tut-grid">
+          ${item('👑', 'Kampania', 'Cała ekipa po kolei, legendy na końcu. Wygrasz, dostajesz tytuł Króla i koronę przy postaci.', 'gold')}
+          ${item('💀', 'Przetrwanie', 'Losowa kolejka rywali, między walkami odzyskujesz tylko 30 HP. Liczy się, ilu pokonasz.')}
+          ${item('👥', '2 graczy', 'Jedna klawiatura: WASD kontra strzałki. Najlepsze na imprezie.')}
+          ${item('👹', 'Boss tygodnia', 'Co poniedziałek inna postać z modyfikatorem (Gigant, Wampir, Chaos…). Pierwsza wygrana w tygodniu: 500 żetonów i Złota Skrzynka.')}
+          ${item('🏟️', 'Turniej', '4 lub 8 osób na jednym urządzeniu, drabinka. Na telefonie gracie „na punkty” podając telefon z ręki do ręki.')}
+          ${item('📅', 'Wyzwanie dnia', 'Codziennie inna postać i warunek do spełnienia. 300 XP.')}
+        </div>` },
+      { icon: '🪙', title: 'Żetony, skrzynki, szatnia', body: `
+        <p class="lead">Za każdą walkę dostajesz <b>żetony</b> i XP. Żetony wydajesz w Sklepie i w Kasynie.</p>
+        <div class="tut-grid">
+          ${item('📦', 'Skrzynki', 'Wypadają po wygranych (co trzecia gwarantowana) i są w Sklepie. W środku rękawice, gacie, czapki, efekty K.O. i teksty. Duplikat zwraca żetony.')}
+          ${item('🛒', 'Sklep', 'Skrzynki, oferta dnia (zmienia się o północy) i pole na tajne kody. Spróbuj kodu <b>PANTSLOW</b>.')}
+          ${item('👕', 'Szatnia', 'Zakładasz zdobyte rzeczy, widać je na Twojej postaci w walce.')}
+          ${item('📈', 'Rozwój postaci', 'Trzy poziomy na postać za żetony i wygrane nią. Poziom 3 wzmacnia supermoc.')}
+          ${item('🗓️', 'Codzienne wejście', 'Siedmiodniowa drabinka nagród. Siódmy dzień daje Złotą Skrzynkę.')}
+          ${item('🔑', 'Tajne kody', 'Ekipa podrzuca je między sobą. Wpisujesz w Sklepie.')}
+        </div>` },
+      { icon: '🎰', title: 'Kasyno u Gazdziola', body: `
+        <p class="lead">Grasz własnymi żetonami, krupierem jest Gazdziol. Sześć gier w zakładkach na górze.</p>
+        <div class="tut-grid">
+          ${item('🎡', 'Ruletka', 'Wybierz żeton, kliknij pole na stole, KRĘĆ. Numer płaci 35:1, kolor 1:1.')}
+          ${item('🃏', 'Blackjack', 'Dobieraj do 21. Krupier stoi na 17, blackjack płaci 3:2. Jest podwojenie i split.')}
+          ${item('🎰', 'Bandyta', 'Trzy bębny z głowami ekipy. Trzy razy Król Pała = jackpot progresywny.')}
+          ${item('♠️', 'Poker', 'Texas hold’em z trzema AI o różnych stylach. Baner na górze mówi, czyj ruch.')}
+          ${item('🏁', 'Wyścigi i szybkie gry', 'Obstaw, kto dobiegnie do liny. Do tego kości i wyżej/niżej z rosnącym mnożnikiem.')}
+          ${item('💸', 'Dług i pojedynek', 'Przegrane liczą się „do odkucia”: możesz wyzwać Gazdziola na ring i odzyskać wszystko. Pusta kieszeń? Gazdziol pożyczy, ale po terminie przychodzi Watol windykator.')}
+        </div>
+        <p class="muted">Dom zawsze wygrywa. Ale spróbuj.</p>` },
+      { icon: '⭐', title: 'XP, pucharki, ranking', body: `
+        <div class="tut-grid">
+          ${item('⬆️', 'Poziomy i rangi', 'XP za K.O., zostałe HP, combo, supermoce, szybkość i serie zwycięstw. Od Świeżaka do Boga Pięści.')}
+          ${item('🏆', 'Pucharki', 'Kilkadziesiąt osiągnięć z paskami postępu i odznakami bossów. Ekran PUCHARKI w menu.')}
+          ${item('☁️', 'Ranking online', 'Konto to ksywka i PIN. Wspólna tabela ekipy, profil synchronizuje się między urządzeniami.')}
+          ${item('📹', 'Powtórki K.O.', 'Po nokaucie gra nagrywa wideo. Na ekranie wyniku jest „Udostępnij powtórkę”, wysyłasz ją prosto na grupę.')}
+          ${item('⭐', 'Gwiazdki i korony', 'Przy postaci widać gwiazdki za wygrane (3 / 10 / 25) i koronę za kampanię.')}
+        </div>` },
+      { icon: '💡', title: 'Porady na start', body: `
+        <div class="tut-grid">
+          ${item('📱', 'Telefon poziomo', 'Wtedy ring jest duży, a przyciski nie zasłaniają walki. „Pełny ekran” w menu, na iPhonie dodaj grę do ekranu początkowego.')}
+          ${item('🔊', 'Dźwięk', 'Postacie mają własne nagrania. Włączasz i wyłączasz przyciskiem DŹWIĘK w menu.')}
+          ${item('🛡️', 'Nie stój w bloku', 'Mocny cios go przełamuje. Blokuj serie, potem unik i kontra.')}
+          ${item('🌟', 'Trzymaj moc na dobry moment', 'Rywal ogłuszony albo przy linach? Wtedy odpalaj supermoc.')}
+          ${item('📖', 'Wróć tu kiedy chcesz', 'Samouczek jest w menu pod przyciskiem SAMOUCZEK, a lista klawiszy pod STEROWANIE.')}
+        </div>
+        <p class="lead" style="text-align:center">Powodzenia. Korona czeka. 👑</p>` },
+    ];
+  },
+  isOpen() { const t = $('#tutorial'); return t && !t.hidden; },
+  open(i = 0) { this._steps = this.steps(); this.i = clamp(i, 0, this._steps.length - 1); $('#tutorial').hidden = false; document.body.classList.add('tut-open'); this.render(0); },
+  close() { $('#tutorial').hidden = true; document.body.classList.remove('tut-open'); if (!PROFILE.d.tutSeen) { PROFILE.d.tutSeen = true; PROFILE.save(); } },
+  go(d) { const n = this.i + d; if (n < 0) return; if (n >= this._steps.length) { this.close(); return; } this.i = n; this.render(d); },
+  key(code) {
+    if (code === 'ArrowRight' || code === 'Enter' || code === 'Space' || code === 'KeyD') { this.go(1); return true; }
+    if (code === 'ArrowLeft' || code === 'KeyA') { this.go(-1); return true; }
+    if (code === 'Escape') { this.close(); return true; }
+    return false;
+  },
+  render(dir) {
+    const st = this._steps[this.i], n = this._steps.length;
+    $('#tut-icon').textContent = st.icon; $('#tut-title').textContent = st.title; $('#tut-step').textContent = `Krok ${this.i + 1} z ${n}`;
+    $('#tut-dots').innerHTML = this._steps.map((_, k) => `<i class="${k === this.i ? 'on' : k < this.i ? 'done' : ''}" data-k="${k}"></i>`).join('');
+    $$('#tut-dots i').forEach((d) => d.onclick = () => { const k = +d.dataset.k; const dd = Math.sign(k - this.i); this.i = k; this.render(dd); });
+    const body = $('#tut-body'); body.className = 'tut-body ' + (dir > 0 ? 'slide-l' : dir < 0 ? 'slide-r' : ''); body.innerHTML = st.body; body.scrollTop = 0;
+    $('#tut-prev').disabled = this.i === 0; $('#tut-prev').style.visibility = this.i === 0 ? 'hidden' : '';
+    $('#tut-next').textContent = this.i === n - 1 ? 'Zaczynamy! 🥊' : 'Dalej →';
+  },
+  init() {
+    $('#btn-tutorial').addEventListener('click', () => { SFX.ensure(); this.open(0); });
+    $('#tut-prev').addEventListener('click', () => this.go(-1));
+    $('#tut-next').addEventListener('click', () => this.go(1));
+    $('#tut-skip').addEventListener('click', () => this.close());
+    $('#tutorial').addEventListener('click', (e) => { if (e.target.id === 'tutorial') this.close(); });
+    let sx = 0, sy = 0, sw = false;
+    const box = $('.tut-box');
+    box.addEventListener('touchstart', (e) => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; sw = true; }, { passive: true });
+    box.addEventListener('touchend', (e) => { if (!sw) return; sw = false; const t = e.changedTouches[0]; const dx = t.clientX - sx, dy = t.clientY - sy; if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) this.go(dx < 0 ? 1 : -1); }, { passive: true });
+  },
+};
+
 function toast(icon, title, text) {
   const el = document.createElement('div'); el.className = 'toast';
   el.innerHTML = `<span class="ic">${icon}</span><span><b>${title}</b>${text}</span>`;
@@ -2158,6 +2301,8 @@ const App = {
 
     $$('[data-mode]').forEach((b) => b.addEventListener('click', () => { SFX.ensure(); this.mode = b.dataset.mode; this.openSelect(); }));
     $('#btn-help').addEventListener('click', () => { $('#help').hidden = false; });
+    TUTORIAL.init();
+    if (!PROFILE.d.tutSeen) setTimeout(() => { if (App.screen === 's-title' && $('#debt-modal').hidden) TUTORIAL.open(0); }, 700);
     $('#btn-trophies').addEventListener('click', () => { this.renderTrophies(); this.show('s-trophies'); });
     $('#btn-shop').addEventListener('click', () => { this.renderShop(); this.show('s-shop'); });
     $('#btn-boss').addEventListener('click', () => { SFX.ensure(); this.mode = 'boss'; this.openSelect(); });

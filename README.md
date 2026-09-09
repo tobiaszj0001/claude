@@ -12,6 +12,13 @@ Najprościej: włącz GitHub Pages dla tego brancha (Settings → Pages → bran
 Lokalnie: otwórz `index.html` w przeglądarce albo odpal `python3 -m http.server`
 w tym folderze i wejdź na `http://localhost:8000`.
 
+## Samouczek
+
+Przy pierwszym uruchomieniu gra pokazuje samouczek w 10 krokach (cel gry, sterowanie, walka, supermoce,
+wydarzenia na ringu, tryby, żetony i skrzynki, kasyno, XP i pucharki, porady). Później jest pod przyciskiem
+**SAMOUCZEK** w menu. Na komputerze przewijasz strzałkami i Enterem, na telefonie palcem (przesunięcie w bok)
+albo przyciskami. Treść kroków jest w `TUTORIAL.steps()` w `game.js`.
+
 ## Sterowanie
 
 | Akcja       | Solo / Gracz 1              | Gracz 2 (tryb 2 graczy)  |
@@ -89,6 +96,9 @@ Do tego: **jednoręki bandyta** z głowami ekipy (3x Król Pała = jackpot), **p
 **Dług**: przy pustej kieszeni Gazdziol pożycza 500, oddajesz 600 w 3 dni. Po terminie przychodzi Watol windykator:
 wygrasz, dług znika; przegrasz, zabiera żetony, a jak ich brakuje, jeden przedmiot z szatni. Kasyno ma 11 pucharków,
 a ranking online pokazuje bilans, rekord i jackpoty.
+
+Na telefonie kasyno ma własny układ: krupier w pasku u góry, zakładki w jednym rzędzie, a przyciski gry
+(KRĘĆ, DOBIERZ, SPRAWDZAM…) są przyklejone do dołu stołu, żeby nie trzeba było przewijać.
 
 ## Ranking online
 

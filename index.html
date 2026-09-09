@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=16" />
+  <link rel="stylesheet" href="style.css?v=17" />
 </head>
 <body>
 <div id="app">
@@ -44,6 +44,7 @@
         <button class="btn" id="btn-online">☁️ RANKING ONLINE</button>
       </div>
       <div class="menu menu-small">
+        <button class="btn btn-ghost btn-sm" id="btn-tutorial">📖 SAMOUCZEK</button>
         <button class="btn btn-ghost btn-sm" id="btn-help">STEROWANIE</button>
         <button class="btn btn-ghost btn-sm" id="btn-fs">PEŁNY EKRAN</button>
         <button class="btn btn-ghost btn-sm" id="btn-sound">🔊 DŹWIĘK: WŁ</button>
@@ -186,12 +187,12 @@
       </aside>
       <div class="casino-main">
         <div class="tabs" id="casino-tabs">
-          <button class="tab on" data-ctab="roulette">🎡 Ruletka</button>
-          <button class="tab" data-ctab="blackjack">🃏 Blackjack</button>
-          <button class="tab" data-ctab="slots">🎰 Bandyta</button>
-          <button class="tab" data-ctab="poker">♠️ Poker</button>
-          <button class="tab" data-ctab="race">🏁 Wyścigi</button>
-          <button class="tab" data-ctab="quick">🎲 Szybkie</button>
+          <button class="tab on" data-ctab="roulette"><i>🎡</i><span>Ruletka</span></button>
+          <button class="tab" data-ctab="blackjack"><i>🃏</i><span>Blackjack</span></button>
+          <button class="tab" data-ctab="slots"><i>🎰</i><span>Bandyta</span></button>
+          <button class="tab" data-ctab="poker"><i>♠️</i><span>Poker</span></button>
+          <button class="tab" data-ctab="race"><i>🏁</i><span>Wyścigi</span></button>
+          <button class="tab" data-ctab="quick"><i>🎲</i><span>Szybkie</span></button>
         </div>
         <div id="casino-game" class="casino-game"></div>
       </div>
@@ -335,6 +336,24 @@
     </div>
   </div>
 
+  <!-- ===== SAMOUCZEK ===== -->
+  <div id="tutorial" class="overlay" hidden>
+    <div class="tut-box">
+      <header class="tut-head">
+        <div class="tut-icon" id="tut-icon"></div>
+        <div class="tut-titles"><div class="tut-step" id="tut-step"></div><h2 id="tut-title"></h2></div>
+        <button class="btn btn-ghost btn-sm tut-close" id="tut-skip" aria-label="Zamknij">✕</button>
+      </header>
+      <div class="tut-dots" id="tut-dots"></div>
+      <div class="tut-body" id="tut-body"></div>
+      <footer class="tut-nav">
+        <button class="btn btn-ghost" id="tut-prev">← Wstecz</button>
+        <span class="tut-swipe">przesuń palcem lub strzałki ← →</span>
+        <button class="btn btn-primary" id="tut-next">Dalej →</button>
+      </footer>
+    </div>
+  </div>
+
   <div id="ios-help" class="overlay" hidden>
     <div class="overlay-box help-box">
       <h2>PEŁNY EKRAN NA TELEFONIE</h2>
@@ -352,6 +371,6 @@
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
 <script src="online-config.js"></script>
-<script src="game.js?v=16"></script>
+<script src="game.js?v=17"></script>
 </body>
 </html>
