@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v8';
+const VERSION = 'v9';
 const BASE_HP = 100;
 const LEGEND_MULT = 1;           // mnożnik HP legend (było 10, ekipa chciała równo)
 const W = 960, H = 540, FLOOR = 470;
@@ -760,6 +760,15 @@ class Match {
 // ============================================================
 //  Aplikacja (ekrany, kampania, pętla)
 // ============================================================
+function statsHtml(ch) {
+  const bar = (label, pct, cls) => `<div class="stat ${cls || ''}"><span>${label}</span><i><b style="width:${pct}%"></b></i></div>`;
+  return `<div class="stats">
+    ${bar('Szybkość', Math.round((ch.speed - 0.7) / 0.6 * 100))}
+    ${bar('Siła', Math.round(clamp((ch.power - 0.7) / 0.9, 0, 1) * 100))}
+    ${bar('HP', Math.round(100 * (ch.legendary ? LEGEND_MULT : 1) / LEGEND_MULT), 'hp')}
+  </div>`;
+}
+
 const App = {
   screen: 's-title', match: null, paused: false, raf: 0, last: 0,
   mode: 'campaign', p1: null, p2: null, campaign: null, canvas: null, ctx: null,
@@ -863,22 +872,33 @@ const App = {
     $('#btn-fight').textContent = this.mode === 'versus' && !this.pickingP2 ? 'DALEJ' : 'WALCZ!';
     ROSTER.forEach((ch) => {
       const card = document.createElement('div'); card.className = 'card' + (ch.legendary ? ' legendary' : '');
+      card.style.setProperty('--glove', ch.glove);
       const hp = BASE_HP * (ch.legendary ? LEGEND_MULT : 1);
       card.innerHTML = `
-        <img src="${headSrc(ch)}" alt="${ch.name}" />
-        <div class="name"><span class="glove" style="background:${ch.glove}"></span>${ch.name}${VOICES.any(ch) ? ' <span class="voice" title="ma głos">🔊</span>' : ''}</div>
+        <div class="card-head"><img src="${headSrc(ch)}" alt="${ch.name}" /></div>
+        <div class="name">${ch.name}${VOICES.any(ch) ? ' <span class="voice" title="ma głos">🔊</span>' : ''}</div>
         <div class="title">${ch.title}</div>
-        <div class="stats">
-          <div class="stat"><span>Szybk.</span><i><b style="width:${Math.round((ch.speed - 0.7) / 0.6 * 100)}%"></b></i></div>
-          <div class="stat"><span>Siła</span><i><b style="width:${Math.round((ch.power - 0.7) / 0.6 * 100)}%"></b></i></div>
-          <div class="stat hp"><span>HP</span><i><b style="width:${Math.round(100 * (ch.legendary ? LEGEND_MULT : 1) / LEGEND_MULT)}%"></b></i></div>
-        </div>`;
+        ${statsHtml(ch)}`;
       if (this.pickingP2 && this.p1 && this.p1.id === ch.id) card.classList.add('taken');
       card.addEventListener('click', () => this.pickCard(ch, card, hp));
       grid.appendChild(card);
     });
     $('#btn-fight').disabled = true;
+    $('#spotlight').querySelector('.spot-empty').hidden = false; $('#spotlight').querySelector('.spot-card').hidden = true;
     $('#sel-info').innerHTML = this.mode === 'versus' ? 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy czekają na końcu.';
+  },
+  fillSpotlight(ch) {
+    const sp = $('#spotlight'); sp.querySelector('.spot-empty').hidden = true;
+    const box = sp.querySelector('.spot-card'); box.hidden = false;
+    box.style.setProperty('--glove', ch.glove);
+    box.classList.toggle('legendary', !!ch.legendary);
+    $('#spot-badge').hidden = !ch.legendary;
+    $('#spot-img').src = headSrc(ch);
+    $('#spot-name').textContent = ch.name;
+    $('#spot-title').textContent = '„' + ch.title + '”';
+    $('#spot-taunt').textContent = '„' + ch.taunt + '”';
+    $('#spot-stats').innerHTML = statsHtml(ch);
+    box.classList.remove('pop'); void box.offsetWidth; box.classList.add('pop');
   },
   pickCard(ch, card, hp) {
     SFX.ensure(); SFX.jump();
@@ -886,6 +906,7 @@ const App = {
     $$('.card').forEach((c) => c.classList.remove('selected', 'selected-p2'));
     card.classList.add(this.pickingP2 ? 'selected-p2' : 'selected');
     if (this.pickingP2) this.p2 = ch; else this.p1 = ch;
+    this.fillSpotlight(ch);
     $('#sel-info').innerHTML = `<b>${ch.name}</b> „${ch.title}” • ${hp} HP • szybkość ${ch.speed.toFixed(2)} • siła ${ch.power.toFixed(2)}${ch.legendary ? ' • <em>★ LEGENDA</em>' : ''}<br><i>„${ch.taunt}”</i>`;
     $('#btn-fight').disabled = false;
   },

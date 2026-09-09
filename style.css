@@ -88,43 +88,82 @@ h1, h2, h3, .logo, .kicker, .champ-title { font-family: var(--font-display); let
 .card .voice { font-size: 0.8em; }
 
 /* ---------- Wybór postaci ---------- */
-#s-select { padding: 0.6rem; gap: 0.6rem; }
+#s-select { padding: 0.8rem 1rem; gap: 0.8rem; background: radial-gradient(ellipse at 50% 0%, rgba(124,92,255,0.18), transparent 60%), var(--bg); }
 .select-head { display: flex; align-items: center; gap: 1rem; }
-.select-head h2 { margin: 0; font-size: clamp(1.4rem, 4vw, 2.4rem); color: var(--gold); text-align: center; flex: 1; }
+.select-head h2 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.8rem); color: var(--gold); text-align: center; flex: 1; text-shadow: 0 4px 0 #a06d00, 0 0 30px rgba(255,215,0,0.35); }
 .select-head .spacer { width: 90px; }
+.select-body { flex: 1; display: flex; gap: 1rem; min-height: 0; }
 .grid {
-  flex: 1; overflow: auto; display: grid; gap: 0.6rem;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  align-content: start; padding: 0.2rem;
+  flex: 1; overflow: auto; display: grid; gap: 0.9rem;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  align-content: start; padding: 0.6rem 0.4rem 1rem;
 }
 .card {
-  background: var(--card); border: 2px solid var(--card-border); border-radius: 16px;
-  padding: 0.6rem 0.5rem; text-align: center; cursor: pointer; position: relative;
-  transition: transform 0.1s, border-color 0.15s, box-shadow 0.15s;
+  --glove: #fff;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glove) 16%, transparent), rgba(255,255,255,0.03) 60%);
+  border: 2px solid color-mix(in srgb, var(--glove) 35%, rgba(255,255,255,0.1));
+  border-radius: 22px; padding: 1rem 0.8rem 0.9rem; text-align: center; cursor: pointer; position: relative;
+  transition: transform 0.12s, border-color 0.15s, box-shadow 0.15s;
 }
-.card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,0.3); }
-.card.selected { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(255,215,0,0.3), 0 10px 30px rgba(255,215,0,0.25); transform: translateY(-3px); }
-.card.selected-p2 { border-color: var(--pink); box-shadow: 0 0 0 3px rgba(255,79,163,0.3); }
-.card.taken { opacity: 0.35; pointer-events: none; }
-.card img { width: 72%; max-width: 110px; height: auto; border-radius: 50%; filter: drop-shadow(0 6px 10px rgba(0,0,0,0.5)); }
-.card.legendary { background: linear-gradient(180deg, rgba(255,215,0,0.14), rgba(255,215,0,0.03)); border-color: rgba(255,215,0,0.5); }
-.card.legendary::before {
-  content: '★ LEGENDA ★'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-  background: var(--gold); color: #1b1200; font-family: var(--font-display); font-size: 0.8rem;
-  padding: 1px 8px; border-radius: 8px; letter-spacing: 0.1em; white-space: nowrap;
+.card:hover { transform: translateY(-5px) scale(1.02); border-color: var(--glove); box-shadow: 0 12px 30px rgba(0,0,0,0.5), 0 0 24px color-mix(in srgb, var(--glove) 45%, transparent); }
+.card.selected, .card.selected-p2 { transform: translateY(-5px) scale(1.03); }
+.card.selected { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(255,215,0,0.35), 0 14px 36px rgba(255,215,0,0.3); }
+.card.selected-p2 { border-color: var(--pink); box-shadow: 0 0 0 4px rgba(255,79,163,0.35), 0 14px 36px rgba(255,79,163,0.3); }
+.card.taken { opacity: 0.3; pointer-events: none; }
+.card-head { position: relative; width: 74%; max-width: 150px; margin: 0 auto; aspect-ratio: 320 / 380; }
+.card-head::before {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--glove) 55%, transparent), transparent 70%);
+  filter: blur(6px);
 }
-.card .name { font-family: var(--font-display); font-size: 1.3rem; margin-top: 0.4rem; letter-spacing: 0.05em; }
-.card .title { font-size: 0.72rem; color: var(--muted); min-height: 1.1em; }
-.stats { display: flex; flex-direction: column; gap: 3px; margin-top: 0.4rem; font-size: 0.62rem; color: var(--muted); text-align: left; }
-.stat { display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 4px; }
-.stat i { display: block; height: 5px; border-radius: 3px; background: rgba(255,255,255,0.1); overflow: hidden; }
-.stat i b { display: block; height: 100%; background: linear-gradient(90deg, var(--pink), var(--gold)); }
+.card-head img { position: relative; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 3px var(--glove), 0 10px 22px rgba(0,0,0,0.6); }
+.card.legendary { background: linear-gradient(180deg, rgba(255,215,0,0.22), rgba(255,215,0,0.04) 70%); border-color: rgba(255,215,0,0.7); }
+.card.legendary::before, .spot-badge {
+  content: '★ LEGENDA ★'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1b1200; font-family: var(--font-display); font-size: 0.9rem;
+  padding: 2px 12px; border-radius: 10px; letter-spacing: 0.12em; white-space: nowrap; box-shadow: 0 4px 12px rgba(255,215,0,0.4);
+}
+.card .name { font-family: var(--font-display); font-size: 1.7rem; margin-top: 0.7rem; letter-spacing: 0.06em; line-height: 1; }
+.card .title { font-size: 0.85rem; color: var(--muted); min-height: 1.2em; margin-top: 0.25rem; }
+.card .voice { font-size: 0.7em; }
+.stats { display: flex; flex-direction: column; gap: 5px; margin-top: 0.7rem; font-size: 0.75rem; color: var(--muted); text-align: left; }
+.stat { display: grid; grid-template-columns: 62px 1fr; align-items: center; gap: 6px; }
+.stat i { display: block; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.stat i b { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--pink), var(--gold)); }
 .stat.hp i b { background: linear-gradient(90deg, #2ec4b6, #7cff9b); }
-.card .glove { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 4px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.4); }
+
+/* panel z wybraną postacią (komputer) */
+.spotlight { display: none; width: 340px; flex: none; flex-direction: column; min-height: 0; padding: 0.6rem 0 1rem; }
+.spotlight > [hidden] { display: none !important; }
+.spot-empty { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; color: var(--muted); padding: 2rem; border: 2px dashed rgba(255,255,255,0.12); border-radius: 24px; font-size: 1.05rem; }
+.spot-card {
+  --glove: #fff; position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.5rem;
+  padding: 2rem 1.4rem 1.4rem; border-radius: 24px; overflow: auto;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--glove) 22%, transparent), rgba(255,255,255,0.03) 55%);
+  border: 2px solid color-mix(in srgb, var(--glove) 50%, rgba(255,255,255,0.1));
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 40px color-mix(in srgb, var(--glove) 30%, transparent);
+}
+.spot-card.legendary { border-color: var(--gold); }
+.spot-card.pop { animation: spotpop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1); }
+@keyframes spotpop { from { transform: scale(0.92); opacity: 0.4; } to { transform: scale(1); opacity: 1; } }
+.spot-head { width: 220px; max-width: 80%; aspect-ratio: 320 / 380; position: relative; margin-top: 0.4rem; }
+.spot-head::before { content: ''; position: absolute; inset: -14px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--glove) 60%, transparent), transparent 70%); filter: blur(10px); animation: spotglow 2.4s ease-in-out infinite; }
+@keyframes spotglow { 0%,100% { opacity: 0.7; transform: scale(1);} 50% { opacity: 1; transform: scale(1.06);} }
+.spot-head img { position: relative; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 5px var(--glove), 0 16px 34px rgba(0,0,0,0.65); animation: bounce 2.4s ease-in-out infinite; }
+.spot-name { font-family: var(--font-display); font-size: 2.6rem; letter-spacing: 0.06em; line-height: 1; margin-top: 0.6rem; text-shadow: 0 4px 0 rgba(0,0,0,0.5); }
+.spot-title { color: var(--gold); font-size: 1.05rem; font-weight: 600; }
+.spot-taunt { color: var(--muted); font-style: italic; font-size: 0.95rem; }
+.spot-stats { width: 100%; margin-top: 0.4rem; }
+.spot-stats .stats { font-size: 0.85rem; }
+.spot-stats .stat i { height: 10px; }
+@media (min-width: 1000px) { .spotlight { display: flex; } .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); } }
+@media (min-width: 1400px) { .grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); } .spotlight { width: 400px; } .spot-head { width: 260px; } }
+
 .select-foot { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.sel-info { flex: 1; color: var(--muted); font-size: 0.95rem; }
+.sel-info { flex: 1; color: var(--muted); font-size: 1rem; }
 .sel-info b { color: var(--text); }
 .sel-info em { color: var(--gold); font-style: normal; }
+.btn-lg { font-size: 2rem; padding: 0.5em 2em; }
 
 /* ---------- Gra ---------- */
 #s-game { background: #000; align-items: center; justify-content: center; }
@@ -215,14 +254,25 @@ kbd {
 
 @media (max-width: 700px) {
   .btn { font-size: 1.2rem; padding: 0.5em 1.2em; }
-  .grid { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 0.4rem; }
-  .card .name { font-size: 1.05rem; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 0.5rem; }
+  .card { padding: 0.7rem 0.4rem 0.6rem; border-radius: 16px; }
+  .card .name { font-size: 1rem; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card .title { font-size: 0.65rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .stats { display: none; }
+  .btn-lg { font-size: 1.4rem; padding: 0.5em 1.4em; }
   .select-head .spacer { display: none; }
 }
 @media (max-height: 420px) {
-  .grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
-  .card img { max-width: 60px; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.5rem; }
+  .card { padding: 0.5rem 0.3rem 0.5rem; border-radius: 16px; }
+  .card-head { max-width: 64px; }
+  .card .name { font-size: 0.95rem; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 0.4rem; }
+  .card .title { font-size: 0.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card.legendary::before { font-size: 0.6rem; top: -8px; }
+  .select-head h2 { font-size: 1.3rem; }
+  #s-select { padding: 0.4rem 0.6rem; gap: 0.3rem; }
+  .sel-info { font-size: 0.75rem; }
+  .btn-lg { font-size: 1.2rem; padding: 0.4em 1.2em; }
   .stats { display: none; }
   .title-inner { gap: 0.5rem; }
   .logo-main { font-size: 3.6rem; }

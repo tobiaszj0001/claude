@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=8" />
+  <link rel="stylesheet" href="style.css?v=9" />
 </head>
 <body>
 <div id="app">
@@ -47,10 +47,23 @@
       <h2 id="select-title">Wybierz wojownika</h2>
       <div class="spacer"></div>
     </header>
-    <div id="grid" class="grid"></div>
+    <div class="select-body">
+      <div id="grid" class="grid"></div>
+      <aside id="spotlight" class="spotlight">
+        <div class="spot-empty">Kliknij postać, żeby zobaczyć ją z bliska</div>
+        <div class="spot-card" hidden>
+          <div class="spot-badge" id="spot-badge">★ LEGENDA ★</div>
+          <div class="spot-head"><img id="spot-img" alt="" /></div>
+          <div class="spot-name" id="spot-name"></div>
+          <div class="spot-title" id="spot-title"></div>
+          <div class="spot-taunt" id="spot-taunt"></div>
+          <div class="spot-stats" id="spot-stats"></div>
+        </div>
+      </aside>
+    </div>
     <footer class="select-foot">
       <div id="sel-info" class="sel-info">Kliknij postać</div>
-      <button class="btn btn-primary" id="btn-fight" disabled>WALCZ!</button>
+      <button class="btn btn-primary btn-lg" id="btn-fight" disabled>WALCZ!</button>
     </footer>
   </section>
 
@@ -170,6 +183,6 @@
 
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
-<script src="game.js?v=8"></script>
+<script src="game.js?v=9"></script>
 </body>
 </html>
