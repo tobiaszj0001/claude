@@ -2,98 +2,155 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Odliczanie aż Grażyna Kubica przejdzie na emeryturę</title>
-  <meta name="description" content="Kredowy licznik odliczający milion lat do emerytury naszej nauczycielki, Grażyny Kubicy." />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0b14" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Only Pantslow Gang: Turniej</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Tło: tablica -->
-  <div class="bg">
-    <div class="bg__vignette"></div>
-    <div class="bg__smudges"></div>
-    <div class="chalk-doodles" aria-hidden="true">
-      <span class="doodle doodle--1">∑</span>
-      <span class="doodle doodle--2">π</span>
-      <span class="doodle doodle--3">★</span>
-      <span class="doodle doodle--4">✎</span>
-      <span class="doodle doodle--5">√</span>
-      <span class="doodle doodle--6">♥</span>
+<div id="app">
+
+  <!-- ===== TYTUŁ ===== -->
+  <section id="s-title" class="screen active">
+    <div class="title-bg"></div>
+    <div class="title-inner">
+      <div class="logo">
+        <span class="logo-top">ONLY PANTSLOW</span>
+        <span class="logo-main">GANG</span>
+        <span class="logo-sub">TURNIEJ O KORONĘ</span>
+      </div>
+      <div id="title-faces" class="title-faces"></div>
+      <div class="menu">
+        <button class="btn btn-primary" data-mode="campaign">KAMPANIA</button>
+        <button class="btn" data-mode="versus">2 GRACZY</button>
+        <button class="btn btn-ghost" id="btn-help">STEROWANIE</button>
+        <button class="btn btn-ghost" id="btn-fs">PEŁNY EKRAN</button>
+      </div>
+      <div id="hall" class="hall"></div>
+    </div>
+  </section>
+
+  <!-- ===== WYBÓR POSTACI ===== -->
+  <section id="s-select" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-back">← Wróć</button>
+      <h2 id="select-title">Wybierz wojownika</h2>
+      <div class="spacer"></div>
+    </header>
+    <div id="grid" class="grid"></div>
+    <footer class="select-foot">
+      <div id="sel-info" class="sel-info">Kliknij postać</div>
+      <button class="btn btn-primary" id="btn-fight" disabled>WALCZ!</button>
+    </footer>
+  </section>
+
+  <!-- ===== GRA ===== -->
+  <section id="s-game" class="screen">
+    <canvas id="c" width="960" height="540"></canvas>
+    <button id="btn-pause" class="pause-btn" aria-label="Pauza">❚❚</button>
+
+    <div id="touch" class="touch" hidden>
+      <div class="pad pad-left">
+        <button class="tbtn tbtn-jump" data-act="jump">▲<small>SKOK</small></button>
+        <div class="pad-row">
+          <button class="tbtn" data-act="left">◀</button>
+          <button class="tbtn" data-act="right">▶</button>
+        </div>
+        <button class="tbtn tbtn-dodge" data-act="dodge">▼<small>UNIK</small></button>
+      </div>
+      <div class="pad pad-right">
+        <button class="tbtn tbtn-block" data-act="block">BLOK</button>
+        <button class="tbtn tbtn-heavy" data-act="heavy">MOCNY</button>
+        <button class="tbtn tbtn-punch" data-act="punch">CIOS</button>
+      </div>
+    </div>
+
+    <div id="pause" class="overlay" hidden>
+      <div class="overlay-box">
+        <h2>PAUZA</h2>
+        <button class="btn btn-primary" id="btn-resume">Graj dalej</button>
+        <button class="btn btn-ghost" id="btn-quit">Wyjdź do menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WYNIK WALKI ===== -->
+  <section id="s-result" class="screen">
+    <div class="result-box">
+      <div id="result-kicker" class="kicker"></div>
+      <h2 id="result-title"></h2>
+      <div id="result-faces" class="result-faces"></div>
+      <p id="result-text"></p>
+      <div id="result-progress" class="progress"></div>
+      <div class="menu">
+        <button class="btn btn-primary" id="btn-next"></button>
+        <button class="btn btn-ghost" id="btn-result-menu">Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== MISTRZ ===== -->
+  <section id="s-champion" class="screen">
+    <div id="confetti" class="confetti"></div>
+    <div class="champion-box">
+      <div class="kicker">NOWY WŁADCA</div>
+      <div class="champ-head">
+        <span class="crown">👑</span>
+        <img id="champ-img" alt="" />
+      </div>
+      <h1 id="champ-name"></h1>
+      <div class="champ-title">KRÓL ONLY PANTSLOW GANG</div>
+      <p id="champ-text"></p>
+      <div class="menu">
+        <button class="btn btn-primary" id="btn-champ-menu">Do menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STEROWANIE ===== -->
+  <div id="help" class="overlay" hidden>
+    <div class="overlay-box help-box">
+      <h2>STEROWANIE</h2>
+      <div class="help-cols">
+        <div>
+          <h3>Solo / Gracz 1</h3>
+          <table>
+            <tr><td>Ruch</td><td><kbd>A</kbd> <kbd>D</kbd> lub <kbd>←</kbd> <kbd>→</kbd></td></tr>
+            <tr><td>Skok</td><td><kbd>W</kbd> lub <kbd>↑</kbd></td></tr>
+            <tr><td>Unik</td><td><kbd>S</kbd> lub <kbd>↓</kbd></td></tr>
+            <tr><td>Cios</td><td><kbd>Spacja</kbd> lub <kbd>F</kbd></td></tr>
+            <tr><td>Mocny cios</td><td><kbd>G</kbd></td></tr>
+            <tr><td>Blok</td><td><kbd>Shift</kbd> lub <kbd>H</kbd></td></tr>
+          </table>
+        </div>
+        <div>
+          <h3>Gracz 2 (tryb 2 graczy)</h3>
+          <table>
+            <tr><td>Ruch</td><td><kbd>←</kbd> <kbd>→</kbd></td></tr>
+            <tr><td>Skok</td><td><kbd>↑</kbd></td></tr>
+            <tr><td>Unik</td><td><kbd>↓</kbd></td></tr>
+            <tr><td>Cios</td><td><kbd>K</kbd></td></tr>
+            <tr><td>Mocny cios</td><td><kbd>L</kbd></td></tr>
+            <tr><td>Blok</td><td><kbd>;</kbd> lub prawy <kbd>Shift</kbd></td></tr>
+          </table>
+        </div>
+      </div>
+      <p class="help-tips">
+        Na telefonie masz przyciski na ekranie. Blok zmniejsza obrażenia do 15%, ale mocny cios go przełamuje.
+        Unik daje chwilę nietykalności. Każde trafienie z rzędu podbija mnożnik combo (do 2x). Obrywasz, combo znika.
+        <br /><br />Pauza: <kbd>Esc</kbd> lub <kbd>P</kbd>.
+      </p>
+      <button class="btn btn-primary" id="btn-help-close">Jasne</button>
     </div>
   </div>
 
-  <main class="wrap">
-    <header class="hero">
-      <div class="badge">
-        <span class="badge__dot"></span>
-        Grono pedagogiczne · Status: wciąż uczy
-      </div>
-      <h1 class="title">
-        Odliczanie aż <span class="title__name">Grażyna Kubica</span><br />
-        przejdzie na emeryturę
-      </h1>
-      <p class="subtitle">
-        Obliczenia w klasowym zeszycie wykazały, że zostało jeszcze dokładnie
-        <strong>milion lat</strong>. Nasza nauczycielka nie zwalnia tempa.
-      </p>
-    </header>
-
-    <!-- LICZNIK -->
-    <section class="counter" aria-label="Licznik odliczający">
-      <div class="counter__unit">
-        <div class="counter__value" id="years">000000</div>
-        <div class="counter__label">Lata</div>
-      </div>
-      <span class="counter__sep">:</span>
-      <div class="counter__unit">
-        <div class="counter__value" id="days">000</div>
-        <div class="counter__label">Dni</div>
-      </div>
-      <span class="counter__sep">:</span>
-      <div class="counter__unit">
-        <div class="counter__value" id="hours">00</div>
-        <div class="counter__label">Godziny</div>
-      </div>
-      <span class="counter__sep">:</span>
-      <div class="counter__unit">
-        <div class="counter__value" id="minutes">00</div>
-        <div class="counter__label">Minuty</div>
-      </div>
-      <span class="counter__sep">:</span>
-      <div class="counter__unit">
-        <div class="counter__value" id="seconds">00</div>
-        <div class="counter__label">Sekundy</div>
-      </div>
-    </section>
-
-    <div class="progress">
-      <div class="progress__bar" id="progressBar"></div>
-      <span class="progress__text" id="progressText">0,0000% ukończono</span>
-    </div>
-
-    <div class="facts">
-      <div class="fact">
-        <span class="fact__num">📚</span>
-        <span class="fact__txt">Zawsze przygotowana</span>
-      </div>
-      <div class="fact">
-        <span class="fact__num">✏️</span>
-        <span class="fact__txt">Cierpliwość: nieskończona</span>
-      </div>
-      <div class="fact">
-        <span class="fact__num">🔔</span>
-        <span class="fact__txt">Dzwonek jej nie zatrzyma</span>
-      </div>
-    </div>
-
-    <footer class="foot">
-      Zrobione z sympatią dla naszej nauczycielki Grażyny Kubicy 💚
-    </footer>
-  </main>
-
-  <script src="script.js"></script>
+  <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
+</div>
+<script src="game.js"></script>
 </body>
 </html>
