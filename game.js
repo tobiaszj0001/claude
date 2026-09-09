@@ -22,9 +22,9 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.20, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v6';
+const VERSION = 'v7';
 const BASE_HP = 100;
-const LEGEND_MULT = 10;          // legendy mają 10x HP
+const LEGEND_MULT = 1;           // mnożnik HP legend (było 10, ekipa chciała równo)
 const W = 960, H = 540, FLOOR = 470;
 const GRAVITY = 1700;
 const RING_L = 90, RING_R = 870;
@@ -871,14 +871,14 @@ const App = {
         <div class="stats">
           <div class="stat"><span>Szybk.</span><i><b style="width:${Math.round((ch.speed - 0.7) / 0.6 * 100)}%"></b></i></div>
           <div class="stat"><span>Siła</span><i><b style="width:${Math.round((ch.power - 0.7) / 0.6 * 100)}%"></b></i></div>
-          <div class="stat hp"><span>HP</span><i><b style="width:${ch.legendary ? 100 : 10}%"></b></i></div>
+          <div class="stat hp"><span>HP</span><i><b style="width:${Math.round(100 * (ch.legendary ? LEGEND_MULT : 1) / LEGEND_MULT)}%"></b></i></div>
         </div>`;
       if (this.pickingP2 && this.p1 && this.p1.id === ch.id) card.classList.add('taken');
       card.addEventListener('click', () => this.pickCard(ch, card, hp));
       grid.appendChild(card);
     });
     $('#btn-fight').disabled = true;
-    $('#sel-info').innerHTML = this.mode === 'versus' ? 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy mają 10x HP.';
+    $('#sel-info').innerHTML = this.mode === 'versus' ? 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy czekają na końcu.';
   },
   pickCard(ch, card, hp) {
     SFX.ensure(); SFX.jump();
@@ -939,7 +939,7 @@ const App = {
       const next = c.order[c.idx];
       $('#result-kicker').textContent = `WALKA ${c.idx} / ${c.order.length} WYGRANA`;
       title.textContent = lf.ch.legendary ? 'LEGENDA UPADŁA!' : 'ZWYCIĘSTWO!';
-      $('#result-text').textContent = `${lf.ch.name} leży. Następny w kolejce: ${next.name} „${next.title}”${next.legendary ? ' — LEGENDA z 10x HP!' : ''}.`;
+      $('#result-text').textContent = `${lf.ch.name} leży. Następny w kolejce: ${next.name} „${next.title}”${next.legendary ? ' — LEGENDA!' : ''}.`;
       $('#btn-next').textContent = `DALEJ: ${next.name.toUpperCase()}`;
       $('#btn-next').onclick = () => this.startCampaignFight();
     } else {

@@ -29,7 +29,7 @@ Na telefonie pojawiają się przyciski na ekranie. Graj poziomo.
 ## Zasady
 
 - Kampania: pokonujesz po kolei całą ekipę, na końcu dwie legendy.
-- Legendy (Król Pała, Watol Wszechwładny) mają 10x więcej HP.
+- Legendy (Król Pała, Watol Wszechwładny) czekają na końcu kampanii. HP mają takie jak wszyscy (mnożnik `LEGEND_MULT` w `game.js`, gdyby ekipa zmieniła zdanie).
 - Blok zmniejsza obrażenia do 15%, mocny cios przełamuje blok.
 - Unik daje chwilę nietykalności.
 - Kolejne trafienia bez oberwania podbijają mnożnik combo do 2x.
@@ -50,7 +50,7 @@ Na telefonie pojawiają się przyciski na ekranie. Graj poziomo.
    { id: 'zenek', name: 'Zenek', title: 'Postrach Osiedla', glove: '#00ff88', speed: 1.0, power: 1.0, taunt: 'Zaraz zobaczysz.' },
    ```
    `speed` i `power` w okolicach 0.85–1.2. Dodaj `legendary: true`, żeby postać
-   dostała 10x HP i koronę.
+   dostała koronę i miejsce na końcu kampanii.
 
 ## Głosy postaci
 
