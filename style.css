@@ -393,11 +393,14 @@ h3 { font-size: 1.15rem; }
 @media (max-width: 768px) {
   .nav__burger { display: flex; }
   .nav__links {
-    position: fixed; inset: 0; background: var(--navy); flex-direction: column; justify-content: center; gap: 28px;
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
+    background: var(--navy); flex-direction: column; justify-content: center; gap: 28px;
     font-size: 1.2rem; transform: translateX(100%); transition: transform .3s var(--ease); z-index: -1;
+    overflow-y: auto; padding: 80px 24px 40px;
   }
   .nav__links.open { transform: none; }
-  .nav.menu-open { background: var(--navy); }
+  /* backdrop-filter tworzy nowy blok pozycjonujący dla elementów fixed — przy otwartym menu musi być wyłączony */
+  .nav.menu-open, .nav.menu-open.scrolled { background: var(--navy); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none; }
   .hero { padding-top: 120px; }
   .hero__stats { grid-template-columns: 1fr 1fr; gap: 24px 0; margin-top: 60px; }
   .stat:nth-child(3) { border-left: 0; padding-left: 0; }
