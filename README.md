@@ -38,7 +38,8 @@ Na telefonie pojawiają się przyciski na ekranie. Graj poziomo.
 
 - **Kampania**: pokonujesz po kolei całą ekipę, legendy na końcu, tytuł Króla i korona.
 - **Przetrwanie**: cała ekipa po kolei w losowej kolejności, między falami odzyskujesz tylko 30 HP. Liczy się liczba pokonanych.
-- **2 graczy**: jedna klawiatura, WASD kontra strzałki.
+- **Szybki mecz**: wybierasz swoją postać i przeciwnika, jeden mecz z AI, nagrody jak w kampanii, „Rewanż” na ekranie wyniku.
+- **2 graczy**: jedna klawiatura, WASD kontra strzałki. Na telefonie bez klawiatury przycisk zmienia się w **2 graczy: na punkty**: obaj wybierają postacie, potem każdy po kolei walczy z AI jako postać rywala, lepszy wynik wygrywa (drabinka jak w turnieju, telefon podajecie sobie z ręki do ręki).
 
 ## Supermoce
 
@@ -97,8 +98,9 @@ Do tego: **jednoręki bandyta** z głowami ekipy (3x Król Pała = jackpot), **p
 wygrasz, dług znika; przegrasz, zabiera żetony, a jak ich brakuje, jeden przedmiot z szatni. Kasyno ma 11 pucharków,
 a ranking online pokazuje bilans, rekord i jackpoty.
 
-Na telefonie kasyno ma własny układ: krupier w pasku u góry, zakładki w jednym rzędzie, a przyciski gry
-(KRĘĆ, DOBIERZ, SPRAWDZAM…) są przyklejone do dołu stołu, żeby nie trzeba było przewijać.
+Na telefonie kasyno ma własny układ bez przewijania: poziomo krupier w pasku u góry, zakładki jako pionowy pasek
+z lewej, a każda gra (ruletka z kołem obok stołu, blackjack z rękami obok siebie, poker bez logu, wyścigi z torem
+tylko w trakcie biegu) mieści się w całości na ekranie. Pionowo zakładki są w jednym rzędzie, a stół pod nimi.
 
 ## Ranking online
 

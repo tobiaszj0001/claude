@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v17';
+const VERSION = 'v18';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -1406,10 +1406,10 @@ const CASINO = {
     const g = $('#casino-game'); this.raceBet = this.raceBet || this.chipSet()[0];
     if (!this.race) this.newRace();
     const r = this.race;
-    g.innerHTML = `<div class="race"><canvas id="race-canvas" width="760" height="230"></canvas>
+    g.innerHTML = `<div class="race ${r.done ? 'done' : this.racing ? 'run' : 'bet'}"><canvas id="race-canvas" width="760" height="230"></canvas>
       <div class="race-comment" id="race-comment">${r.comment || 'Obstaw, kto pierwszy dobiegnie do liny. Kursy według formy.'}</div>
       <div class="racers">${r.runners.map((ru, i) => `<div class="racer ${r.pick === i ? 'on' : ''}" data-race="${i}"><img src="${headSrc(ru.ch)}" alt=""><div><div class="n">${ru.ch.name}</div><div class="f">${ru.formTxt}</div></div><div class="odds">${ru.odds.toFixed(1)}x</div></div>`).join('')}</div>
-      <div>Stawka: <b style="color:var(--gold)">${this.raceBet}</b>${r.pick !== null ? ` na <b>${r.runners[r.pick].ch.name}</b> • wygrana <b style="color:var(--gold)">${Math.round(this.raceBet * r.runners[r.pick].odds)}</b>` : ''}</div>${this.chipBar()}
+      <div class="stake">Stawka: <b style="color:var(--gold)">${this.raceBet}</b>${r.pick !== null ? ` na <b>${r.runners[r.pick].ch.name}</b> • wygrana <b style="color:var(--gold)">${Math.round(this.raceBet * r.runners[r.pick].odds)}</b>` : ''}</div>${this.chipBar()}
       <div class="bj-ctrl">${r.done ? `<button class="btn btn-primary" id="race-new">NOWY WYŚCIG</button>` : `<button class="btn btn-primary btn-lg" id="race-go" ${r.pick === null || this.chips() < this.raceBet || this.racing ? 'disabled' : ''}>🏁 START (${this.raceBet})</button>`}</div></div>`;
     this.bindChips(); $$('[data-chip]').forEach((x) => x.addEventListener('click', () => { this.raceBet = this.chip; this.renderRace(); }));
     $$('[data-race]').forEach((el) => el.onclick = () => { if (this.racing || r.done) return; r.pick = +el.dataset.race; this.renderRace(); });
@@ -1446,6 +1446,7 @@ const CASINO = {
   startRace() {
     const r = this.race; if (this.racing || r.pick === null || this.chips() < this.raceBet) return;
     const bet = this.raceBet; this.pay(-bet); this.racing = true; $('#race-go').disabled = true; SFX.ensure(); SFX.bell();
+    const rc = $('.race'); if (rc) { rc.classList.remove('bet'); rc.classList.add('run'); }
     const LINES = ['{n} potyka się o własne sznurówki!', '{n} znalazł energetyka!', '{n} zatrzymał się na kebaba!', '{n} sprintuje jak po ostatni autobus!', '{n} ogląda się za kimś z widowni!', '{n} dostał wiatr w plecy!'];
     let last = performance.now(), place = 0;
     const step = (now) => {
@@ -2130,7 +2131,8 @@ const TUTORIAL = {
         <div class="tut-grid">
           ${item('👑', 'Kampania', 'Cała ekipa po kolei, legendy na końcu. Wygrasz, dostajesz tytuł Króla i koronę przy postaci.', 'gold')}
           ${item('💀', 'Przetrwanie', 'Losowa kolejka rywali, między walkami odzyskujesz tylko 30 HP. Liczy się, ilu pokonasz.')}
-          ${item('👥', '2 graczy', 'Jedna klawiatura: WASD kontra strzałki. Najlepsze na imprezie.')}
+          ${item('⚡', 'Szybki mecz', 'Wybierasz swoją postać i przeciwnika, jeden mecz z AI, normalne nagrody.')}
+          ${item('👥', '2 graczy', touch ? 'Na telefonie „na punkty”: każdy po kolei walczy z AI jako postać rywala, lepszy wynik wygrywa. Podajcie sobie telefon.' : 'Jedna klawiatura: WASD kontra strzałki. Najlepsze na imprezie.')}
           ${item('👹', 'Boss tygodnia', 'Co poniedziałek inna postać z modyfikatorem (Gigant, Wampir, Chaos…). Pierwsza wygrana w tygodniu: 500 żetonów i Złota Skrzynka.')}
           ${item('🏟️', 'Turniej', '4 lub 8 osób na jednym urządzeniu, drabinka. Na telefonie gracie „na punkty” podając telefon z ręki do ręki.')}
           ${item('📅', 'Wyzwanie dnia', 'Codziennie inna postać i warunek do spełnienia. 300 XP.')}
@@ -2395,6 +2397,7 @@ const App = {
 
   // ---------- Tytuł ----------
   renderTitle() {
+    const vb = $('#btn-versus'); if (vb) vb.textContent = this.touchVersus() ? '🤝 2 GRACZY: NA PUNKTY' : '2 GRACZY';
     const faces = $('#title-faces'); faces.innerHTML = '';
     ROSTER.forEach((ch) => { const img = document.createElement('img'); img.src = headSrc(ch); img.alt = ch.name; faces.appendChild(img); });
     const p = PROFILE.d, lvl = PROFILE.level(), cur = p.xp - PROFILE.xpFor(lvl), need = PROFILE.xpFor(lvl + 1) - PROFILE.xpFor(lvl);
@@ -2499,7 +2502,8 @@ const App = {
       ${t.champion ? `<div class="round"><div class="round-name">MISTRZ</div><div class="match champ"><div class="ent won"><img src="${headSrc(t.champion.ch)}" alt=""><span>🏆 ${t.champion.name}</span></div></div></div>` : ''}</div>
       <div class="menu">${cur && !t.champion ? `<button class="btn btn-primary btn-lg" id="btn-tourney-play">${t.touch && t.pending ? `TERAZ GRA: ${t.pending.name.toUpperCase()}` : `GRAJ: ${cur.a.name} vs ${cur.b.name}`}</button>` : ''}<button class="btn btn-ghost" id="btn-tourney-new">Nowy turniej</button></div>`;
     const play = $('#btn-tourney-play'); if (play) play.onclick = () => this.playTourneyMatch();
-    $('#btn-tourney-new').onclick = () => { this.tourney = null; this.renderTourney(); };
+    $('#btn-tourney-new').onclick = () => { const duel = t.duel; this.tourney = null; if (duel) { this.mode = 'versus'; this.openSelect(); } else this.renderTourney(); };
+    const h = $('#s-tourney h2'); if (t.duel) { $('#btn-tourney-new').textContent = 'Nowy pojedynek'; if (h) h.textContent = '🤝 2 graczy: na punkty'; } else if (h) h.textContent = '🏟️ Turniej ekipy';
   },
   playTourneyMatch() {
     const t = this.tourney, m = t.rounds[t.ri][t.mi]; this.mode = 'tourney';
@@ -2522,7 +2526,7 @@ const App = {
     // przenieś zwycięzcę dalej
     if (t.ri + 1 < t.rounds.length) { const nm = t.rounds[t.ri + 1][Math.floor(t.mi / 2)]; if (t.mi % 2 === 0) nm.a = m.winner; else nm.b = m.winner; }
     t.mi++; if (t.mi >= t.rounds[t.ri].length) { t.mi = 0; t.ri++; }
-    if (t.ri >= t.rounds.length) { t.champion = m.winner; PROFILE.d.tourneyWins++; PROFILE.d.chips += 200; PROFILE.save(); toast('🏆', `Mistrz turnieju: ${m.winner.name}`, '+200 żetonów dla właściciela telefonu'); SFX.cheer(); SFX.bell(); }
+    if (t.ri >= t.rounds.length) { t.champion = m.winner; if (t.duel) { toast('🥊', `${m.winner.name} wygrywa pojedynek!`, m.score ? 'Punkty: ' + m.score : ''); } else { PROFILE.d.tourneyWins++; PROFILE.d.chips += 200; PROFILE.save(); toast('🏆', `Mistrz turnieju: ${m.winner.name}`, '+200 żetonów dla właściciela telefonu'); } SFX.cheer(); SFX.bell(); }
     this.renderTourney(); this.show('s-tourney');
   },
   // ---------- Sklep ----------
@@ -2631,8 +2635,8 @@ const App = {
   renderGrid() {
     const grid = $('#grid'); grid.innerHTML = '';
     const wbx = weeklyBoss();
-    $('#select-title').textContent = this.mode === 'casino' ? `Pojedynek z krupierem o ${this.casinoStake} żetonów. Kim walczysz?` : this.mode === 'versus' ? (this.pickingP2 ? 'Gracz 2: wybierz wojownika' : 'Gracz 1: wybierz wojownika') : this.mode === 'boss' ? `Boss: ${wbx.ch.name} ${wbx.mod.name}. Kim walczysz?` : this.mode === 'tourney' ? 'Wybierz wojownika' : 'Wybierz wojownika';
-    $('#btn-fight').textContent = this.mode === 'versus' && !this.pickingP2 ? 'DALEJ' : 'WALCZ!';
+    $('#select-title').textContent = this.mode === 'casino' ? `Pojedynek z krupierem o ${this.casinoStake} żetonów. Kim walczysz?` : this.mode === 'versus' ? (this.pickingP2 ? 'Gracz 2: wybierz wojownika' : 'Gracz 1: wybierz wojownika') : this.mode === 'quick' ? (this.pickingP2 ? 'Szybki mecz: wybierz przeciwnika' : 'Szybki mecz: kim walczysz?') : this.mode === 'boss' ? `Boss: ${wbx.ch.name} ${wbx.mod.name}. Kim walczysz?` : this.mode === 'tourney' ? 'Wybierz wojownika' : 'Wybierz wojownika';
+    $('#btn-fight').textContent = (this.mode === 'versus' || this.mode === 'quick') && !this.pickingP2 ? 'DALEJ' : 'WALCZ!';
     ROSTER.forEach((ch) => {
       const card = document.createElement('div'); card.className = 'card' + (ch.legendary ? ' legendary' : '');
       card.style.setProperty('--glove', ch.glove);
@@ -2650,7 +2654,7 @@ const App = {
     });
     $('#btn-fight').disabled = true;
     $('#spotlight').querySelector('.spot-empty').hidden = false; $('#spotlight').querySelector('.spot-card').hidden = true;
-    $('#sel-info').innerHTML = this.mode === 'boss' ? `👹 <b>${wbx.ch.name}</b> jako <em>${wbx.mod.name}</em>: ${wbx.mod.desc}. Nagroda za pierwsze zwycięstwo w tygodniu: 500 żetonów i Złota Skrzynka.` : this.mode === 'versus' ? 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.' : this.mode === 'survival' ? 'Przetrwanie: walczysz z całą ekipą po kolei, HP nie odnawia się w pełni. Ile fal wytrzymasz?' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy czekają na końcu.';
+    $('#sel-info').innerHTML = this.mode === 'boss' ? `👹 <b>${wbx.ch.name}</b> jako <em>${wbx.mod.name}</em>: ${wbx.mod.desc}. Nagroda za pierwsze zwycięstwo w tygodniu: 500 żetonów i Złota Skrzynka.` : this.mode === 'versus' ? (this.touchVersus() ? 'Na telefonie gracie na punkty: każdy po kolei walczy z AI jako postać rywala, lepszy wynik wygrywa. Podajcie sobie telefon.' : 'Gracz 1 wybiera na WASD, Gracz 2 na strzałkach.') : this.mode === 'quick' ? (this.pickingP2 ? `Grasz jako <b>${this.p1 ? this.p1.name : ''}</b>. Teraz wybierz, z kim chcesz się bić. Jeden mecz, normalne nagrody.` : 'Jeden mecz na Twoich zasadach: wybierasz swoją postać i przeciwnika. XP i żetony jak zwykle.') : this.mode === 'survival' ? 'Przetrwanie: walczysz z całą ekipą po kolei, HP nie odnawia się w pełni. Ile fal wytrzymasz?' : 'Pokonaj całą ekipę i zdobądź koronę. Legendy czekają na końcu.';
   },
   fillSpotlight(ch) {
     const sp = $('#spotlight'); sp.querySelector('.spot-empty').hidden = true;
@@ -2680,10 +2684,20 @@ const App = {
     $('#sel-info').innerHTML = `<b>${ch.name}</b> „${ch.title}” • ${hp} HP • szybkość ${ch.speed.toFixed(2)} • siła ${ch.power.toFixed(2)}${ch.legendary ? ' • <em>★ LEGENDA</em>' : ''}${spx ? `<br>${spx.icon} <em>${spx.name}</em>: ${spx.desc}` : ''}`;
     $('#btn-fight').disabled = false;
   },
+  touchVersus() { return isTouchDevice() && !usingKeyboard; },
   confirmSelect() {
     if (this.mode === 'versus') {
       if (!this.pickingP2) { this.pickingP2 = true; this.renderGrid(); return; }
+      if (this.touchVersus()) {
+        // telefon bez klawiatury: pojedynek na punkty, jak w turnieju (każdy po kolei z AI jako postać rywala)
+        const a = { name: 'Gracz 1', ch: this.p1 }, b = { name: 'Gracz 2', ch: this.p2 };
+        this.tourney = { rounds: [[{ a, b, winner: null, score: null }]], ri: 0, mi: 0, touch: true, duel: true, pending: a };
+        this.playTourneyMatch(); return;
+      }
       this.startMatch({ p1: this.p1, p2: this.p2, mode: 'versus', label: 'GRACZ 1 vs GRACZ 2' });
+    } else if (this.mode === 'quick') {
+      if (!this.pickingP2) { this.pickingP2 = true; this.renderGrid(); return; }
+      this.startQuick();
     } else if (this.mode === 'casino') {
       const dealer = ROSTER.find((c) => c.id === 'gazdziol') || ROSTER[0];
       this.startMatch({ p1: this.p1, p2: dealer, mode: 'casino', diff: 0.85, label: `POJEDYNEK Z KRUPIEREM • STAWKA ${this.casinoStake} 🪙`, events: true });
@@ -2702,6 +2716,9 @@ const App = {
   },
 
   // ---------- Kampania ----------
+  startQuick() {
+    this.startMatch({ p1: this.p1, p2: this.p2, mode: 'quick', diff: 0.8, events: true, label: `SZYBKI MECZ • ${this.p1.name.toUpperCase()} vs ${this.p2.name.toUpperCase()}` });
+  },
   startCampaignFight() {
     const c = this.campaign, opp = c.order[c.idx], n = c.order.length;
     const diff = c.survival ? Math.min(1, 0.4 + 0.06 * c.idx) : (opp.legendary ? 1.0 : 0.35 + 0.55 * (c.idx / Math.max(1, n - 1)));
@@ -2764,6 +2781,13 @@ const App = {
       if (winner === 0) { PROFILE.d.chips += stake; PROFILE.d.casinoLost = 0; PROFILE.d.casinoDuels++; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'ODKUTY!'; $('#result-text').textContent = `Gazdziol oddaje ${stake} żetonów. Z twarzy mu zeszło. Wracasz do stołu?`; toast('🪙', `+${stake} żetonów`, 'Krupier oddał przegrane'); }
       else { PROFILE.d.casinoLost = 0; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'PRZEGRANA'; title.classList.add('lose'); $('#result-text').textContent = `Gazdziol zatrzymuje ${stake} żetonów i poprawia marynarkę. Licznik strat wyzerowany.`; }
       $('#btn-next').textContent = 'DO KASYNA'; $('#btn-next').onclick = () => { CASINO.render(); this.show('s-casino'); };
+      this.show('s-result'); return;
+    }
+    if (this.mode === 'quick') {
+      $('#result-kicker').textContent = 'SZYBKI MECZ';
+      if (winner === 0) { title.textContent = 'ZWYCIĘSTWO!'; $('#result-text').textContent = `${lf.ch.name} leży. Rewanż z tym samym rywalem albo wróć do menu i ustaw inną parę.`; }
+      else { title.textContent = 'PRZEGRANA'; title.classList.add('lose'); $('#result-text').textContent = `${wf.ch.name} tym razem górą. Rewanż?`; }
+      $('#btn-next').textContent = 'REWANŻ'; $('#btn-next').onclick = () => this.startQuick();
       this.show('s-result'); return;
     }
     if (this.mode === 'boss') {
