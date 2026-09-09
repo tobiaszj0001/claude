@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v11';
+const VERSION = 'v12';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -1331,7 +1331,7 @@ const PROFILE = {
   },
   useCode(raw) {
     const code = (raw || '').trim().toUpperCase().replace(/\s+/g, '');
-    const CODES = { 'PANTSLOW': { chips: 500 }, 'GANG': { crate: 'basic' }, 'KRUPNIOK': { item: 'g_sausage' }, 'WIELKIEGLOWY': { toggle: 'bigHeads' }, 'SWIETOCHLOWICE': { item: 'h_poop' }, 'DZIADEK': { item: 's_thong' }, 'KACZKA': { item: 'k_ducks' }, 'KORONA': { crate: 'gold' }, 'BYTOM': { chips: 250, item: 't_6' } };
+    const CODES = { 'PANTSLOW': { chips: 500 }, 'GANG': { crate: 'basic' }, 'KRUPNIOK': { item: 'g_sausage' }, 'WIELKIEGLOWY': { toggle: 'bigHeads' }, 'SWIETOCHLOWICE': { item: 'h_poop' }, 'DZIADEK': { item: 's_thong' }, 'KACZKA': { item: 'k_ducks' }, 'KORONA': { crate: 'gold' }, 'BYTOM': { chips: 250, item: 't_6' }, 'BABCIASHOP': { chips: 2500 } };
     const c = CODES[code]; if (!c) return { ok: false, msg: 'Nieznany kod.' };
     if (c.toggle) { this.d[c.toggle] = !this.d[c.toggle]; this.save(); return { ok: true, msg: c.toggle === 'bigHeads' ? (this.d.bigHeads ? 'Tryb WIELKICH GŁÓW włączony!' : 'Wielkie głowy wyłączone.') : 'OK' }; }
     if (this.d.codes[code]) return { ok: false, msg: 'Ten kod już był użyty.' };
