@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v12';
+const VERSION = 'v13';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -328,6 +328,10 @@ window.addEventListener('keydown', (e) => {
   if (!usingKeyboard && GAME_KEYS.has(e.code)) { usingKeyboard = true; if (inGame) $('#touch').hidden = true; }
   keysHeld.add(e.code); keyBuf.set(e.code, performance.now());
   if (inGame && App.match && App.match.phase === 'replay') { App.match.replay.skip = true; return; }
+  if ((e.code === 'Space' || e.code === 'Enter') && !['INPUT', 'SELECT', 'TEXTAREA'].includes((document.activeElement || {}).tagName)) {
+    const primary = { 's-result': '#btn-next', 's-champion': '#btn-champ-menu', 's-select': '#btn-fight' }[App.screen];
+    if (primary) { const b = $(primary); if (b && !b.disabled && !b.hidden) { e.preventDefault(); b.click(); return; } }
+  }
   if ((e.code === 'Escape' || e.code === 'KeyP') && inGame) App.togglePause();
 });
 window.addEventListener('keyup', (e) => { keysHeld.delete(e.code); if (App.screen === 's-game' && GAME_KEYS.has(e.code)) e.preventDefault(); });
@@ -1304,12 +1308,216 @@ const ONLINE = {
 };
 
 // ============================================================
+//  KASYNO U GAŹDZIOŁA: ruletka, blackjack, pojedynek z krupierem
+// ============================================================
+const ROULETTE_WHEEL = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
+const ROULETTE_RED = new Set([1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36]);
+const DEALER_SAY = {
+  hello: ['Siadaj. Żetony na stół.', 'Dom zawsze wygrywa. Ale spróbuj.', 'Elegancko cię ogram.', 'Garnitur mam z twoich przegranych.'],
+  win: ['Szczęście początkującego.', 'Trzymaj, zanim się rozmyślę.', 'Hm. Nie przyzwyczajaj się.', 'Dobra, tym razem twoje.'],
+  lose: ['Dziękuję, bardzo dziękuję.', 'Może jeszcze jeden zakład? Dla odkucia.', 'Tak to jest, jak się nie umie.', 'Krupier nigdy nie płacze.', 'To były ładne żetony.'],
+  big: ['NIE. To niemożliwe.', 'Kto ci to pozwolił?!', 'Sprawdzam stół... czysto. Cholera.'],
+  bj: ['Blackjack. Ugh. Elegancko.', 'Dwadzieścia jeden. Zapamiętam cię.'],
+  duel: ['Chcesz odkuć? To wychodź na ring.', 'Zdejmuję marynarkę. Nie oszczędzę cię.'],
+};
+const CASINO = {
+  tab: 'roulette', chip: 50, bets: {}, spinning: false, history: [], angle: 0, ballAngle: 0, anim: null,
+  bj: null,
+  say(kind) { const el = $('#dealer-say'); if (el) el.textContent = pick(DEALER_SAY[kind]); },
+  chips() { return PROFILE.d.chips; },
+  pay(n) { PROFILE.d.chips = Math.max(0, Math.round(PROFILE.d.chips + n)); PROFILE.save(); this.refresh(); },
+  track(delta) { const p = PROFILE.d; p.casinoRounds++; if (delta < 0) { p.casinoLost += -delta; p.casinoLostTotal += -delta; } else if (delta > 0) { p.casinoWon += delta; } PROFILE.save(); },
+  refresh() {
+    $('#chips-casino').textContent = '🪙 ' + this.chips(); $('#chips-title').textContent = this.chips();
+    const p = PROFILE.d;
+    $('#casino-stats').innerHTML = `Rundy: <b>${p.casinoRounds}</b><br>Wygrane: <b>${p.casinoWon}</b> • Przegrane: <b>${p.casinoLostTotal}</b><br>Do odkucia: <b>${p.casinoLost}</b>`;
+    const db = $('#duel-box'); db.hidden = p.casinoLost <= 0;
+    if (p.casinoLost > 0) { db.innerHTML = `<b>Przegrałeś ${p.casinoLost} żetonów</b><span>Wyzwij krupiera na pojedynek. Wygrasz, odzyskasz wszystko. Przegrasz, licznik się zeruje i żetony przepadają.</span><button class="btn btn-sm btn-primary" id="btn-duel">🥊 WYZWIJ GAŹDZIOŁA</button>`; $('#btn-duel').onclick = () => App.casinoDuel(); }
+  },
+  render() {
+    $('#dealer-img').src = headSrc(ROSTER.find((c) => c.id === 'gazdziol') || ROSTER[0]);
+    $$('[data-ctab]').forEach((b) => { b.classList.toggle('on', b.dataset.ctab === this.tab); b.onclick = () => { if (this.spinning || (this.bj && this.bj.phase === 'play')) return; this.tab = b.dataset.ctab; this.render(); }; });
+    this.refresh();
+    if (this.tab === 'roulette') this.renderRoulette(); else this.renderBlackjack();
+  },
+  chipBar() { return `<div class="chip-select">${[10, 50, 100, 500, 1000].map((v) => `<button class="chip c${v} ${this.chip === v ? 'on' : ''}" data-chip="${v}">${v}</button>`).join('')}</div>`; },
+  bindChips() { $$('[data-chip]').forEach((b) => b.onclick = () => { this.chip = +b.dataset.chip; $$('[data-chip]').forEach((x) => x.classList.toggle('on', +x.dataset.chip === this.chip)); }); },
+  // ---------- RULETKA ----------
+  betTotal() { return Object.values(this.bets).reduce((a, b) => a + b, 0); },
+  renderRoulette() {
+    const g = $('#casino-game');
+    const cell = (key, label, cls) => `<div class="cell ${cls}" data-bet="${key}">${label}${this.bets[key] ? `<span class="bet">${this.bets[key]}</span>` : ''}</div>`;
+    let grid = cell('n0', '0', 'green');
+    for (let col = 0; col < 12; col++) for (let row = 0; row < 3; row++) { /* placeholder, budujemy niżej */ }
+    // siatka: 3 rzędy x 12 kolumn (górny rząd 3,6,9..., dolny 1,4,7...)
+    let cells = '';
+    for (let row = 2; row >= 0; row--) { for (let col = 0; col < 12; col++) { const n = col * 3 + row + 1; cells += cell('n' + n, n, ROULETTE_RED.has(n) ? 'red' : 'black'); } cells += cell('col' + (row + 1), '2:1', 'out col'); }
+    const dozens = `<div class="dozens">${cell('d1', '1-12', 'out')}${cell('d2', '13-24', 'out')}${cell('d3', '25-36', 'out')}</div>`;
+    const outs = `<div class="outs">${cell('low', '1-18', 'out')}${cell('even', 'PARZ.', 'out')}${cell('red', '🔴', 'out')}${cell('black', '⚫', 'out')}${cell('odd', 'NIEP.', 'out')}${cell('high', '19-36', 'out')}</div>`;
+    g.innerHTML = `<div class="roulette"><canvas id="wheel" width="240" height="240"></canvas><div><div class="table">${grid}${cells}${dozens}${outs}</div></div></div>
+      ${this.chipBar()}
+      <div class="roulette-ctrl"><span>Na stole: <b style="color:var(--gold)">${this.betTotal()}</b></span><button class="btn btn-sm btn-ghost" id="rl-clear">Zdejmij</button><button class="btn btn-sm btn-ghost" id="rl-repeat" ${this.lastBets ? '' : 'disabled'}>Powtórz</button><button class="btn btn-primary" id="rl-spin" ${this.betTotal() ? '' : 'disabled'}>🎡 KRĘĆ</button></div>
+      <div class="history">${this.history.slice(-14).map((n) => `<span style="background:${n === 0 ? '#1e8449' : ROULETTE_RED.has(n) ? '#c0392b' : '#1a1a1a'}">${n}</span>`).join('')}</div>
+      <div class="t-hint">Numer 35:1 • kolumna i tuzin 2:1 • kolor, parzyste, połówki 1:1. Kliknij pole, żeby postawić wybrany żeton.</div>`;
+    this.bindChips();
+    $$('[data-bet]').forEach((c) => c.onclick = () => { if (this.spinning) return; if (this.chips() - this.betTotal() < this.chip) { this.say('lose'); $('#dealer-say').textContent = 'Nie stać cię. Wygraj coś w ringu.'; return; } const k = c.dataset.bet; this.bets[k] = (this.bets[k] || 0) + this.chip; SFX.ensure(); SFX.tone(1400, 0.05, 0.15, 'square', 0.9); this.renderRoulette(); });
+    $('#rl-clear').onclick = () => { if (!this.spinning) { this.bets = {}; this.renderRoulette(); } };
+    $('#rl-repeat').onclick = () => { if (!this.spinning && this.lastBets) { const tot = Object.values(this.lastBets).reduce((a, b) => a + b, 0); if (tot <= this.chips()) { this.bets = Object.assign({}, this.lastBets); this.renderRoulette(); } } };
+    $('#rl-spin').onclick = () => this.spin();
+    this.drawWheel();
+  },
+  drawWheel(highlight) {
+    const cv = $('#wheel'); if (!cv) return; const ctx = cv.getContext('2d'); const R = 112, cx = 120, cy = 120, n = ROULETTE_WHEEL.length;
+    ctx.clearRect(0, 0, 240, 240);
+    ctx.save(); ctx.translate(cx, cy);
+    ctx.fillStyle = '#5a3a1e'; ctx.beginPath(); ctx.arc(0, 0, R + 8, 0, Math.PI * 2); ctx.fill();
+    ctx.rotate(this.angle);
+    for (let i = 0; i < n; i++) {
+      const num = ROULETTE_WHEEL[i], a0 = i / n * Math.PI * 2, a1 = (i + 1) / n * Math.PI * 2;
+      ctx.fillStyle = num === 0 ? '#1e8449' : ROULETTE_RED.has(num) ? '#c0392b' : '#1a1a1a';
+      if (highlight === num) ctx.fillStyle = '#ffd700';
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, R, a0, a1); ctx.closePath(); ctx.fill();
+      ctx.save(); ctx.rotate((a0 + a1) / 2); ctx.fillStyle = highlight === num ? '#000' : '#fff'; ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(num, R - 14, 4); ctx.restore();
+    }
+    ctx.fillStyle = '#2b2540'; ctx.beginPath(); ctx.arc(0, 0, R * 0.55, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#ffd700'; ctx.font = '22px Bangers, Impact, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('OPG', 0, 8);
+    ctx.restore();
+    // kulka
+    const br = R - 10; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(cx + Math.cos(this.ballAngle) * br, cy + Math.sin(this.ballAngle) * br, 6, 0, Math.PI * 2); ctx.fill();
+    // wskaźnik
+    ctx.fillStyle = '#ffd700'; ctx.beginPath(); ctx.moveTo(cx - 8, 2); ctx.lineTo(cx + 8, 2); ctx.lineTo(cx, 18); ctx.closePath(); ctx.fill();
+  },
+  spin() {
+    if (this.spinning || !this.betTotal()) return;
+    const total = this.betTotal(); if (total > this.chips()) return;
+    this.spinning = true; this.lastBets = Object.assign({}, this.bets);
+    this.pay(-total);
+    $('#rl-spin').disabled = true; $('#dealer-say').textContent = 'Kulka w ruchu. Zakłady zamknięte.';
+    const result = ROULETTE_WHEEL[Math.floor(Math.random() * ROULETTE_WHEEL.length)];
+    const idx = ROULETTE_WHEEL.indexOf(result), n = ROULETTE_WHEEL.length;
+    // docelowy kąt: sektor wyniku pod wskaźnikiem (góra = -PI/2)
+    const target = -Math.PI / 2 - (idx + 0.5) / n * Math.PI * 2;
+    const start = this.angle % (Math.PI * 2), turns = 5 + Math.floor(Math.random() * 3);
+    const end = target - turns * Math.PI * 2 - Math.floor((start - target) / (Math.PI * 2)) * Math.PI * 2 + Math.PI * 2 * 0;
+    const dur = 4200, t0 = performance.now();
+    SFX.ensure();
+    const step = (now) => {
+      const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+      this.angle = start + (end - start) * e;
+      this.ballAngle = -this.angle * 2.2 + p * 3;
+      if (p >= 1) this.ballAngle = -Math.PI / 2;
+      if (Math.floor(p * 40) !== Math.floor((p - 0.01) * 40) && p < 0.9) SFX.tone(600 + p * 200, 0.02, 0.06, 'square', 1);
+      this.drawWheel(p >= 1 ? result : undefined);
+      if (p < 1) this.anim = requestAnimationFrame(step); else this.settle(result, total);
+    };
+    this.anim = requestAnimationFrame(step);
+  },
+  settle(result, total) {
+    let win = 0;
+    for (const [k, amt] of Object.entries(this.bets)) {
+      if (k === 'n' + result) win += amt * 36;
+      else if (result !== 0) {
+        if (k === 'red' && ROULETTE_RED.has(result)) win += amt * 2;
+        if (k === 'black' && !ROULETTE_RED.has(result)) win += amt * 2;
+        if (k === 'even' && result % 2 === 0) win += amt * 2;
+        if (k === 'odd' && result % 2 === 1) win += amt * 2;
+        if (k === 'low' && result <= 18) win += amt * 2;
+        if (k === 'high' && result >= 19) win += amt * 2;
+        if (k === 'd1' && result <= 12) win += amt * 3; if (k === 'd2' && result >= 13 && result <= 24) win += amt * 3; if (k === 'd3' && result >= 25) win += amt * 3;
+        if (k.startsWith('col') && (result - 1) % 3 + 1 === +k.slice(3)) win += amt * 3;
+      }
+    }
+    this.history.push(result); this.spinning = false;
+    const delta = win - total; this.track(delta);
+    if (this.bets['n' + result]) { PROFILE.d.casinoStraight++; }
+    if (win > 0) this.pay(win);
+    const col = result === 0 ? 'zielone' : ROULETTE_RED.has(result) ? 'czerwone' : 'czarne';
+    if (delta > 0) { this.say(delta >= total * 10 ? 'big' : 'win'); toast('🎡', `Wypadło ${result} (${col})`, `+${delta} żetonów netto`); SFX.bell(); if (delta >= total * 10) SFX.cheer(); }
+    else if (delta === 0) { $('#dealer-say').textContent = `${result}. Wychodzisz na zero. Nudno.`; }
+    else { this.say('lose'); toast('🎡', `Wypadło ${result} (${col})`, `-${-delta} żetonów`); SFX.hurt(); }
+    this.bets = {};
+    this.checkTrophies();
+    setTimeout(() => { this.renderRoulette(); $$('.cell').forEach((c) => c.classList.toggle('hit', c.dataset.bet === 'n' + result)); }, 300);
+  },
+  // ---------- BLACKJACK ----------
+  newDeck() { const d = []; for (let k = 0; k < 4; k++) for (const su of ['♠', '♥', '♦', '♣']) for (const r of ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']) d.push({ r, su }); return shuffle(d); },
+  val(hand) { let t = 0, aces = 0; for (const c of hand) { if (c.r === 'A') { aces++; t += 11; } else if (['J', 'Q', 'K'].includes(c.r)) t += 10; else t += +c.r; } while (t > 21 && aces) { t -= 10; aces--; } return t; },
+  isBJ(h) { return h.length === 2 && this.val(h) === 21; },
+  draw() { if (!this.deck || this.deck.length < 20) this.deck = this.newDeck(); return this.deck.pop(); },
+  renderBlackjack() {
+    const g = $('#casino-game'); const b = this.bj;
+    const card = (c, hidden) => hidden ? '<div class="card-p back"></div>' : `<div class="card-p ${['♥', '♦'].includes(c.su) ? 'red' : ''}"><div>${c.r}${c.su}</div><div class="s">${c.su}</div><div class="b">${c.r}${c.su}</div></div>`;
+    if (!b || b.phase === 'bet') {
+      this.bjBet = this.bjBet || 50;
+      g.innerHTML = `<div class="bj"><div class="bj-msg">${b && b.msg ? b.msg : 'BLACKJACK'}</div><div class="hand"><div class="hand-label">KRUPIER</div><div class="cards">${b ? b.dealer.map((c) => card(c)).join('') : ''}</div></div>
+        ${b ? b.hands.map((h, i) => `<div class="hand"><div class="hand-label">TY${b.hands.length > 1 ? ' ' + (i + 1) : ''}<b>${this.val(h.cards)}</b></div><div class="cards">${h.cards.map((c) => card(c)).join('')}</div></div>`).join('') : '<div class="hand"><div class="hand-label">TY</div><div class="cards"></div></div>'}
+        <div>Stawka: <b style="color:var(--gold)">${this.bjBet}</b></div>${this.chipBar()}
+        <div class="bj-ctrl"><button class="btn btn-sm btn-ghost" id="bj-minus">−</button><button class="btn btn-sm btn-ghost" id="bj-plus">+</button><button class="btn btn-primary" id="bj-deal" ${this.chips() < this.bjBet ? 'disabled' : ''}>🃏 ROZDAJ (${this.bjBet})</button></div>
+        <div class="t-hint">Blackjack płaci 3:2. Krupier dobiera do 16, stoi na 17. Podwojenie na dwóch kartach, split par.</div></div>`;
+      this.bindChips();
+      $$('[data-chip]').forEach((x) => x.addEventListener('click', () => { this.bjBet = this.chip; this.renderBlackjack(); }));
+      $('#bj-minus').onclick = () => { this.bjBet = Math.max(10, this.bjBet - this.chip); this.renderBlackjack(); };
+      $('#bj-plus').onclick = () => { this.bjBet = Math.min(this.chips(), this.bjBet + this.chip); this.renderBlackjack(); };
+      $('#bj-deal').onclick = () => this.bjDeal();
+      return;
+    }
+    const cur = b.hands[b.cur]; const done = b.phase === 'done';
+    g.innerHTML = `<div class="bj"><div class="bj-msg ${b.msgLose ? 'lose' : ''}">${b.msg || ''}</div>
+      <div class="hand"><div class="hand-label">KRUPIER${done || b.reveal ? `<b>${this.val(b.dealer)}</b>` : ''}</div><div class="cards">${b.dealer.map((c, i) => card(c, i === 1 && !b.reveal && !done)).join('')}</div></div>
+      ${b.hands.map((h, i) => `<div class="hand ${!done && i === b.cur ? 'active' : ''}"><div class="hand-label">TY${b.hands.length > 1 ? ' ' + (i + 1) : ''} • ${h.bet}<b>${this.val(h.cards)}${h.result ? ' • ' + h.result : ''}</b></div><div class="cards">${h.cards.map((c) => card(c)).join('')}</div></div>`).join('')}
+      <div class="bj-ctrl">${done ? `<button class="btn btn-primary" id="bj-again">JESZCZE RAZ</button><button class="btn btn-ghost" id="bj-new">Zmień stawkę</button>` : `<button class="btn btn-primary" id="bj-hit">DOBIERZ</button><button class="btn" id="bj-stand">STÓJ</button>${cur.cards.length === 2 && this.chips() >= cur.bet ? `<button class="btn" id="bj-double">PODWÓJ</button>` : ''}${cur.cards.length === 2 && b.hands.length === 1 && this.rank(cur.cards[0]) === this.rank(cur.cards[1]) && this.chips() >= cur.bet ? `<button class="btn" id="bj-split">SPLIT</button>` : ''}`}</div></div>`;
+    if (done) { $('#bj-again').onclick = () => { if (this.chips() >= this.bjBet) this.bjDeal(); else { this.bj = { phase: 'bet', dealer: [], hands: [], msg: 'Brak żetonów na tę stawkę' }; this.renderBlackjack(); } }; $('#bj-new').onclick = () => { this.bj = null; this.renderBlackjack(); }; return; }
+    $('#bj-hit').onclick = () => this.bjHit(); $('#bj-stand').onclick = () => this.bjStand();
+    const d = $('#bj-double'); if (d) d.onclick = () => this.bjDouble();
+    const sp = $('#bj-split'); if (sp) sp.onclick = () => this.bjSplit();
+  },
+  rank(c) { return ['J', 'Q', 'K', '10'].includes(c.r) ? 10 : c.r; },
+  bjDeal() {
+    const bet = this.bjBet; if (this.chips() < bet) return;
+    this.pay(-bet); SFX.ensure(); SFX.tone(800, 0.06, 0.1, 'triangle', 0.8);
+    this.bj = { phase: 'play', dealer: [this.draw(), this.draw()], hands: [{ cards: [this.draw(), this.draw()], bet, result: null }], cur: 0, reveal: false, msg: '' };
+    const b = this.bj;
+    if (this.isBJ(b.hands[0].cards) || this.isBJ(b.dealer)) { this.bjFinish(); return; }
+    this.renderBlackjack();
+  },
+  bjHit() { const b = this.bj, h = b.hands[b.cur]; h.cards.push(this.draw()); SFX.tone(700, 0.05, 0.1, 'triangle', 0.8); if (this.val(h.cards) > 21) { h.result = 'FURA'; this.bjNext(); } else if (this.val(h.cards) === 21) this.bjNext(); else this.renderBlackjack(); },
+  bjStand() { this.bjNext(); },
+  bjDouble() { const b = this.bj, h = b.hands[b.cur]; if (this.chips() < h.bet) return; this.pay(-h.bet); h.bet *= 2; h.cards.push(this.draw()); if (this.val(h.cards) > 21) h.result = 'FURA'; this.bjNext(); },
+  bjSplit() { const b = this.bj, h = b.hands[0]; if (this.chips() < h.bet) return; this.pay(-h.bet); const c2 = h.cards.pop(); b.hands.push({ cards: [c2, this.draw()], bet: h.bet, result: null }); h.cards.push(this.draw()); this.renderBlackjack(); },
+  bjNext() { const b = this.bj; b.cur++; if (b.cur >= b.hands.length) this.bjFinish(); else this.renderBlackjack(); },
+  bjFinish() {
+    const b = this.bj; b.reveal = true;
+    const anyLive = b.hands.some((h) => h.result !== 'FURA');
+    const playerBJ = b.hands.length === 1 && this.isBJ(b.hands[0].cards);
+    if (anyLive && !playerBJ) { while (this.val(b.dealer) < 17) b.dealer.push(this.draw()); }
+    const dv = this.val(b.dealer), dbj = this.isBJ(b.dealer); let net = 0; const parts = [];
+    for (const h of b.hands) {
+      const v = this.val(h.cards), pbj = this.isBJ(h.cards) && b.hands.length === 1;
+      let ret = 0;
+      if (h.result === 'FURA') { ret = 0; }
+      else if (pbj && !dbj) { ret = h.bet * 2.5; h.result = 'BLACKJACK!'; PROFILE.d.casinoBJ++; }
+      else if (dbj && !pbj) { ret = 0; h.result = 'krupier ma BJ'; }
+      else if (dv > 21) { ret = h.bet * 2; h.result = 'KRUPIER FURA'; }
+      else if (v > dv) { ret = h.bet * 2; h.result = 'WYGRANA'; }
+      else if (v === dv) { ret = h.bet; h.result = 'REMIS'; }
+      else { ret = 0; h.result = 'PRZEGRANA'; }
+      net += ret - h.bet; if (ret) this.pay(ret); parts.push(h.result);
+    }
+    b.phase = 'done'; this.track(net);
+    b.msgLose = net < 0; b.msg = net > 0 ? `+${Math.round(net)} żetonów` : net < 0 ? `-${Math.round(-net)} żetonów` : 'Remis, stawka wraca';
+    if (b.hands.some((h) => h.result === 'BLACKJACK!')) { this.say('bj'); SFX.cheer(); } else if (net > 0) { this.say('win'); SFX.bell(); } else if (net < 0) { this.say('lose'); SFX.hurt(); }
+    this.checkTrophies(); this.renderBlackjack();
+  },
+  checkTrophies() { const p = PROFILE.d; const nt = TROPHIES.filter((t) => !p.trophies[t.id] && t.check(p, null)); nt.forEach((t, i) => { p.trophies[t.id] = Date.now(); setTimeout(() => toast(t.icon, 'Pucharek: ' + t.name, t.desc), 400 + i * 900); }); PROFILE.save(); },
+};
+
+// ============================================================
 //  Profil gracza: XP, poziomy, pucharki, seria, wyzwanie dnia
 // ============================================================
 const PROFILE = {
   d: null,
   defaults() { return { xp: 0, fights: 0, wins: 0, losses: 0, streak: 0, bestStreak: 0, maxCombo: 0, specials: 0, blocks: 0, dodges: 0, versusFights: 0, charWins: {}, charPlays: {}, crowns: {}, trophies: {}, survivalBest: 0, fastestWin: 0, dailyDone: '', dailies: 0, lostTo: {}, wonAfterLoss: 0, kos: 0,
-    chips: 0, items: {}, equipped: { gloves: null, shorts: null, hat: null, ko: null, taunt: null }, crates: { basic: 0, gold: 0 }, cratesOpened: 0, lastLogin: '', loginStreak: 0, codes: {}, upgrades: {}, bigHeads: false, bosses: {}, winsSinceCrate: 0, crits: 0, pickups: 0, tourneyWins: 0, nick: '' }; },
+    chips: 0, items: {}, equipped: { gloves: null, shorts: null, hat: null, ko: null, taunt: null }, crates: { basic: 0, gold: 0 }, cratesOpened: 0, lastLogin: '', loginStreak: 0, codes: {}, upgrades: {}, bigHeads: false, bosses: {}, winsSinceCrate: 0, crits: 0, pickups: 0, tourneyWins: 0, nick: '', casinoRounds: 0, casinoWon: 0, casinoLost: 0, casinoLostTotal: 0, casinoStraight: 0, casinoBJ: 0, casinoDuels: 0 }; },
   addChips(n) { this.d.chips = Math.max(0, Math.round(this.d.chips + n)); this.save(); },
   owns(id) { return !!this.d.items[id]; },
   giveItem(id) { const it = ITEM_BY_ID[id]; if (!it) return { dup: true, refund: 0 }; if (this.d.items[id]) { const r = RARITY[it.rarity].refund; this.d.chips += r; this.save(); return { dup: true, refund: r }; } this.d.items[id] = Date.now(); this.save(); return { dup: false }; },
@@ -1396,6 +1604,10 @@ const TROPHIES = [
   { id: 'items10', icon: '👕', name: 'Szafiarz', desc: 'Zdobądź 10 przedmiotów', check: (p) => Object.keys(p.items).length >= 10, prog: (p) => [Object.keys(p.items).length, 10] },
   { id: 'legendary', icon: '💎', name: 'Legendarny drop', desc: 'Zdobądź przedmiot legendarny', check: (p) => Object.keys(p.items).some((id) => ITEM_BY_ID[id] && ITEM_BY_ID[id].rarity === 'legendary') },
   { id: 'upg3', icon: '⬆️', name: 'Maksymalny rozwój', desc: 'Rozwiń postać do 3. poziomu', check: (p) => Object.values(p.upgrades).some((v) => v >= 3) },
+  { id: 'casino10', icon: '🎰', name: 'Hazardzista', desc: 'Zagraj 10 rund w kasynie', check: (p) => p.casinoRounds >= 10, prog: (p) => [p.casinoRounds, 10] },
+  { id: 'casino_bj', icon: '🃏', name: 'Dwadzieścia jeden', desc: 'Trafić blackjacka', check: (p) => p.casinoBJ >= 1 },
+  { id: 'casino_35', icon: '🎡', name: 'Numer!', desc: 'Trafić pojedynczy numer w ruletce', check: (p) => p.casinoStraight >= 1 },
+  { id: 'casino_duel', icon: '🥊', name: 'Odkuty', desc: 'Odzyskaj żetony w pojedynku z krupierem', check: (p) => p.casinoDuels >= 1 },
   { id: 'login7', icon: '📆', name: 'Stały bywalec', desc: 'Wejdź do gry 7 dni z rzędu', check: (p) => p.loginStreak >= 7, prog: (p) => [Math.min(p.loginStreak, 7), 7] },
 ];
 function masteryStars(id) { const w = (PROFILE.d.charWins[id] || 0); return w >= 25 ? 3 : w >= 10 ? 2 : w >= 3 ? 1 : 0; }
@@ -1499,6 +1711,8 @@ const App = {
     $('#btn-tourney').addEventListener('click', () => { SFX.ensure(); this.tourney = null; this.renderTourney(); this.show('s-tourney'); });
     $('#btn-tourney-back').addEventListener('click', () => this.show('s-title'));
     $('#btn-online').addEventListener('click', () => { ONLINE.loadSession(); this.renderOnline(); this.show('s-online'); });
+    $('#btn-casino').addEventListener('click', () => { SFX.ensure(); CASINO.render(); CASINO.say('hello'); this.show('s-casino'); });
+    $('#btn-casino-back').addEventListener('click', () => { if (CASINO.spinning) return; this.show('s-title'); });
     $('#btn-online-back').addEventListener('click', () => this.show('s-title'));
     $('#replay-close').addEventListener('click', () => { $('#replay-modal').hidden = true; const v = $('#replay-video'); v.pause(); });
     ONLINE.loadSession();
@@ -1600,6 +1814,13 @@ const App = {
       : 'Nikt jeszcze nie zdobył korony. Będziesz pierwszy?';
   },
   loadHall() { try { return JSON.parse(localStorage.getItem('opg_hall') || '{}'); } catch (e) { return {}; } },
+  casinoDuel() {
+    const dealer = ROSTER.find((c) => c.id === 'gazdziol') || ROSTER[0];
+    this.p1 = this.p1 && this.p1.id !== dealer.id ? this.p1 : ROSTER.find((c) => c.id !== dealer.id);
+    this.mode = 'casino'; CASINO.say('duel');
+    this.casinoStake = PROFILE.d.casinoLost;
+    this.openSelect();
+  },
   // ---------- Ranking online ----------
   async renderOnline() {
     const box = $('#online-body');
@@ -1800,7 +2021,7 @@ const App = {
   renderGrid() {
     const grid = $('#grid'); grid.innerHTML = '';
     const wbx = weeklyBoss();
-    $('#select-title').textContent = this.mode === 'versus' ? (this.pickingP2 ? 'Gracz 2: wybierz wojownika' : 'Gracz 1: wybierz wojownika') : this.mode === 'boss' ? `Boss: ${wbx.ch.name} ${wbx.mod.name}. Kim walczysz?` : this.mode === 'tourney' ? 'Wybierz wojownika' : 'Wybierz wojownika';
+    $('#select-title').textContent = this.mode === 'casino' ? `Pojedynek z krupierem o ${this.casinoStake} żetonów. Kim walczysz?` : this.mode === 'versus' ? (this.pickingP2 ? 'Gracz 2: wybierz wojownika' : 'Gracz 1: wybierz wojownika') : this.mode === 'boss' ? `Boss: ${wbx.ch.name} ${wbx.mod.name}. Kim walczysz?` : this.mode === 'tourney' ? 'Wybierz wojownika' : 'Wybierz wojownika';
     $('#btn-fight').textContent = this.mode === 'versus' && !this.pickingP2 ? 'DALEJ' : 'WALCZ!';
     ROSTER.forEach((ch) => {
       const card = document.createElement('div'); card.className = 'card' + (ch.legendary ? ' legendary' : '');
@@ -1853,6 +2074,9 @@ const App = {
     if (this.mode === 'versus') {
       if (!this.pickingP2) { this.pickingP2 = true; this.renderGrid(); return; }
       this.startMatch({ p1: this.p1, p2: this.p2, mode: 'versus', label: 'GRACZ 1 vs GRACZ 2' });
+    } else if (this.mode === 'casino') {
+      const dealer = ROSTER.find((c) => c.id === 'gazdziol') || ROSTER[0];
+      this.startMatch({ p1: this.p1, p2: dealer, mode: 'casino', diff: 0.85, label: `POJEDYNEK Z KRUPIEREM • STAWKA ${this.casinoStake} 🪙`, events: true });
     } else if (this.mode === 'boss') {
       const wb = weeklyBoss();
       this.startMatch({ p1: this.p1, p2: wb.ch, mode: 'boss', diff: 0.9, boss: wb.mod, label: `BOSS TYGODNIA • ${wb.mod.name}` });
@@ -1884,8 +2108,9 @@ const App = {
     this.match = null;
     const me = m.f[0], opp = m.f[1];
     const sum = { mode: this.mode, won: winner === 0, player: me.ch, opp: opp.ch, hpEnd: me.hp, hpMax: me.maxHp, dmgTaken: me.stats.dmgTaken, maxCombo: me.stats.maxCombo, specials: me.stats.specials, blocks: me.stats.blocks, dodges: me.stats.dodges, time: m.fightTime, oppLegendary: !!opp.ch.legendary, wave: (this.campaign && this.campaign.survival && winner === 0) ? this.campaign.idx + 1 : 0, crits: me.stats.crits || 0, pickups: me.stats.pickups || 0, perfect: m.perfect && winner === 0, boss: !!m.opts.boss };
+    if (this.mode === 'casino') { const p = PROFILE.d; p.fights++; p.charPlays[me.ch.id] = (p.charPlays[me.ch.id] || 0) + 1; PROFILE.save(); }
     if (this.mode === 'versus' || this.mode === 'tourney') { const p = PROFILE.d; p.fights++; p.versusFights++; p.charPlays[me.ch.id] = (p.charPlays[me.ch.id] || 0) + 1; p.charPlays[opp.ch.id] = (p.charPlays[opp.ch.id] || 0) + 1; p.maxCombo = Math.max(p.maxCombo, me.stats.maxCombo, opp.stats.maxCombo); p.specials += me.stats.specials + opp.stats.specials; const nt = TROPHIES.filter((t) => !p.trophies[t.id] && t.check(p, null)); nt.forEach((t, i) => { p.trophies[t.id] = Date.now(); setTimeout(() => toast(t.icon, 'Pucharek: ' + t.name, t.desc), 500 + i * 900); }); PROFILE.save(); }
-    const settle = (this.mode === 'versus' || this.mode === 'tourney') ? null : settleFight(sum);
+    const settle = (this.mode === 'versus' || this.mode === 'tourney' || this.mode === 'casino') ? null : settleFight(sum);
     const xpBox = $('#result-xp'); xpBox.hidden = !settle;
     if (settle) {
       const lvl = settle.lvl, cur = settle.after - PROFILE.xpFor(lvl), need = PROFILE.xpFor(lvl + 1) - PROFILE.xpFor(lvl);
@@ -1912,6 +2137,13 @@ const App = {
     $('#result-progress').innerHTML = '';
 
     if (this.mode === 'tourney') { this.tourneyResult(winner, m); return; }
+    if (this.mode === 'casino') {
+      const stake = this.casinoStake || 0;
+      if (winner === 0) { PROFILE.d.chips += stake; PROFILE.d.casinoLost = 0; PROFILE.d.casinoDuels++; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'ODKUTY!'; $('#result-text').textContent = `Gaździoł oddaje ${stake} żetonów. Z twarzy mu zeszło. Wracasz do stołu?`; toast('🪙', `+${stake} żetonów`, 'Krupier oddał przegrane'); }
+      else { PROFILE.d.casinoLost = 0; PROFILE.save(); $('#result-kicker').textContent = 'POJEDYNEK Z KRUPIEREM'; title.textContent = 'PRZEGRANA'; title.classList.add('lose'); $('#result-text').textContent = `Gaździoł zatrzymuje ${stake} żetonów i poprawia marynarkę. Licznik strat wyzerowany.`; }
+      $('#btn-next').textContent = 'DO KASYNA'; $('#btn-next').onclick = () => { CASINO.render(); this.show('s-casino'); };
+      this.show('s-result'); return;
+    }
     if (this.mode === 'boss') {
       const wb = weeklyBoss();
       if (winner === 0) {
@@ -2010,7 +2242,7 @@ const App = {
   },
 };
 
-window.OPG = App; window.OPG_VOICES = VOICES; window.OPG_PICKUPS = PICKUPS;
+window.OPG = App; window.OPG_VOICES = VOICES; window.OPG_PICKUPS = PICKUPS; window.OPG_CASINO = CASINO;
 PROFILE.load();
 Promise.all([loadHeads(), VOICES.load()]).then(() => App.init());
 })();

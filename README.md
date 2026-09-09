@@ -75,6 +75,13 @@ Co kilkanaście sekund coś się dzieje: spada przedmiot na spadochronie (pizza,
 - **Powtórka K.O.**: po nokaucie ostatnie 2,5 s w zwolnionym tempie ze zbliżeniem. Gra nagrywa ją jako wideo, na ekranie wyniku jest „Udostępnij powtórkę” (na telefonie otwiera udostępnianie, na komputerze podgląd i pobranie).
 - **Krytyki** (8% ciosów, 1,6x, pęknięty ekran), **Pierwsza krew**, **PERFECT** za walkę bez obrażeń, nazwy combo od 5x.
 
+## Kasyno u Gaździoła
+
+Grasz swoimi żetonami. Ruletka europejska z pełnym stołem (numer 35:1, tuziny i kolumny 2:1, kolor, parzyste i połówki 1:1),
+blackjack (krupier stoi na 17, blackjack 3:2, podwojenie, split par). Krupierem jest Gaździoł i komentuje.
+Przegrane żetony liczą się w „do odkucia”: możesz wyzwać krupiera na pojedynek w ringu. Wygrasz, odzyskujesz wszystko.
+Przegrasz, licznik się zeruje. Cztery pucharki za kasyno.
+
 ## Ranking online
 
 Wspólna tabela dla całej ekipy z kontami (ksywka + PIN) i synchronizacją profilu między urządzeniami.

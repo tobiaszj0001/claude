@@ -412,6 +412,61 @@ kbd {
 .badge small { font-size: 0.65rem; color: var(--muted); }
 #btn-boss small { display: block; }
 
+/* ---------- Kasyno ---------- */
+.btn-casino { border-color: rgba(255,59,59,0.6); background: linear-gradient(135deg, rgba(255,59,59,0.18), rgba(255,215,0,0.12)); }
+#s-casino { padding: 0.8rem 1rem; gap: 0.8rem; background: radial-gradient(ellipse at 50% 0%, rgba(255,59,59,0.16), transparent 60%), #0d1a12; }
+#s-casino h2 { margin: 0; flex: 1; text-align: center; color: var(--gold); font-size: clamp(1.4rem, 4vw, 2.4rem); }
+.casino-body { flex: 1; display: flex; gap: 1rem; min-height: 0; }
+.dealer { width: 250px; flex: none; display: flex; flex-direction: column; align-items: center; gap: 8px; background: rgba(0,0,0,0.3); border: 2px solid rgba(255,215,0,0.25); border-radius: 20px; padding: 1rem 0.8rem; overflow: auto; }
+.dealer-head { position: relative; width: 120px; }
+.dealer-head img { width: 100%; height: auto; border-radius: 50%; box-shadow: 0 0 0 4px var(--gold), 0 10px 24px rgba(0,0,0,0.6); }
+.dealer-hat { position: absolute; top: -34px; left: 50%; transform: translateX(-50%) rotate(-8deg); font-size: 3rem; }
+.dealer-name { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.05em; }
+.dealer-name small { display: block; font-family: var(--font-body); font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+.bubble { background: #fff; color: #1b1200; border-radius: 14px; padding: 8px 12px; font-size: 0.9rem; font-weight: 600; position: relative; text-align: center; min-height: 3em; width: 100%; }
+.bubble::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); border: 6px solid transparent; border-bottom-color: #fff; border-top: 0; }
+.casino-stats { font-size: 0.75rem; color: var(--muted); text-align: center; line-height: 1.5; }
+.casino-stats b { color: var(--gold); }
+.duel-box { background: linear-gradient(180deg, rgba(255,59,59,0.25), rgba(255,59,59,0.05)); border: 2px solid #ff3b3b; border-radius: 14px; padding: 8px; text-align: center; font-size: 0.8rem; display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.duel-box[hidden] { display: none !important; }
+.duel-box b { color: #ff5c5c; font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.05em; }
+.casino-main { flex: 1; display: flex; flex-direction: column; gap: 0.6rem; min-height: 0; }
+.casino-game { flex: 1; overflow: auto; background: radial-gradient(ellipse at 50% 30%, #1e5a3a, #0f3a25 70%); border: 6px solid #5a3a1e; border-radius: 40px; padding: 1rem; box-shadow: inset 0 0 40px rgba(0,0,0,0.5); display: flex; flex-direction: column; gap: 0.8rem; align-items: center; }
+.chip-select { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.chip { width: 44px; height: 44px; border-radius: 50%; border: 4px dashed #fff; font-family: var(--font-display); font-size: 0.85rem; color: #fff; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+.chip.c10 { background: #3b82f6; } .chip.c50 { background: #2ec4b6; } .chip.c100 { background: #ff3b3b; } .chip.c500 { background: #9b5cff; } .chip.c1000 { background: #ffd700; color: #1b1200; }
+.chip.on { transform: scale(1.18); box-shadow: 0 0 0 3px #fff, 0 6px 12px rgba(0,0,0,0.6); }
+.roulette { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; align-items: flex-start; width: 100%; }
+#wheel { width: 240px; height: 240px; flex: none; }
+.table { display: grid; grid-template-columns: 40px repeat(12, 34px) 44px; grid-auto-rows: 34px; gap: 3px; }
+.cell { display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; color: #fff; border: 1px solid rgba(255,255,255,0.35); border-radius: 5px; cursor: pointer; position: relative; user-select: none; }
+.cell.red { background: #c0392b; } .cell.black { background: #1a1a1a; } .cell.green { background: #1e8449; grid-row: span 3; }
+.cell.out { background: rgba(0,0,0,0.35); font-size: 0.7rem; }
+.cell.col { font-size: 0.65rem; }
+.cell .bet { position: absolute; bottom: -6px; right: -6px; background: var(--gold); color: #1b1200; border-radius: 50%; min-width: 22px; height: 22px; font-size: 0.6rem; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; font-family: var(--font-display); padding: 0 3px; }
+.cell.hit { box-shadow: 0 0 0 3px var(--gold), 0 0 16px var(--gold); }
+.dozens { grid-column: 2 / span 12; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+.outs { grid-column: 2 / span 12; display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }
+.roulette-ctrl { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: center; }
+.history { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; }
+.history span { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; color: #fff; }
+.bj { display: flex; flex-direction: column; gap: 0.8rem; align-items: center; width: 100%; }
+.hand { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.hand-label { font-family: var(--font-display); letter-spacing: 0.1em; color: rgba(255,255,255,0.8); font-size: 1rem; }
+.hand-label b { color: var(--gold); margin-left: 6px; }
+.cards { display: flex; gap: 6px; min-height: 84px; }
+.card-p { width: 58px; height: 84px; background: #fff; color: #1b1200; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between; padding: 4px 6px; font-weight: 800; font-size: 1.1rem; animation: dealin 0.3s cubic-bezier(0.2, 1.3, 0.4, 1); }
+.card-p.red { color: #c0392b; }
+.card-p .s { font-size: 1.5rem; text-align: center; }
+.card-p .b { text-align: right; transform: rotate(180deg); }
+.card-p.back { background: repeating-linear-gradient(45deg, #2a2245 0 6px, #3b2f6b 6px 12px); border: 3px solid #fff; }
+@keyframes dealin { from { transform: translateY(-40px) rotate(-8deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.hand.active .cards { outline: 3px solid var(--gold); outline-offset: 6px; border-radius: 10px; }
+.bj-ctrl { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.bj-msg { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.05em; color: var(--gold); text-align: center; min-height: 1.2em; }
+.bj-msg.lose { color: #ff5c5c; }
+@media (max-width: 900px) { .casino-body { flex-direction: column; } .dealer { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 0.6rem; } .dealer-head { width: 70px; } .dealer-hat { font-size: 1.8rem; top: -20px; } .bubble { flex: 1; min-width: 160px; } .casino-stats { display: none; } .table { grid-template-columns: 30px repeat(12, 24px) 34px; grid-auto-rows: 26px; gap: 2px; } .cell { font-size: 0.65rem; } .casino-game { padding: 0.6rem; border-radius: 24px; } #wheel { width: 170px; height: 170px; } }
+
 /* ---------- Online ---------- */
 #s-online { padding: 0.8rem 1rem; gap: 0.8rem; background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,0.16), transparent 60%), var(--bg); }
 #s-online h2 { margin: 0; flex: 1; text-align: center; color: var(--gold); font-size: clamp(1.4rem, 4vw, 2.4rem); }

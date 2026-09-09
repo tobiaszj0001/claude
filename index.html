@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=12" />
+  <link rel="stylesheet" href="style.css?v=13" />
 </head>
 <body>
 <div id="app">
@@ -38,6 +38,7 @@
       <div class="menu">
         <button class="btn btn-shop" id="btn-shop">🪙 SKLEP <span id="chips-title"></span></button>
         <button class="btn btn-shop" id="btn-wardrobe">👕 SZATNIA</button>
+        <button class="btn btn-casino" id="btn-casino">🎰 KASYNO</button>
         <button class="btn btn-boss" id="btn-boss">👹 BOSS TYGODNIA</button>
         <button class="btn" id="btn-tourney">🏟️ TURNIEJ</button>
         <button class="btn" id="btn-online">☁️ RANKING ONLINE</button>
@@ -162,6 +163,31 @@
       <div id="stats-box" class="stats-box"></div>
       <div id="boss-badges" class="boss-badges"></div>
       <div id="trophy-grid" class="trophy-grid"></div>
+    </div>
+  </section>
+
+  <!-- ===== KASYNO ===== -->
+  <section id="s-casino" class="screen">
+    <header class="select-head">
+      <button class="btn btn-ghost btn-sm" id="btn-casino-back">← Wróć</button>
+      <h2>🎰 Kasyno u Gaździoła</h2>
+      <div class="chips-big" id="chips-casino"></div>
+    </header>
+    <div class="casino-body">
+      <aside class="dealer">
+        <div class="dealer-head"><img id="dealer-img" alt="Gaździoł" /><span class="dealer-hat">🎩</span></div>
+        <div class="dealer-name">Gaździoł <small>krupier</small></div>
+        <div class="bubble" id="dealer-say">Siadaj. Żetony na stół.</div>
+        <div class="casino-stats" id="casino-stats"></div>
+        <div id="duel-box" class="duel-box" hidden></div>
+      </aside>
+      <div class="casino-main">
+        <div class="tabs" id="casino-tabs">
+          <button class="tab on" data-ctab="roulette">🎡 Ruletka</button>
+          <button class="tab" data-ctab="blackjack">🃏 Blackjack</button>
+        </div>
+        <div id="casino-game" class="casino-game"></div>
+      </div>
     </div>
   </section>
 
@@ -311,6 +337,6 @@
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
 <script src="online-config.js"></script>
-<script src="game.js?v=12"></script>
+<script src="game.js?v=13"></script>
 </body>
 </html>
