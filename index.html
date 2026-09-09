@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="assets/icon-192.png" />
   <link rel="apple-touch-icon" href="assets/icon-192.png" />
-  <link rel="stylesheet" href="style.css?v=13" />
+  <link rel="stylesheet" href="style.css?v=14" />
 </head>
 <body>
 <div id="app">
@@ -178,6 +178,9 @@
         <div class="dealer-head"><img id="dealer-img" alt="Gaździoł" /><span class="dealer-hat">🎩</span></div>
         <div class="dealer-name">Gaździoł <small>krupier</small></div>
         <div class="bubble" id="dealer-say">Siadaj. Żetony na stół.</div>
+        <div class="jackpot" id="jackpot-box"></div>
+        <button class="btn btn-sm btn-vip" id="btn-vip" hidden>👑 VIP</button>
+        <div id="debt-box" class="duel-box debt" hidden></div>
         <div class="casino-stats" id="casino-stats"></div>
         <div id="duel-box" class="duel-box" hidden></div>
       </aside>
@@ -185,6 +188,10 @@
         <div class="tabs" id="casino-tabs">
           <button class="tab on" data-ctab="roulette">🎡 Ruletka</button>
           <button class="tab" data-ctab="blackjack">🃏 Blackjack</button>
+          <button class="tab" data-ctab="slots">🎰 Bandyta</button>
+          <button class="tab" data-ctab="poker">♠️ Poker</button>
+          <button class="tab" data-ctab="race">🏁 Wyścigi</button>
+          <button class="tab" data-ctab="quick">🎲 Szybkie</button>
         </div>
         <div id="casino-game" class="casino-game"></div>
       </div>
@@ -200,6 +207,14 @@
     </header>
     <div id="online-body" class="tourney-body"></div>
   </section>
+
+  <div id="debt-modal" class="overlay" hidden>
+    <div class="overlay-box">
+      <h2 style="color:#ffb020">💸 WINDYKACJA</h2>
+      <p id="debt-modal-text" style="margin:0;font-size:1rem;line-height:1.5"></p>
+      <div class="menu"><button class="btn btn-primary" id="debt-fight">🥊 WALCZĘ Z WATOLEM</button><button class="btn" id="debt-pay">SPŁACAM</button></div>
+    </div>
+  </div>
 
   <div id="replay-modal" class="overlay" hidden>
     <div class="overlay-box">
@@ -337,6 +352,6 @@
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
 <script src="online-config.js"></script>
-<script src="game.js?v=13"></script>
+<script src="game.js?v=14"></script>
 </body>
 </html>

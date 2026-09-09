@@ -44,6 +44,7 @@ returns jsonb language sql security definer set search_path = public as $$
     'nick', nick, 'xp', summary->'xp', 'level', summary->'level', 'wins', summary->'wins', 'fights', summary->'fights',
     'best_streak', summary->'best_streak', 'max_combo', summary->'max_combo', 'survival_best', summary->'survival_best',
     'crowns', summary->'crowns', 'trophies', summary->'trophies', 'fastest_win', summary->'fastest_win', 'bosses', summary->'bosses',
+    'chips', summary->'chips', 'casino_win', summary->'casino_win', 'casino_loss', summary->'casino_loss', 'casino_net', summary->'casino_net', 'jackpots', summary->'jackpots',
     'updated_at', updated_at) order by (summary->>'xp')::numeric desc nulls last), '[]'::jsonb)
   from opg_players;
 $$;

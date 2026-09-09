@@ -80,7 +80,15 @@ Co kilkanaście sekund coś się dzieje: spada przedmiot na spadochronie (pizza,
 Grasz swoimi żetonami. Ruletka europejska z pełnym stołem (numer 35:1, tuziny i kolumny 2:1, kolor, parzyste i połówki 1:1),
 blackjack (krupier stoi na 17, blackjack 3:2, podwojenie, split par). Krupierem jest Gaździoł i komentuje.
 Przegrane żetony liczą się w „do odkucia”: możesz wyzwać krupiera na pojedynek w ringu. Wygrasz, odzyskujesz wszystko.
-Przegrasz, licznik się zeruje. Cztery pucharki za kasyno.
+Przegrasz, licznik się zeruje.
+
+Do tego: **jednoręki bandyta** z głowami ekipy (3x Król Pała = jackpot), **poker Texas hold'em** z trzema AI o różnych stylach
+(blefiarz, pasiwo, all-in), **wyścigi ekipy** z kursami według formy i komentarzem, **kości** i **wyżej/niżej** z rosnącym mnożnikiem.
+**Jackpot progresywny** rośnie o 5% każdej przegranej, do wzięcia na pojedynczym numerze w ruletce albo trzech Królach na bandycie.
+**VIP room** odblokowuje się po 10 000 żetonów obrotu (złoty stół, żetony do 10K, Gaździoł w koronie).
+**Dług**: przy pustej kieszeni Gaździoł pożycza 500, oddajesz 600 w 3 dni. Po terminie przychodzi Watol windykator:
+wygrasz, dług znika; przegrasz, zabiera żetony, a jak ich brakuje, jeden przedmiot z szatni. Kasyno ma 11 pucharków,
+a ranking online pokazuje bilans, rekord i jackpoty.
 
 ## Ranking online
 
