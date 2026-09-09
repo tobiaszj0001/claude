@@ -81,10 +81,10 @@ function headSrc(ch) { const h = heads[ch.id]; return h instanceof HTMLCanvasEle
 //  Dźwięk (syntezowany, bez plików)
 // ============================================================
 const SFX = {
-  ctx: null,
+  ctx: null, muted: false,
   ensure() { if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; } } if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); },
   noise(dur, freq, q, vol, type = 'lowpass') {
-    if (!this.ctx) return; const c = this.ctx; const n = c.sampleRate * dur;
+    if (!this.ctx || this.muted) return; const c = this.ctx; const n = c.sampleRate * dur;
     const buf = c.createBuffer(1, n, c.sampleRate); const d = buf.getChannelData(0);
     for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
     const src = c.createBufferSource(); src.buffer = buf;
@@ -93,7 +93,7 @@ const SFX = {
     src.connect(f); f.connect(g); g.connect(c.destination); src.start();
   },
   tone(freq, dur, vol, type = 'sine', slide = 1) {
-    if (!this.ctx) return; const c = this.ctx; const o = c.createOscillator(); const g = c.createGain();
+    if (!this.ctx || this.muted) return; const c = this.ctx; const o = c.createOscillator(); const g = c.createGain();
     o.type = type; o.frequency.setValueAtTime(freq, c.currentTime);
     o.frequency.exponentialRampToValueAtTime(Math.max(20, freq * slide), c.currentTime + dur);
     g.gain.setValueAtTime(vol, c.currentTime); g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
@@ -107,6 +107,30 @@ const SFX = {
   bell() { this.tone(1600, 0.7, 0.35, 'triangle', 0.98); this.tone(2400, 0.5, 0.15, 'sine', 0.98); },
   cheer() { this.noise(1.4, 1400, 0.4, 0.35, 'bandpass'); },
   hurt() { this.tone(300, 0.15, 0.2, 'sawtooth', 0.5); },
+};
+
+// ============================================================
+//  Głosy postaci (nagrania z sounds/, lista w sounds/manifest.json)
+//  Zdarzenia: intro, cios, obrywa, blok, ko, wygrana, wybor
+// ============================================================
+const VOICES = { data: {}, muted: false, last: {}, cache: {},
+  load() {
+    return fetch('sounds/manifest.json?v=' + Date.now()).then((r) => (r.ok ? r.json() : {})).then((d) => { this.data = d || {}; }).catch(() => {});
+  },
+  has(ch, ev) { const v = this.data[ch.id]; return !!(v && v[ev] && v[ev].length); },
+  play(ch, ev, opts = {}) {
+    if (this.muted || SFX.muted || !this.has(ch, ev)) return false;
+    const key = ch.id + ':' + ev, now = performance.now();
+    if (now - (this.last[key] || 0) < (opts.cooldown || 700)) return false;
+    if (opts.chance !== undefined && Math.random() > opts.chance) return false;
+    this.last[key] = now;
+    const files = this.data[ch.id][ev]; const src = 'sounds/' + pick(files);
+    try {
+      const a = new Audio(src); a.volume = opts.volume === undefined ? 1 : opts.volume;
+      const p = a.play(); if (p && p.catch) p.catch(() => {});
+    } catch (e) {}
+    return true;
+  },
 };
 
 // ============================================================
@@ -538,6 +562,8 @@ class Match {
     this.winner = null; this.ended = false;
     buildCrowd([opts.p1.id, opts.p2.id]);
     SFX.bell();
+    setTimeout(() => VOICES.play(opts.p1, 'intro'), 300);
+    setTimeout(() => VOICES.play(opts.p2, 'intro'), 1300);
   }
   update(dtRaw) {
     dtRaw = Math.min(dtRaw, 1 / 30);
@@ -598,13 +624,16 @@ class Match {
       def.hp -= dmg; def.vx = dir * 160;
       SFX.block();
       this.spark(G.x, G.y, '#9ecbff', 6);
-      if (heavy) { def.setState('hit', 0.24); this.popup(def.x, def.y - 240, 'PRZEŁAMANY!', '#ffb020', 24); this.shake = 6; }
-      else this.popup(G.x, G.y - 30, 'BLOK', '#9ecbff', 20);
+      if (heavy) { def.setState('hit', 0.24); this.popup(def.x, def.y - 240, 'PRZEŁAMANY!', '#ffb020', 24); this.shake = 6; VOICES.play(def.ch, 'obrywa', { chance: 0.6 }); }
+      else { this.popup(G.x, G.y - 30, 'BLOK', '#9ecbff', 20); VOICES.play(def.ch, 'blok', { chance: 0.35, cooldown: 1500 }); }
     } else {
       def.hp -= dmg; def.combo = 0; att.combo++;
       def.setState('hit', heavy ? 0.42 : 0.26); def.hurtFlash = 0.25;
       def.vx = dir * (heavy ? 460 : 220); if (heavy) { def.vy = -240; def.onGround = false; }
-      SFX.punch(heavy); if (Math.random() < 0.4) SFX.hurt();
+      SFX.punch(heavy);
+      const said = VOICES.play(def.ch, 'obrywa', { chance: heavy ? 0.8 : 0.4, cooldown: 900 });
+      if (!said && Math.random() < 0.4) SFX.hurt();
+      VOICES.play(att.ch, 'cios', { chance: heavy ? 0.7 : 0.3, cooldown: 1200 });
       this.spark(G.x, G.y, att.ch.glove, heavy ? 18 : 9);
       this.spark(G.x, G.y, '#ffffff', 4);
       this.popup(G.x + dir * 10, G.y - 40, pick(heavy ? ['ŁOMOT!', 'KABOOM!', 'BUM!'] : ['ŁUP!', 'BACH!', 'PRASK!', 'TRZASK!', 'PAC!']), heavy ? '#ffb020' : '#fff', heavy ? 40 : 28);
@@ -619,6 +648,8 @@ class Match {
     def.setState('ko'); def.vx = att.facing * 380; def.vy = -300; def.onGround = false;
     this.phase = 'ko'; this.phaseT = 0; this.winner = att.side; this.shake = 18; this.freeze = 0.18; this.excite = 1;
     SFX.ko(); setTimeout(() => SFX.cheer(), 400);
+    VOICES.play(def.ch, 'ko', { cooldown: 0 });
+    setTimeout(() => VOICES.play(att.ch, 'wygrana', { cooldown: 0 }), 1400);
     this.spark(def.x, def.y - 150, '#ffd700', 30);
   }
   spark(x, y, col, n) { for (let i = 0; i < n; i++) { const a = rand(0, Math.PI * 2), s = rand(120, 460); this.particles.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 100, life: rand(0.25, 0.6), col, r: rand(2, 5) }); } }
@@ -711,6 +742,11 @@ const App = {
 
     $$('[data-mode]').forEach((b) => b.addEventListener('click', () => { SFX.ensure(); this.mode = b.dataset.mode; this.openSelect(); }));
     $('#btn-help').addEventListener('click', () => { $('#help').hidden = false; });
+    const sndBtn = $('#btn-sound');
+    const applySound = () => { sndBtn.textContent = SFX.muted ? '🔇 DŹWIĘK: WYŁ' : '🔊 DŹWIĘK: WŁ'; };
+    try { SFX.muted = localStorage.getItem('opg_mute') === '1'; } catch (e) {}
+    applySound();
+    sndBtn.addEventListener('click', () => { SFX.muted = !SFX.muted; try { localStorage.setItem('opg_mute', SFX.muted ? '1' : '0'); } catch (e) {} applySound(); if (!SFX.muted) { SFX.ensure(); SFX.bell(); } });
     $('#btn-help-close').addEventListener('click', () => { $('#help').hidden = true; });
     $('#btn-fs').addEventListener('click', () => this.fullscreen());
     $('#btn-back').addEventListener('click', () => this.show('s-title'));
@@ -815,6 +851,7 @@ const App = {
   },
   pickCard(ch, card, hp) {
     SFX.ensure(); SFX.jump();
+    if (!VOICES.play(ch, 'wybor', { cooldown: 300 })) VOICES.play(ch, 'intro', { cooldown: 300 });
     $$('.card').forEach((c) => c.classList.remove('selected', 'selected-p2'));
     card.classList.add(this.pickingP2 ? 'selected-p2' : 'selected');
     if (this.pickingP2) this.p2 = ch; else this.p1 = ch;
@@ -912,5 +949,5 @@ const App = {
 };
 
 window.OPG = App;
-loadHeads().then(() => App.init());
+Promise.all([loadHeads(), VOICES.load()]).then(() => App.init());
 })();

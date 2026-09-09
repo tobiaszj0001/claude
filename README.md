@@ -52,9 +52,32 @@ Na telefonie pojawiają się przyciski na ekranie. Graj poziomo.
    `speed` i `power` w okolicach 0.85–1.2. Dodaj `legendary: true`, żeby postać
    dostała 10x HP i koronę.
 
+## Głosy postaci
+
+Postacie mogą mieć własne nagrania. Wrzuć plik do `sounds/` pod nazwą
+`<id>_<zdarzenie>.mp3` (może być też m4a, ogg, wav, wtedy skrypt skonwertuje):
+
+| Zdarzenie | Kiedy gra                               | Przykład                 |
+|-----------|-----------------------------------------|--------------------------|
+| intro     | przed walką i po kliknięciu w menu      | `cypis_intro.mp3`        |
+| cios      | gdy postać trafia przeciwnika           | `cypis_cios.mp3`         |
+| obrywa    | gdy postać dostaje                      | `cypis_obrywa.mp3`       |
+| blok      | gdy postać blokuje                      | `cypis_blok.mp3`         |
+| ko        | gdy postać pada                         | `cypis_ko.mp3`           |
+| wygrana   | gdy postać wygrywa walkę                | `cypis_wygrana.mp3`      |
+| wybor     | tylko po kliknięciu w menu wyboru       | `cypis_wybor.mp3`        |
+
+Kilka wersji tego samego zdarzenia dostaje numer: `cypis_obrywa2.mp3`, `cypis_obrywa3.mp3`,
+gra losuje jedną. Krótkie nagrania (do 2 sekund) działają najlepiej, intro może mieć 3-4 sekundy.
+
+Po wrzuceniu plików uruchom `python3 tools/make_sounds.py` (do konwersji potrzebny ffmpeg albo
+`pip install imageio-ffmpeg`). Skrypt wyrównuje głośność i zapisuje listę w `sounds/manifest.json`.
+Bez tej listy gra nie wie o nagraniach.
+
 ## Pliki
 
 - `index.html`, `style.css`, `game.js`: cała gra, czysty canvas 2D bez bibliotek.
 - `assets/heads/`: wycięte głowy (PNG z przezroczystością).
 - `photos/`: oryginalne zdjęcia.
 - `tools/make_heads.py`: wycinanie głów ze zdjęć.
+- `sounds/`: głosy postaci, `tools/make_sounds.py`: budowanie listy nagrań.

@@ -1,0 +1,12 @@
+{
+ "king_pala": {
+  "intro": [
+   "king_pala_intro.mp3"
+  ]
+ },
+ "watol": {
+  "intro": [
+   "watol_intro.mp3"
+  ]
+ }
+}
