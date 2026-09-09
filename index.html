@@ -3,306 +3,486 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Social Reach — 100 000 osób miesięcznie</title>
+  <title>NAVI partner — Partner rozliczeniowy dla kierowców taxi i kurierów</title>
+  <meta name="description" content="NAVI partner to partner rozliczeniowy dla kierowców Uber, Bolt, FreeNow oraz kurierów. Szybkie wypłaty, pełna księgowość, licencje i benefity dla kierowców." />
+  <meta property="og:title" content="NAVI partner — Partner rozliczeniowy taxi" />
+  <meta property="og:description" content="Jeździsz — my rozliczamy. Wypłaty, dokumenty, licencja, wsparcie 7 dni w tygodniu." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="assets/logo-mark.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="nav" id="nav">
+  <a class="skip-link" href="#oferta">Przejdź do treści</a>
+
+  <!-- ================= NAV ================= -->
+  <header class="nav" id="nav">
     <div class="container nav__inner">
-      <a href="#" class="nav__logo">Social<span>Reach</span></a>
-      <ul class="nav__links">
-        <li><a href="#uslugi">Usługi</a></li>
-        <li><a href="#realizacje">Realizacje</a></li>
-        <li><a href="#kontakt" class="btn btn--sm">Kontakt</a></li>
-      </ul>
-      <button class="nav__burger" id="burger" aria-label="Menu">
+      <a href="#top" class="brand" aria-label="NAVI partner — strona główna">
+        <img src="assets/logo-mark.svg" alt="" class="brand__mark" width="28" height="40" />
+        <span class="brand__text"><strong>NAVI</strong><small>partner</small></span>
+      </a>
+      <nav class="nav__links" id="navLinks" aria-label="Nawigacja główna">
+        <a href="#oferta">Oferta</a>
+        <a href="#jak-to-dziala">Jak to działa</a>
+        <a href="#cennik">Cennik</a>
+        <a href="#benefity">Benefity</a>
+        <a href="#faq">FAQ</a>
+        <a href="#kontakt" class="btn btn--primary btn--sm">Dołącz do nas</a>
+      </nav>
+      <button class="nav__burger" id="burger" aria-label="Otwórz menu" aria-expanded="false" aria-controls="navLinks">
         <span></span><span></span><span></span>
       </button>
     </div>
-  </nav>
+  </header>
 
-  <!-- HERO -->
-  <section class="hero" id="home">
-    <div class="hero__bg"></div>
-    <div class="container hero__content">
-      <div class="hero__badge">Social Media dla firm</div>
-      <h1 class="hero__title">
-        Twoja marka<br />
-        <span class="gradient-text">widoczna przez<br />100 000 osób</span><br />
-        każdego miesiąca
-      </h1>
-      <p class="hero__sub">
-        Buduję profesjonalny wizerunek Twojej firmy w social mediach.<br />
-        Gwarantowany zasięg. Mierzalne efekty.
-      </p>
-      <div class="hero__cta">
-        <a href="#kontakt" class="btn btn--primary btn--lg">Zacznijmy współpracę</a>
-        <a href="#realizacje" class="btn btn--ghost btn--lg">Zobacz realizacje</a>
+  <main id="top">
+
+  <!-- ================= HERO ================= -->
+  <section class="hero">
+    <div class="hero__glow hero__glow--1"></div>
+    <div class="hero__glow hero__glow--2"></div>
+    <div class="hero__grid"></div>
+    <div class="container hero__inner">
+      <div class="hero__copy">
+        <span class="eyebrow"><span class="eyebrow__dot"></span> Partner rozliczeniowy dla kierowców i kurierów</span>
+        <h1 class="hero__title">
+          Ty jeździsz.<br />
+          <span class="text-gradient">My rozliczamy.</span>
+        </h1>
+        <p class="hero__lead">
+          Rozliczamy kierowców Uber, Bolt i FreeNow oraz kurierów. Zajmujemy się dokumentami,
+          licencją, księgowością i wypłatami — Ty skupiasz się na zarabianiu.
+        </p>
+        <div class="hero__cta">
+          <a href="#kontakt" class="btn btn--primary btn--lg">Zostań kierowcą</a>
+          <a href="#jak-to-dziala" class="btn btn--ghost btn--lg">Zobacz, jak to działa</a>
+        </div>
+        <ul class="hero__ticks" aria-label="Najważniejsze korzyści">
+          <li>Wypłaty 2× w tygodniu</li>
+          <li>Start nawet w 24 h</li>
+          <li>Bez ukrytych opłat</li>
+        </ul>
       </div>
-      <div class="hero__stats">
-        <div class="stat">
-          <span class="stat__num">100K+</span>
-          <span class="stat__label">zasięgu miesięcznie</span>
+
+      <div class="hero__visual" aria-hidden="true">
+        <div class="payout-card">
+          <div class="payout-card__head">
+            <img src="assets/logo-mark.svg" alt="" width="22" height="32" />
+            <span>Rozliczenie tygodniowe</span>
+            <span class="payout-card__badge">Wypłacono</span>
+          </div>
+          <div class="payout-card__amount">4 286,40 zł</div>
+          <div class="payout-card__meta">
+            <span>Tydzień 36 · 31.08–06.09</span>
+            <span>Przelew ekspresowy</span>
+          </div>
+          <ul class="payout-card__rows">
+            <li><span class="pill pill--uber">Uber</span><span>2 340,10 zł</span></li>
+            <li><span class="pill pill--bolt">Bolt</span><span>1 512,30 zł</span></li>
+            <li><span class="pill pill--freenow">FreeNow</span><span>434,00 zł</span></li>
+          </ul>
+          <div class="payout-card__bar"><span style="width:72%"></span></div>
         </div>
-        <div class="stat__divider"></div>
-        <div class="stat">
-          <span class="stat__num">50+</span>
-          <span class="stat__label">obsługiwanych firm</span>
+        <div class="float-chip float-chip--1">
+          <strong>+18%</strong><small>vs poprzedni tydzień</small>
         </div>
-        <div class="stat__divider"></div>
-        <div class="stat">
-          <span class="stat__num">3x</span>
-          <span class="stat__label">wzrost zaangażowania</span>
+        <div class="float-chip float-chip--2">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          <span>Dokumenty zatwierdzone</span>
         </div>
       </div>
     </div>
-    <div class="hero__scroll">
-      <span></span>
+
+    <div class="container hero__stats">
+      <div class="stat"><span class="stat__num" data-count="1200" data-suffix="+">0</span><span class="stat__label">rozliczanych kierowców</span></div>
+      <div class="stat"><span class="stat__num" data-count="24" data-suffix=" h">0</span><span class="stat__label">do rozpoczęcia jazdy</span></div>
+      <div class="stat"><span class="stat__num" data-count="2" data-prefix="" data-suffix="×">0</span><span class="stat__label">wypłaty w tygodniu</span></div>
+      <div class="stat"><span class="stat__num" data-count="7" data-suffix="/7">0</span><span class="stat__label">wsparcie dla kierowców</span></div>
     </div>
   </section>
 
-  <!-- USŁUGI -->
-  <section class="section" id="uslugi">
+  <!-- ================= PLATFORMS ================= -->
+  <section class="platforms" aria-label="Obsługiwane platformy">
+    <div class="container platforms__inner">
+      <span class="platforms__label">Rozliczamy z aplikacji</span>
+      <ul class="platforms__list">
+        <li>Uber</li><li>Bolt</li><li>FreeNow</li><li>Uber Eats</li><li>Glovo</li><li>Wolt</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ================= OFERTA ================= -->
+  <section class="section" id="oferta">
     <div class="container">
-      <div class="section__header">
-        <p class="section__tag">Co oferuję</p>
-        <h2 class="section__title">Kompleksowe prowadzenie<br />social mediów</h2>
+      <div class="section__head">
+        <span class="eyebrow">Oferta</span>
+        <h2>Wszystko, czego potrzebujesz, <span class="text-gradient">w jednym miejscu</span></h2>
+        <p>Zdejmujemy z Ciebie formalności. Dostajesz partnera, który zna branżę przewozową od podszewki.</p>
       </div>
-      <div class="services__grid">
-        <div class="card card--service">
+
+      <div class="grid grid--3">
+        <article class="card">
           <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 20.5c4.694 0 8.5-3.806 8.5-8.5S16.694 3.5 12 3.5 3.5 7.306 3.5 12s3.806 8.5 8.5 8.5z"/><path d="M8.5 12h7M12 8.5v7"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></svg>
           </div>
-          <h3>Tworzenie contentu</h3>
-          <p>Profesjonalne grafiki, reelsy i posty dopasowane do charakteru Twojej marki i algorytmów platformy.</p>
-        </div>
-        <div class="card card--service card--featured">
-          <div class="card__badge">Najpopularniejsze</div>
+          <h3>Szybkie wypłaty</h3>
+          <p>Przelewy dwa razy w tygodniu na Twoje konto. Możliwość wypłaty ekspresowej tego samego dnia.</p>
+        </article>
+        <article class="card">
           <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>
           </div>
-          <h3>Gwarantowany zasięg</h3>
-          <p>100 000 unikalnych odbiorców miesięcznie. Nie szacunki — gwarancja w umowie. Twoja firma zawsze widoczna.</p>
-        </div>
-        <div class="card card--service">
+          <h3>Pełna księgowość</h3>
+          <p>Faktury, rozliczenia podatkowe i ZUS. Otrzymujesz czytelne zestawienie każdego tygodnia.</p>
+        </article>
+        <article class="card">
           <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4 6v6c0 5 3.5 8.5 8 9 4.5-.5 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
           </div>
-          <h3>Analityka i raportowanie</h3>
-          <p>Miesięczne raporty z wynikami: zasięg, zaangażowanie, wzrost obserwujących i konwersje.</p>
-        </div>
-        <div class="card card--service">
+          <h3>Licencja i dokumenty</h3>
+          <p>Jeździsz pod naszą licencją na przewóz osób. Pomagamy w badaniach, zaświadczeniach i rejestracji w aplikacjach.</p>
+        </article>
+        <article class="card">
           <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17h14l-1.5-5.5a2 2 0 0 0-1.9-1.5H8.4a2 2 0 0 0-1.9 1.5z"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M8 10 9 6h6l1 4"/></svg>
           </div>
-          <h3>Budowanie społeczności</h3>
-          <p>Angażuję obserwatorów, odpowiadam na komentarze i buduję lojalną społeczność wokół Twojej marki.</p>
-        </div>
-        <div class="card card--service">
+          <h3>Auto na wynajem</h3>
+          <p>Nie masz samochodu? Skorzystaj z naszej floty aut spełniających wymogi Uber i Bolt, z ubezpieczeniem i serwisem.</p>
+        </article>
+        <article class="card">
           <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.4 7.2L4 21l1.8-5.6A8 8 0 1 1 21 12z"/><path d="M8 12h8M8 9h5"/></svg>
           </div>
-          <h3>Reklamy płatne</h3>
-          <p>Skuteczne kampanie Meta Ads i TikTok Ads z optymalizacją pod konwersje i świadomość marki.</p>
-        </div>
-        <div class="card card--service">
+          <h3>Wsparcie 7 dni w tygodniu</h3>
+          <p>Opiekun kierowcy odpowiada na telefon i czat. Pomagamy przy blokadach konta, reklamacjach i pytaniach.</p>
+        </article>
+        <article class="card">
           <div class="card__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3.5"/></svg>
           </div>
-          <h3>Strategia marki</h3>
-          <p>Opracowuję spójną strategię komunikacji — tone of voice, identyfikacja wizualna i plan publikacji.</p>
-        </div>
+          <h3>Benefity dla kierowców</h3>
+          <p>Karta sportowa Medicover Sport, zniżki na paliwo i serwis oraz program poleceń z premią za każdego kierowcę.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- REALIZACJE -->
-  <section class="section section--dark" id="realizacje">
+  <!-- ================= JAK TO DZIAŁA ================= -->
+  <section class="section section--alt" id="jak-to-dziala">
     <div class="container">
-      <div class="section__header">
-        <p class="section__tag">Portfolio</p>
-        <h2 class="section__title">Moje realizacje</h2>
-        <p class="section__sub">Wybrane projekty i efekty współpracy z klientami</p>
+      <div class="section__head">
+        <span class="eyebrow">Jak to działa</span>
+        <h2>Od zgłoszenia do pierwszej wypłaty <span class="text-gradient">w 4 krokach</span></h2>
+        <p>Cały proces prowadzimy zdalnie. Większość kierowców rusza w ciągu jednego dnia roboczego.</p>
       </div>
-      <div class="portfolio__grid">
 
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--1">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">Instagram + Facebook</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Restauracja "Smak Południa"</h3>
-            <p>Budowanie marki lokalnej restauracji od zera do 12 000 obserwujących w 4 miesiące.</p>
-            <div class="portfolio__metrics">
-              <span><strong>180K</strong> zasięgu/mies.</span>
-              <span><strong>+340%</strong> zaangażowanie</span>
-            </div>
-          </div>
-        </div>
+      <ol class="steps">
+        <li class="step">
+          <span class="step__num">01</span>
+          <h3>Zgłoszenie</h3>
+          <p>Wypełniasz krótki formularz lub dzwonisz. Oddzwaniamy tego samego dnia i ustalamy szczegóły.</p>
+        </li>
+        <li class="step">
+          <span class="step__num">02</span>
+          <h3>Dokumenty</h3>
+          <p>Prawo jazdy, zaświadczenie o niekaralności, badania. Podpowiadamy, co i gdzie załatwić.</p>
+        </li>
+        <li class="step">
+          <span class="step__num">03</span>
+          <h3>Aktywacja w aplikacjach</h3>
+          <p>Rejestrujemy Cię jako kierowcę naszej floty w Uber, Bolt i FreeNow. Możesz zacząć jeździć.</p>
+        </li>
+        <li class="step">
+          <span class="step__num">04</span>
+          <h3>Wypłata</h3>
+          <p>Rozliczamy Twoje kursy i przelewamy pieniądze. Zestawienie widzisz w panelu kierowcy.</p>
+        </li>
+      </ol>
 
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--2">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">TikTok + Instagram</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Sklep online "FashionPL"</h3>
-            <p>Wiralowe reelsy i TikToki generujące ruch do sklepu i bezpośrednią sprzedaż.</p>
-            <div class="portfolio__metrics">
-              <span><strong>250K</strong> zasięgu/mies.</span>
-              <span><strong>+520%</strong> sprzedaż</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--3">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">LinkedIn + Facebook</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Firma B2B "TechSolve"</h3>
-            <p>Profesjonalny wizerunek eksperta branżowego, generowanie leadów przez LinkedIn.</p>
-            <div class="portfolio__metrics">
-              <span><strong>120K</strong> zasięgu/mies.</span>
-              <span><strong>45</strong> leadów/mies.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="portfolio__card">
-          <div class="portfolio__img portfolio__img--4">
-            <div class="portfolio__overlay">
-              <span class="portfolio__platform">Instagram + TikTok</span>
-            </div>
-          </div>
-          <div class="portfolio__info">
-            <h3>Gabinet kosmetyczny "Glow"</h3>
-            <p>Content beauty i edukacyjny budujący zaufanie klientek i zapełniający kalendarz wizyt.</p>
-            <div class="portfolio__metrics">
-              <span><strong>110K</strong> zasięgu/mies.</span>
-              <span><strong>+280%</strong> rezerwacje</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-      <div class="portfolio__cta">
-        <p>Chcesz dołączyć do grona moich klientów?</p>
-        <a href="#kontakt" class="btn btn--primary btn--lg">Napisz do mnie</a>
+      <div class="cta-inline">
+        <p>Masz pytania przed startem? <a href="#kontakt">Napisz do nas</a> — odpowiadamy w ciągu kilku godzin.</p>
       </div>
     </div>
   </section>
 
-  <!-- PROCES -->
-  <section class="section" id="proces">
+  <!-- ================= CENNIK ================= -->
+  <section class="section" id="cennik">
     <div class="container">
-      <div class="section__header">
-        <p class="section__tag">Jak to działa</p>
-        <h2 class="section__title">Prosty proces,<br />konkretne wyniki</h2>
+      <div class="section__head">
+        <span class="eyebrow">Cennik</span>
+        <h2>Przejrzyste zasady, <span class="text-gradient">zero niespodzianek</span></h2>
+        <p>Jedna stała opłata tygodniowa. Nie pobieramy procentu od Twoich zarobków.</p>
       </div>
-      <div class="process__steps">
-        <div class="process__step">
-          <div class="process__num">01</div>
-          <h3>Bezpłatna konsultacja</h3>
-          <p>Poznajemy Twoją firmę, cele i grupę docelową. Analizuję obecne działania i konkurencję.</p>
-        </div>
-        <div class="process__arrow">→</div>
-        <div class="process__step">
-          <div class="process__num">02</div>
-          <h3>Strategia i plan</h3>
-          <p>Przygotowuję spersonalizowaną strategię z harmonogramem publikacji i planem działania.</p>
-        </div>
-        <div class="process__arrow">→</div>
-        <div class="process__step">
-          <div class="process__num">03</div>
-          <h3>Realizacja</h3>
-          <p>Tworzę content, prowadzę profile i optymalizuję działania na bieżąco.</p>
-        </div>
-        <div class="process__arrow">→</div>
-        <div class="process__step">
-          <div class="process__num">04</div>
-          <h3>Raport i optymalizacja</h3>
-          <p>Co miesiąc dostajesz szczegółowy raport z wynikami i planem na kolejny okres.</p>
-        </div>
+
+      <div class="pricing">
+        <article class="price">
+          <h3>Start</h3>
+          <p class="price__desc">Dla kierowców, którzy dopiero zaczynają lub jeżdżą dorywczo.</p>
+          <div class="price__value"><span>39 zł</span><small>/ tydzień</small></div>
+          <ul class="price__list">
+            <li>Rozliczenie Uber, Bolt, FreeNow</li>
+            <li>Wypłaty 2× w tygodniu</li>
+            <li>Panel kierowcy z zestawieniami</li>
+            <li>Wsparcie telefoniczne i czat</li>
+          </ul>
+          <a href="#kontakt" class="btn btn--ghost btn--block">Wybieram Start</a>
+        </article>
+
+        <article class="price price--featured">
+          <span class="price__tag">Najczęściej wybierany</span>
+          <h3>Pro</h3>
+          <p class="price__desc">Dla kierowców jeżdżących na pełen etat, którzy chcą maksymalnie uprościć rozliczenia.</p>
+          <div class="price__value"><span>59 zł</span><small>/ tydzień</small></div>
+          <ul class="price__list">
+            <li>Wszystko z planu Start</li>
+            <li>Wypłata ekspresowa tego samego dnia</li>
+            <li>Pełna obsługa księgowa i ZUS</li>
+            <li>Karta Medicover Sport w cenie promocyjnej</li>
+            <li>Zniżki na paliwo i serwis</li>
+          </ul>
+          <a href="#kontakt" class="btn btn--primary btn--block">Wybieram Pro</a>
+        </article>
+
+        <article class="price">
+          <h3>Flota</h3>
+          <p class="price__desc">Dla właścicieli kilku aut i kierowców pracujących w zespole.</p>
+          <div class="price__value price__value--text"><span>Wycena indywidualna</span></div>
+          <ul class="price__list">
+            <li>Rozliczenie wielu kierowców</li>
+            <li>Raporty floty i podział przychodów</li>
+            <li>Dedykowany opiekun</li>
+            <li>Preferencyjne warunki wynajmu aut</li>
+          </ul>
+          <a href="#kontakt" class="btn btn--ghost btn--block">Zapytaj o ofertę</a>
+        </article>
       </div>
+      <p class="pricing__note">Podane kwoty są cenami brutto. Opłata pobierana jest tylko w tygodniach, w których wykonałeś kursy.</p>
     </div>
   </section>
 
-  <!-- KONTAKT -->
-  <section class="section section--dark" id="kontakt">
+  <!-- ================= BENEFITY / MEDICOVER ================= -->
+  <section class="section section--dark" id="benefity">
     <div class="container">
-      <div class="contact__wrap">
-        <div class="contact__left">
-          <p class="section__tag">Kontakt</p>
-          <h2 class="contact__title">Zacznijmy budować<br />Twój zasięg</h2>
-          <p class="contact__sub">Napisz do mnie — odpowiem w ciągu 24 godzin z bezpłatną analizą Twoich social mediów.</p>
-          <div class="contact__info">
-            <a href="mailto:kontakt@socialreach.pl" class="contact__link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              kontakt@socialreach.pl
-            </a>
-            <a href="tel:+48000000000" class="contact__link">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.57a16 16 0 0 0 6.52 6.52l1.93-1.93a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-              +48 000 000 000
-            </a>
+      <div class="benefit">
+        <div class="benefit__copy">
+          <span class="eyebrow">Benefity</span>
+          <h2>NAVI partner <span class="benefit__x">×</span> Medicover Sport</h2>
+          <p class="benefit__lead">
+            Rozpoczęliśmy współpracę z Medicover Sport. Każdy kierowca rozliczający się z nami
+            może korzystać z siłowni, basenów, klubów fitness i innych obiektów sportowych w całej Polsce.
+          </p>
+          <ul class="benefit__facts">
+            <li><strong>od 62 zł</strong><span>miesięcznie za pakiet</span></li>
+            <li><strong>2 wejścia</strong><span>w tygodniu na wybrane obiekty</span></li>
+            <li><strong>4 000+</strong><span>obiektów w całym kraju</span></li>
+          </ul>
+          <a href="#kontakt" class="btn btn--primary">Zapytaj o kartę sportową</a>
+        </div>
+        <div class="benefit__icons" aria-hidden="true">
+          <div class="benefit__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"/></svg>
+            <span>Siłownie</span>
+          </div>
+          <div class="benefit__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2 17c2 0 2 1.5 4 1.5s2-1.5 4-1.5 2 1.5 4 1.5 2-1.5 4-1.5 2 1.5 4 1.5M7 14V6a2 2 0 0 1 4 0M13 14V6a2 2 0 0 1 4 0M7 10h6"/></svg>
+            <span>Baseny</span>
+          </div>
+          <div class="benefit__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="2"/><path d="M12 7v6M12 13l-4 7M12 13l4 7M5 9l7-1 7 1"/></svg>
+            <span>Fitness kluby</span>
+          </div>
+          <div class="benefit__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6M9 12h2M13 12h2"/></svg>
+            <span>Inne obiekty</span>
           </div>
         </div>
-        <form class="contact__form" id="contactForm">
-          <div class="form__row">
-            <div class="form__group">
-              <label for="name">Imię i nazwisko</label>
-              <input type="text" id="name" placeholder="Jan Kowalski" required />
-            </div>
-            <div class="form__group">
-              <label for="company">Nazwa firmy</label>
-              <input type="text" id="company" placeholder="Moja Firma Sp. z o.o." />
-            </div>
-          </div>
-          <div class="form__group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="jan@firma.pl" required />
-          </div>
-          <div class="form__group">
-            <label for="message">Opowiedz o swojej firmie</label>
-            <textarea id="message" rows="4" placeholder="Czym zajmuje się Twoja firma i czego oczekujesz od współpracy?"></textarea>
-          </div>
-          <button type="submit" class="btn btn--primary btn--full">
-            Wyślij wiadomość
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </button>
-          <p class="form__note">Bezpłatna konsultacja i analiza Twoich social mediów w prezencie.</p>
-        </form>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER -->
+  <!-- ================= OPINIE ================= -->
+  <section class="section" id="opinie">
+    <div class="container">
+      <div class="section__head">
+        <span class="eyebrow">Opinie kierowców</span>
+        <h2>Dlaczego kierowcy <span class="text-gradient">wybierają NAVI</span></h2>
+      </div>
+      <div class="grid grid--3">
+        <blockquote class="quote">
+          <div class="quote__stars" aria-label="5 na 5 gwiazdek">★★★★★</div>
+          <p>„Przeniosłem się z innego partnera i różnicę widać od razu. Wypłata w środę i w piątek, bez pisania i dopytywania.”</p>
+          <footer><strong>Marcin</strong><span>Uber &amp; Bolt, Warszawa</span></footer>
+        </blockquote>
+        <blockquote class="quote">
+          <div class="quote__stars" aria-label="5 na 5 gwiazdek">★★★★★</div>
+          <p>„Zaczynałam od zera. Pomogli mi z badaniami, licencją i rejestracją w aplikacjach. Po dwóch dniach miałam pierwsze kursy.”</p>
+          <footer><strong>Karolina</strong><span>FreeNow, Kraków</span></footer>
+        </blockquote>
+        <blockquote class="quote">
+          <div class="quote__stars" aria-label="5 na 5 gwiazdek">★★★★★</div>
+          <p>„Stała opłata zamiast procentu to dla mnie duża oszczędność. Do tego karta sportowa – po zmianie idę na basen.”</p>
+          <footer><strong>Tomasz</strong><span>Uber, Wrocław</span></footer>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="section section--alt" id="faq">
+    <div class="container container--narrow">
+      <div class="section__head">
+        <span class="eyebrow">FAQ</span>
+        <h2>Najczęstsze <span class="text-gradient">pytania</span></h2>
+      </div>
+
+      <div class="faq">
+        <details class="faq__item" open>
+          <summary>Czym jest partner rozliczeniowy i czy jest mi potrzebny?</summary>
+          <div class="faq__body"><p>Aplikacje takie jak Uber, Bolt czy FreeNow wymagają, aby kierowca działał w ramach firmy posiadającej licencję na przewóz osób. Partner rozliczeniowy udostępnia tę licencję, rozlicza Twoje kursy z aplikacjami i wypłaca Ci pieniądze. Nie musisz zakładać własnej działalności.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary>Jakie dokumenty muszę mieć, żeby zacząć?</summary>
+          <div class="faq__body"><p>Prawo jazdy kat. B od co najmniej roku, zaświadczenie o niekaralności, orzeczenie lekarskie i psychologiczne oraz dowód osobisty. Jeśli czegoś brakuje, pomożemy Ci to załatwić — podpowiemy sprawdzone placówki.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary>Kiedy i jak otrzymuję wypłatę?</summary>
+          <div class="faq__body"><p>Standardowo przelewamy pieniądze dwa razy w tygodniu na wskazane konto bankowe. W planie Pro masz dostęp do wypłaty ekspresowej tego samego dnia.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary>Czy mogę jeździć własnym samochodem?</summary>
+          <div class="faq__body"><p>Tak. Auto musi spełniać wymagania aplikacji (wiek pojazdu, liczba drzwi, stan techniczny). Jeśli nie masz samochodu, możesz wynająć auto z naszej floty.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary>Czy jestem związany umową na czas określony?</summary>
+          <div class="faq__body"><p>Nie. Umowa jest na czas nieokreślony, z krótkim okresem wypowiedzenia. Nie pobieramy opłat za rezygnację.</p></div>
+        </details>
+        <details class="faq__item">
+          <summary>Jak działa karta Medicover Sport?</summary>
+          <div class="faq__body"><p>Po zgłoszeniu chęci przystąpienia otrzymujesz kartę, a opłata za pakiet jest potrącana z tygodniowego rozliczenia. Szczegóły i zapisy prowadzi Twój opiekun.</p></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= KONTAKT ================= -->
+  <section class="section section--contact" id="kontakt">
+    <div class="container contact">
+      <div class="contact__copy">
+        <span class="eyebrow">Kontakt</span>
+        <h2>Dołącz do <span class="text-gradient">NAVI partner</span></h2>
+        <p>Zostaw numer telefonu — oddzwonimy, odpowiemy na pytania i pomożemy wystartować.</p>
+
+        <ul class="contact__list">
+          <li>
+            <span class="contact__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>
+            <div><strong>Telefon</strong><a href="tel:+48000000000">+48 000 000 000</a></div>
+          </li>
+          <li>
+            <span class="contact__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 7 10 7 10-7"/></svg></span>
+            <div><strong>E‑mail</strong><a href="mailto:kontakt@navipartner.pl">kontakt@navipartner.pl</a></div>
+          </li>
+          <li>
+            <span class="contact__ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <div><strong>Biuro</strong><span>ul. Przykładowa 1, 00-001 Warszawa<br />pon.–pt. 9:00–17:00</span></div>
+          </li>
+        </ul>
+      </div>
+
+      <form class="form" id="leadForm" novalidate>
+        <div class="form__row">
+          <label>
+            <span>Imię i nazwisko</span>
+            <input type="text" name="name" placeholder="Jan Kowalski" required autocomplete="name" />
+          </label>
+          <label>
+            <span>Telefon</span>
+            <input type="tel" name="phone" placeholder="+48 600 000 000" required autocomplete="tel" />
+          </label>
+        </div>
+        <label>
+          <span>E‑mail (opcjonalnie)</span>
+          <input type="email" name="email" placeholder="jan@przyklad.pl" autocomplete="email" />
+        </label>
+        <div class="form__row">
+          <label>
+            <span>Miasto</span>
+            <input type="text" name="city" placeholder="Warszawa" required />
+          </label>
+          <label>
+            <span>Interesuje mnie</span>
+            <select name="topic">
+              <option>Rozliczanie kursów</option>
+              <option>Wynajem samochodu</option>
+              <option>Oferta dla floty</option>
+              <option>Karta Medicover Sport</option>
+              <option>Inne pytanie</option>
+            </select>
+          </label>
+        </div>
+        <label>
+          <span>Wiadomość</span>
+          <textarea name="message" rows="4" placeholder="Napisz, od kiedy chcesz zacząć i czy masz już dokumenty…"></textarea>
+        </label>
+        <label class="form__consent">
+          <input type="checkbox" name="consent" required />
+          <span>Wyrażam zgodę na kontakt telefoniczny i mailowy w sprawie oferty NAVI partner. <a href="#">Polityka prywatności</a>.</span>
+        </label>
+        <button type="submit" class="btn btn--primary btn--lg btn--block">Wyślij zgłoszenie</button>
+        <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
   <footer class="footer">
     <div class="container footer__inner">
-      <a href="#" class="nav__logo">Social<span>Reach</span></a>
-      <p class="footer__copy">© 2025 SocialReach. Wszystkie prawa zastrzeżone.</p>
-      <div class="footer__social">
-        <a href="#" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      <div class="footer__brand">
+        <a href="#top" class="brand">
+          <img src="assets/logo-mark.svg" alt="" class="brand__mark" width="28" height="40" />
+          <span class="brand__text"><strong>NAVI</strong><small>partner</small></span>
         </a>
-        <a href="#" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
-        </a>
-        <a href="#" aria-label="LinkedIn">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-        </a>
+        <p>Partner rozliczeniowy dla kierowców Uber, Bolt, FreeNow oraz kurierów. Licencja, księgowość, wypłaty i wsparcie w jednym miejscu.</p>
+      </div>
+      <nav class="footer__col" aria-label="Oferta">
+        <h4>Oferta</h4>
+        <a href="#oferta">Rozliczanie kierowców</a>
+        <a href="#oferta">Wynajem samochodów</a>
+        <a href="#cennik">Cennik</a>
+        <a href="#benefity">Benefity</a>
+      </nav>
+      <nav class="footer__col" aria-label="Informacje">
+        <h4>Informacje</h4>
+        <a href="#jak-to-dziala">Jak to działa</a>
+        <a href="#faq">FAQ</a>
+        <a href="#">Regulamin</a>
+        <a href="#">Polityka prywatności</a>
+      </nav>
+      <div class="footer__col">
+        <h4>Kontakt</h4>
+        <a href="tel:+48000000000">+48 000 000 000</a>
+        <a href="mailto:kontakt@navipartner.pl">kontakt@navipartner.pl</a>
+        <div class="footer__social">
+          <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.8c0-.9.3-1.6 1.6-1.6h1.7V4.4c-.3 0-1.3-.1-2.5-.1-2.5 0-4.1 1.5-4.1 4.2v2.3H7.4V14h2.8v8z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c.3 2.3 1.7 3.7 4 3.9v3.2c-1.5 0-2.9-.5-4-1.3v6.6a5.6 5.6 0 1 1-5.6-5.6c.3 0 .6 0 .9.1v3.3a2.4 2.4 0 1 0 1.5 2.2V3z"/></svg></a>
+        </div>
       </div>
     </div>
+    <div class="container footer__bottom">
+      <span>© <span id="year"></span> NAVI partner. Wszelkie prawa zastrzeżone.</span>
+      <span>Uber, Bolt i FreeNow są znakami towarowymi ich właścicieli.</span>
+    </div>
   </footer>
+
+  <a href="#top" class="to-top" id="toTop" aria-label="Wróć na górę">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>
+  </a>
 
   <script src="script.js"></script>
 </body>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 200" role="img" aria-label="NAVI partner">
+  <defs>
+    <linearGradient id="np-g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3D6BFF"/>
+      <stop offset="1" stop-color="#1C40D6"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(0 10) scale(0.9)">
+    <path fill="url(#np-g)" d="M0 0 H70 C108.7 0 140 31.3 140 70 C140 108.7 108.7 140 70 140 H55 V150 C55 178 33 200 5 200 H0 Z"/>
+    <path fill="#fff" d="M22 50 H72 V28 L118 70 L72 112 V90 H22 Z"/>
+  </g>
+  <text x="160" y="112" font-family="Inter, Arial, sans-serif" font-weight="900" font-size="78" letter-spacing="2" fill="#0B0F1A">NAVI</text>
+  <text x="168" y="162" font-family="Inter, Arial, sans-serif" font-weight="500" font-size="46" fill="#0B0F1A">partner</text>
+</svg>
