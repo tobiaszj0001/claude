@@ -1,0 +1,15 @@
+{
+  "name": "Only Pantslow Gang: Turniej",
+  "short_name": "OPG Turniej",
+  "description": "Bokserska bijatyka ekipy Only Pantslow Gang",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#0b0b14",
+  "theme_color": "#0b0b14",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

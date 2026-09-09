@@ -114,17 +114,38 @@ const SFX = {
 // ============================================================
 const keysHeld = new Set();
 const keyBuf = new Map(); // code -> timestamp naciśnięcia
+const GAME_KEYS = new Set(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyF', 'KeyG', 'KeyH', 'KeyK', 'KeyL', 'Semicolon', 'ShiftLeft', 'ShiftRight', 'KeyP', 'Escape']);
+let usingKeyboard = false;
 window.addEventListener('keydown', (e) => {
+  const inGame = App.screen === 's-game';
+  if (inGame && GAME_KEYS.has(e.code)) e.preventDefault(); // żadnego przewijania, klikania przycisków spacją itp.
   if (e.repeat) return;
+  if (inGame && document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+  if (!usingKeyboard && GAME_KEYS.has(e.code)) { usingKeyboard = true; if (inGame) $('#touch').hidden = true; }
   keysHeld.add(e.code); keyBuf.set(e.code, performance.now());
-  if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
-  if ((e.code === 'Escape' || e.code === 'KeyP') && App.screen === 's-game') App.togglePause();
+  if ((e.code === 'Escape' || e.code === 'KeyP') && inGame) App.togglePause();
 });
-window.addEventListener('keyup', (e) => { keysHeld.delete(e.code); });
+window.addEventListener('keyup', (e) => { keysHeld.delete(e.code); if (App.screen === 's-game' && GAME_KEYS.has(e.code)) e.preventDefault(); });
 window.addEventListener('blur', () => { keysHeld.clear(); touchHeld.clear(); });
+window.addEventListener('touchstart', () => { if (usingKeyboard) { usingKeyboard = false; if (App.screen === 's-game') $('#touch').hidden = false; } }, { passive: true });
 
 const touchHeld = new Set();
 const touchBuf = new Map();
+
+// Telefony: żadnego przybliżania przez podwójne tapnięcie ani gest szczypania
+const IS_IOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const IS_STANDALONE = window.navigator.standalone === true || matchMedia('(display-mode: standalone)').matches || matchMedia('(display-mode: fullscreen)').matches;
+let lastTap = { t: 0, x: -999, y: -999 };
+document.addEventListener('touchend', (e) => {
+  const now = Date.now(); const t = e.changedTouches && e.changedTouches[0];
+  const x = t ? t.clientX : 0, y = t ? t.clientY : 0;
+  // podwójne tapnięcie w to samo miejsce = przeglądarka chce przybliżyć; nie pozwalamy
+  if (now - lastTap.t < 350 && Math.hypot(x - lastTap.x, y - lastTap.y) < 60) e.preventDefault();
+  lastTap = { t: now, x, y };
+}, { passive: false });
+document.addEventListener('touchmove', (e) => { if (e.touches.length > 1 || App.screen === 's-game') e.preventDefault(); }, { passive: false });
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, (e) => e.preventDefault(), { passive: false });
+document.addEventListener('dblclick', (e) => e.preventDefault(), { passive: false });
 
 const KEYMAP = {
   p1: { left: ['KeyA'], right: ['KeyD'], jump: ['KeyW'], dodge: ['KeyS'], punch: ['KeyF', 'Space'], heavy: ['KeyG'], block: ['KeyH', 'ShiftLeft'] },
@@ -700,6 +721,11 @@ const App = {
     $('#btn-result-menu').addEventListener('click', () => this.show('s-title'));
     $('#btn-champ-menu').addEventListener('click', () => this.show('s-title'));
     this.setupTouch();
+    if (IS_IOS && !IS_STANDALONE) $('#btn-fs').textContent = 'PEŁNY EKRAN (iPHONE)';
+    if (IS_STANDALONE) $('#btn-fs').hidden = true;
+    $('#btn-ios-close').addEventListener('click', () => { $('#ios-help').hidden = true; });
+    $$('button').forEach((b) => b.addEventListener('click', () => b.blur()));
+    if (isTouchDevice() && !IS_STANDALONE) $('#s-game').addEventListener('pointerdown', () => { if (!IS_IOS && !document.fullscreenElement && !this._fsTried) { this._fsTried = true; this.fullscreen(); } }, { once: true });
     this.renderTitle();
     this.loop(0);
     if (isTouchDevice()) $('#rotate-hint').classList.add('show');
@@ -708,14 +734,21 @@ const App = {
     $$('.screen').forEach((s) => s.classList.toggle('active', s.id === id));
     this.screen = id;
     if (id === 's-title') this.renderTitle();
-    if (id === 's-game') { this.fitCanvas(); $('#touch').hidden = !isTouchDevice(); }
+    if (id === 's-game') { this.fitCanvas(); $('#touch').hidden = !isTouchDevice() || usingKeyboard; }
     else $('#touch').hidden = true;
   },
   fullscreen() {
     const el = document.documentElement;
-    if (!document.fullscreenElement) { (el.requestFullscreen || el.webkitRequestFullscreen || function () {}).call(el); try { screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} }
-    else (document.exitFullscreen || function () {}).call(document);
+    const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen;
+    if (IS_STANDALONE) { this.lockLandscape(); return; }
+    if (IS_IOS || !req) { $('#ios-help').hidden = false; return; }
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      let p; try { p = req.call(el); } catch (e) { p = null; }
+      const after = () => { this.lockLandscape(); setTimeout(() => this.fitCanvas(), 250); };
+      if (p && p.then) p.then(after).catch(() => { $('#ios-help').hidden = false; }); else setTimeout(after, 300);
+    } else { (document.exitFullscreen || document.webkitExitFullscreen || function () {}).call(document); }
   },
+  lockLandscape() { try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } catch (e) {} },
   fitCanvas() {
     const area = $('#s-game').getBoundingClientRect();
     const vw = area.width || innerWidth, vh = area.height || innerHeight;
@@ -733,6 +766,9 @@ const App = {
       btn.addEventListener('pointerdown', down);
       btn.addEventListener('pointerup', up); btn.addEventListener('pointercancel', up); btn.addEventListener('pointerleave', up);
       btn.addEventListener('contextmenu', (e) => e.preventDefault());
+      btn.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+      btn.addEventListener('touchend', (e) => e.preventDefault(), { passive: false });
+      btn.addEventListener('click', (e) => e.preventDefault());
     });
   },
 

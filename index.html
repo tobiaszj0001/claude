@@ -10,7 +10,10 @@
   <title>Only Pantslow Gang: Turniej</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Rubik:wght@400;600;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
 <div id="app">
@@ -149,8 +152,22 @@
     </div>
   </div>
 
+  <div id="ios-help" class="overlay" hidden>
+    <div class="overlay-box help-box">
+      <h2>PEŁNY EKRAN NA TELEFONIE</h2>
+      <p class="help-tips" style="font-size:1rem">
+        Safari na iPhonie nie pozwala stronie przejść na pełny ekran. Jest na to sposób:<br /><br />
+        1. Kliknij w Safari przycisk <b>Udostępnij</b> (kwadrat ze strzałką w górę, na dole ekranu).<br />
+        2. Wybierz <b>Do ekranu początkowego</b> i zatwierdź <b>Dodaj</b>.<br />
+        3. Zamknij Safari i odpal grę z nowej ikony na pulpicie. Wtedy działa na całym ekranie, bez paska adresu.<br /><br />
+        Na Androidzie w Chrome: menu ⋮ → <b>Dodaj do ekranu głównego</b>, albo po prostu kliknij „Pełny ekran” w menu gry.
+      </p>
+      <button class="btn btn-primary" id="btn-ios-close">Jasne</button>
+    </div>
+  </div>
+
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
-<script src="game.js"></script>
+<script src="game.js?v=2"></script>
 </body>
 </html>
