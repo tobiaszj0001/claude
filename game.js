@@ -22,7 +22,7 @@ const ROSTER = [
   { id: 'watol',      name: 'Watol Wszechwładny', title: 'Wszechwładny',  glove: '#9b5cff', speed: 1.00, power: 1.50, legendary: true, taunt: 'Wszechwładza nie pyta o zgodę.' },
 ];
 
-const VERSION = 'v19';
+const VERSION = 'v20';
 const BASE_HP = 100;
 const METER_MAX = 100;
 
@@ -1798,10 +1798,12 @@ const CASINO = {
     for (let row = 2; row >= 0; row--) { for (let col = 0; col < 12; col++) { const n = col * 3 + row + 1; cells += cell('n' + n, n, ROULETTE_RED.has(n) ? 'red' : 'black'); } cells += cell('col' + (row + 1), '2:1', 'out col'); }
     const dozens = `<div class="dozens">${cell('d1', '1-12', 'out')}${cell('d2', '13-24', 'out')}${cell('d3', '25-36', 'out')}</div>`;
     const outs = `<div class="outs">${cell('low', '1-18', 'out')}${cell('even', 'PARZ.', 'out')}${cell('red', '🔴', 'out')}${cell('black', '⚫', 'out')}${cell('odd', 'NIEP.', 'out')}${cell('high', '19-36', 'out')}</div>`;
-    g.innerHTML = `<div class="roulette"><canvas id="wheel" width="240" height="240"></canvas><div><div class="table">${grid}${cells}${dozens}${outs}</div></div></div>
-      ${this.chipBar()}
-      <div class="roulette-ctrl"><span>Na stole: <b style="color:var(--gold)">${this.betTotal()}</b></span><button class="btn btn-sm btn-ghost" id="rl-clear">Zdejmij</button><button class="btn btn-sm btn-ghost" id="rl-repeat" ${this.lastBets ? '' : 'disabled'}>Powtórz</button><button class="btn btn-primary" id="rl-spin" ${this.betTotal() ? '' : 'disabled'}>🎡 KRĘĆ</button></div>
-      <div class="history">${this.history.slice(-14).map((n) => `<span style="background:${n === 0 ? '#1e8449' : ROULETTE_RED.has(n) ? '#c0392b' : '#1a1a1a'}">${n}</span>`).join('')}</div>
+    g.innerHTML = `<div class="roulette">
+        <div class="rl-left"><canvas id="wheel" width="240" height="240"></canvas><div class="history">${this.history.slice(-12).map((n) => `<span style="background:${n === 0 ? '#1e8449' : ROULETTE_RED.has(n) ? '#c0392b' : '#1a1a1a'}">${n}</span>`).join('') || '<span class="none">ostatnie liczby</span>'}</div></div>
+        <div class="rl-right"><div class="table">${grid}${cells}${dozens}${outs}</div>
+          ${this.chipBar()}
+          <div class="roulette-ctrl"><span>Na stole: <b style="color:var(--gold)">${this.betTotal()}</b></span><button class="btn btn-sm btn-ghost" id="rl-clear">Zdejmij</button><button class="btn btn-sm btn-ghost" id="rl-repeat" ${this.lastBets ? '' : 'disabled'}>Powtórz</button><button class="btn btn-primary" id="rl-spin" ${this.betTotal() ? '' : 'disabled'}>🎡 KRĘĆ</button></div>
+        </div></div>
       <div class="t-hint">Numer 35:1 • kolumna i tuzin 2:1 • kolor, parzyste, połówki 1:1. Kliknij pole, żeby postawić wybrany żeton.</div>`;
     this.bindChips();
     $$('[data-bet]').forEach((c) => c.onclick = () => { if (this.spinning) return; if (this.chips() - this.betTotal() < this.chip) { this.say('lose'); $('#dealer-say').textContent = 'Nie stać cię. Wygraj coś w ringu.'; return; } const k = c.dataset.bet; this.bets[k] = (this.bets[k] || 0) + this.chip; SFX.ensure(); SFX.tone(1400, 0.05, 0.15, 'square', 0.9); this.renderRoulette(); });
