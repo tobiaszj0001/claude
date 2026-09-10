@@ -362,8 +362,26 @@ kbd {
 .upg-row.done { color: var(--gold); }
 .upg-row .req { color: #ff7a1a; font-size: 0.7rem; }
 
-.crate-box { display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }
-.crate-stage { width: 260px; height: 220px; display: flex; align-items: center; justify-content: center; position: relative; }
+.crate-box { display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; max-height: 100%; max-width: 100%; overflow: auto; padding: 4px; }
+.crate-stage { width: 260px; max-width: 100%; min-height: 60px; display: flex; align-items: center; justify-content: center; position: relative; }
+.crate-stage:has(> .crate-icon:not([hidden])) { height: 220px; }
+#crate .menu { flex: none; }
+/* telefon poziomo: skrzynka i nagroda mieszczą się razem z przyciskami */
+@media (max-height: 500px) {
+  #crate { padding: 0.4rem; }
+  .crate-box { gap: 0.3rem; }
+  .crate-stage:has(> .crate-icon:not([hidden])) { height: 140px; }
+  .crate-icon { font-size: 5.5rem; }
+  .crate-result { gap: 1px; }
+  .crate-result .rarity { font-size: 0.8rem; }
+  .crate-result .item-big { font-size: 3rem; }
+  .crate-result .item-big .sw { width: 64px; height: 64px; border-width: 3px; }
+  .crate-result .item-name { font-size: 1.3rem; }
+  .crate-result .item-type { font-size: 0.78rem; }
+  .crate-result .dup { font-size: 0.8rem; }
+  #crate .menu { gap: 0.4rem; } #crate .menu .btn { font-size: 0.85rem; padding: 0.35em 0.8em; }
+  .crate-stage.legendary::before { inset: -30px; }
+}
 .crate-icon { font-size: 9rem; line-height: 1; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.7)); }
 .crate-icon.shake { animation: crateshake 0.9s ease-in-out; }
 .crate-icon.burst { animation: crateburst 0.5s ease-in forwards; }
@@ -522,7 +540,10 @@ kbd {
 /* ---------- Poker: czytelny stół ---------- */
 .pk-layout { display: flex; gap: 0.8rem; width: 100%; max-width: 1100px; align-items: stretch; }
 .pk-layout .poker-table { display: flex; flex-direction: column; gap: 0.5rem; flex: 1; grid-template-columns: none; }
-.pk-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; }
+.pk-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+.seat { min-width: 0; }
+.seat .seat-top > div { min-width: 0; }
+.seat .seat-top .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pk-row.me-row { grid-template-columns: 1fr; }
 .pk-log { width: 230px; flex: none; background: rgba(0,0,0,0.35); border: 2px solid rgba(255,255,255,0.12); border-radius: 14px; padding: 8px; display: flex; flex-direction: column; min-height: 0; }
 .pk-log-title { font-family: var(--font-display); letter-spacing: 0.1em; color: var(--gold); font-size: 0.95rem; margin-bottom: 4px; }
@@ -654,7 +675,7 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
 /* ---------- Kasyno na telefonie: jeden pasek u góry, zakładki w rzędzie, stół na resztę ekranu ---------- */
 .tab i { font-style: normal; margin-right: 4px; }
 @media (max-width: 900px) {
-  #s-casino.active { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto 1fr; gap: 6px 8px; padding: 6px 8px; }
+  #s-casino.active { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto 1fr; gap: 6px 8px; padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
   #s-casino .select-head { grid-column: 1; grid-row: 1; gap: 6px; }
   #s-casino .select-head h2 { display: none; }
   #s-casino .select-head .btn { font-size: 0.8rem; padding: 0.35em 0.7em; }
@@ -676,11 +697,14 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
   .duel-box span { flex: 1 1 160px; text-align: left; }
   .duel-box .btn { font-size: 0.75rem; padding: 0.3em 0.7em; }
   .btn-vip { font-size: 0.72rem; padding: 0.25em 0.6em; }
-  .casino-main { grid-column: 1 / -1; grid-row: 2 / 4; min-height: 0; gap: 6px; }
+  .casino-main { grid-column: 1 / -1; grid-row: 2 / 4; min-height: 0; min-width: 0; gap: 6px; }
+  #s-casino .select-head, .dealer, .casino-game, .tabs { min-width: 0; }
+  .casino-game { overflow-x: hidden; }
+  .roulette > div { max-width: 100%; overflow-x: auto; }
   .tabs { flex-wrap: nowrap; gap: 4px; }
-  .tab { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 3px 2px; font-size: 0.62rem; letter-spacing: 0.02em; border-radius: 8px; }
-  .tab i { margin: 0; font-size: 1.05rem; line-height: 1.1; }
-  .tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .tab { flex: 1 1 0; min-width: 0; height: 46px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 2px; font-size: 0.6rem; letter-spacing: 0.02em; border-radius: 8px; line-height: 1; }
+  .tab i { margin: 0; font-size: 1.05rem; line-height: 1; display: flex; align-items: center; justify-content: center; width: 24px; height: 22px; flex: none; }
+  .tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; height: 12px; line-height: 12px; display: block; }
   .casino-game { padding: 0.5rem; border-width: 3px; border-radius: 14px; gap: 0.5rem; justify-content: flex-start; }
   .t-hint { font-size: 0.72rem; }
   .slot-title { font-size: 1.3rem; letter-spacing: 0.08em; }
@@ -749,6 +773,27 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
   .bj > .bj-ctrl, .casino-game > .roulette-ctrl, .slots > .bj-ctrl, .race > .bj-ctrl { position: sticky; bottom: -0.5rem; width: calc(100% + 1rem); margin: 0 -0.5rem -0.5rem; padding: 6px 8px; background: rgba(6, 30, 18, 0.92); backdrop-filter: blur(4px); border-top: 1px solid rgba(255,255,255,0.12); z-index: 2; }
   .duel-box .d { display: none; }
 }
+/* wąskie telefony poziomo (np. iPhone SE): w pokerze bez główek przy nazwiskach, żeby nazwiska się mieściły */
+@media (max-width: 640px) and (max-height: 500px) {
+  .pk-layout .seat:not(.me) img { display: none; }
+  .pk-layout .seat .seat-top .n { font-size: 0.62rem; }
+  .pk-layout .seat .stack { font-size: 0.7rem; }
+  .pk-layout .seat .cards .card-p { width: 22px; height: 32px; }
+}
+/* wąskie telefony pionowo: mniejsze pola ruletki, żeby stół nie rozpychał ekranu */
+@media (max-width: 400px) {
+  .table { grid-template-columns: 20px repeat(12, 19px) 24px; grid-auto-rows: 21px; gap: 2px; }
+  .cell { font-size: 0.6rem; } .cell.out { font-size: 0.55rem; } .cell.col { font-size: 0.5rem; }
+  #wheel { width: 120px; height: 120px; }
+  .chip { width: 34px; height: 34px; font-size: 0.7rem; }
+  #rotate-hint { font-size: 0.72rem; padding: 5px; }
+  .pk-layout .seat .cards .card-p { width: 22px; height: 32px; }
+}
+@media (max-width: 340px) {
+  .table { grid-template-columns: 18px repeat(12, 17px) 22px; grid-auto-rows: 20px; gap: 1px; }
+  .cell { font-size: 0.55rem; }
+  .tab span { font-size: 0.5rem; }
+}
 /* telefon pionowo: nagłówek i krupier jeden pod drugim, na całą szerokość */
 @media (max-width: 560px) {
   #s-casino.active { grid-template-columns: 1fr; grid-template-rows: auto auto auto 1fr; }
@@ -774,7 +819,7 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
   .pk-layout .seat .cards .card-p { width: 24px; height: 34px; font-size: 0.5rem; padding: 1px 2px; }
   .pk-layout .seat .cards .card-p .s { font-size: 0.7rem; }
   .pk-layout .seat .hand-name { font-size: 0.55rem; } .pk-layout .seat .bet-stack { font-size: 0.6rem; min-height: 0; }
-  .pk-layout .seat.me { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 8px; padding: 4px 8px 6px; }
+  .pk-layout .seat.me { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 8px; padding: 4px 8px 6px; }
   .pk-layout .seat.me .seat-top { grid-column: 1; grid-row: 1; }
   .pk-layout .seat.me .cards { grid-column: 2; grid-row: 1 / 4; }
   .pk-layout .seat.me .hand-name { grid-column: 1; grid-row: 2; text-align: left; min-height: 0; }
@@ -794,7 +839,7 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
 }
 /* telefon poziomo: wszystko na jednym ekranie, bez przewijania. Zakładki jako pionowy pasek z lewej, stół na resztę */
 @media (max-width: 900px) and (max-height: 500px) {
-  #s-casino.active { grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; gap: 4px 6px; padding: 4px 6px; }
+  #s-casino.active { grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; gap: 4px 6px; padding: max(4px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(4px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left)); }
   #s-casino .select-head { grid-column: 1; grid-row: 1; }
   .dealer { grid-column: 2; grid-row: 1; flex-wrap: nowrap; padding: 2px 8px; gap: 6px; }
   .dealer-head { width: 30px; } .dealer-hat { font-size: 0.8rem; top: -8px; }
@@ -803,9 +848,10 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
   .duel-box { flex: 0 1 auto; width: auto; white-space: nowrap; padding: 2px 6px; gap: 6px; flex-wrap: nowrap; }
   .duel-box .btn { font-size: 0.7rem; padding: 0.25em 0.6em; }
   .casino-main { display: contents; }
-  .tabs { grid-column: 1; grid-row: 2; flex-direction: column; gap: 3px; width: 62px; min-height: 0; }
-  .tab { flex: 1 1 0; padding: 1px 2px; font-size: 0.55rem; border-radius: 7px; min-height: 0; }
-  .tab i { font-size: 0.95rem; line-height: 1; }
+  .tabs { grid-column: 1; grid-row: 2; flex-direction: column; justify-content: space-between; gap: 3px; width: 64px; min-height: 0; }
+  .tab { flex: 1 1 0; height: auto; min-height: 0; max-height: 52px; width: 100%; padding: 1px 2px; font-size: 0.55rem; border-radius: 7px; justify-content: center; gap: 2px; }
+  .tab i { font-size: 1rem; line-height: 1; width: 24px; height: 20px; }
+  .tab span { height: 11px; line-height: 11px; }
   .casino-game { grid-column: 2; grid-row: 2; min-height: 0; padding: 0.3rem 0.5rem; gap: 0.25rem; border-width: 2px; border-radius: 12px; }
   .casino-game .t-hint { display: none; }
   .chip { width: 32px; height: 32px; border-width: 3px; font-size: 0.68rem; }
@@ -838,11 +884,11 @@ body.tut-open .toasts { top: auto; bottom: max(10px, env(safe-area-inset-bottom)
   .poker { gap: 0.2rem; }
   .pk-banner { font-size: 0.75rem; padding: 1px 6px; border-width: 1px; }
   .pk-layout { gap: 0; }
-  .pk-layout .poker-table { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; align-items: stretch; }
+  .pk-layout .poker-table { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.25rem; align-items: stretch; }
   .pk-row { gap: 0.25rem; }
   .seat.turn::after, .seat.me.turn::after { bottom: -7px; font-size: 0.5rem; padding: 0 5px; }
   .pk-layout .poker-table .pk-row:first-child { grid-column: 1 / -1; }
-  .pk-layout .seat { display: grid; grid-template-columns: 1fr auto; align-items: center; column-gap: 6px; row-gap: 0; padding: 3px 6px 4px; }
+  .pk-layout .seat { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 6px; row-gap: 0; padding: 3px 6px 4px; }
   .pk-layout .seat .seat-top { grid-column: 1; grid-row: 1; }
   .pk-layout .seat .cards { grid-column: 2; grid-row: 1 / 4; }
   .pk-layout .seat .hand-name { grid-column: 1; grid-row: 2; font-size: 0.52rem; min-height: 0; text-align: left; }
