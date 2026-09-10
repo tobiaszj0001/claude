@@ -7,7 +7,7 @@ Bokserska bijatyka w przeglądarce. Patyczaki z głowami ekipy walczą o tytuł
 
 Gra mieszka w repozytorium `pantslow` i jest publikowana przez GitHub Actions
 (`.github/workflows/pages-rebuild.yml`) po każdym pushu na `main`. Adres:
-`https://tobiaszj0001.github.io/pantslow/`. Stary adres `/claude/` przekierowuje na nowy.
+`https://tobiaszj0001.github.io/Pantslow/`. Stary adres `/claude/` przekierowuje na nowy.
 
 Lokalnie: otwórz `index.html` w przeglądarce albo odpal `python3 -m http.server`
 w tym folderze i wejdź na `http://localhost:8000`.

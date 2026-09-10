@@ -374,8 +374,8 @@
 <script>
   // Gra przeprowadziła się pod ładniejszy adres: stary link /claude/ przekierowuje, gdy tylko nowy jest online.
   (function () {
-    if (!/\/claude\//.test(location.pathname)) return;
-    var NEW = 'https://tobiaszj0001.github.io/pantslow/';
+    if (!/\/claude\//i.test(location.pathname)) return;
+    var NEW = 'https://tobiaszj0001.github.io/Pantslow/';
     fetch(NEW + 'manifest.json', { method: 'HEAD', cache: 'no-store' }).then(function (r) { if (r.ok) location.replace(NEW + location.search + location.hash); }).catch(function () {});
   })();
 </script>
