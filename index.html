@@ -371,6 +371,14 @@
 
   <div id="rotate-hint">📱↻ Obróć telefon poziomo, będzie wygodniej</div>
 </div>
+<script>
+  // Gra przeprowadziła się pod ładniejszy adres: stary link /claude/ przekierowuje, gdy tylko nowy jest online.
+  (function () {
+    if (!/\/claude\//.test(location.pathname)) return;
+    var NEW = 'https://tobiaszj0001.github.io/pantslow/';
+    fetch(NEW + 'manifest.json', { method: 'HEAD', cache: 'no-store' }).then(function (r) { if (r.ok) location.replace(NEW + location.search + location.hash); }).catch(function () {});
+  })();
+</script>
 <script src="online-config.js"></script>
 <script src="game.js?v=20"></script>
 </body>
