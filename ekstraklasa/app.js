@@ -1,23 +1,23 @@
 /* =========================================================
-   KOJNY LIVE — logika strony
+   COIN LIVE — logika strony
    - wyniki / terminarz / tabela Ekstraklasy
    - kursy liczone z formy drużyn (orientacyjne)
-   - kupony za Kojny (KJ) — wirtualna waluta, nie pieniądze
+   - kupony za Coiny (CN) — wirtualna waluta, nie pieniądze
    - kody doładowania (sekcja PROMO poniżej)
    - pobieranie danych na żywo z TheSportsDB (fetchLive)
    ========================================================= */
 (function () {
   "use strict";
 
-  const D = window.KOJNY_DATA;
-  const STORE_KEY = "kojny-live-v1";
+  const D = window.COIN_DATA;
+  const STORE_KEY = "coin-live-v1";
   const START_BALANCE = 1000;
 
   /* ---------- KODY DOŁADOWANIA ----------
      Tu dodajesz własne kody. `reusable: true` = można wpisywać wiele razy.
-     Dodatkowo działa format KOJNY+<kwota>, np. KOJNY+2500.            */
+     Dodatkowo działa format COIN+<kwota>, np. COIN+2500.            */
   const PROMO = {
-    KOJNY2026: { amount: 1000, reusable: true,  label: "Kod stały" },
+    COIN2026: { amount: 1000, reusable: true,  label: "Kod stały" },
     START500:  { amount: 500,  reusable: false, label: "Bonus na start" },
     MISTRZ:    { amount: 250,  reusable: false, label: "Bonus mistrza" },
     DERBY:     { amount: 100,  reusable: false, label: "Bonus derbowy" },
@@ -59,7 +59,7 @@
   /* ---------- Narzędzia ---------- */
   const $ = (sel) => document.querySelector(sel);
   const esc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  const fmtKJ = (n) => `${Math.round(n).toLocaleString("pl-PL")} KJ`;
+  const fmtCN = (n) => `${Math.round(n).toLocaleString("pl-PL")} CN`;
   const fmtOdd = (o) => o.toFixed(2);
   function fmtDate(iso) { const [y, m, d] = iso.split("-"); return `${d}.${m}.${y}`; }
   function todayISO() { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; }
@@ -178,7 +178,7 @@
       b.status = odds === 1 ? "void" : "won";
       b.payout = Math.round(b.stake * odds);
       credit(b.payout, b.status === "void" ? `Zwrot kuponu #${b.no}` : `Wygrana kuponu #${b.no}`);
-      showToast(b.status === "void" ? `Kupon #${b.no} zwrócony` : `🎉 Kupon #${b.no} wygrany: +${fmtKJ(b.payout)}`);
+      showToast(b.status === "void" ? `Kupon #${b.no} zwrócony` : `🎉 Kupon #${b.no} wygrany: +${fmtCN(b.payout)}`);
       changed = true;
     }
     if (changed) { saveState(); renderBetsCount(); }
@@ -213,9 +213,7 @@
   }
   function renderBetsCount() {
     const open = state.bets.filter(b => b.status === "open").length;
-    const el = $("#betsCount");
-    el.hidden = open === 0;
-    el.textContent = open;
+    document.querySelectorAll(".betsCount").forEach(el => { el.hidden = open === 0; el.textContent = open; });
   }
 
   /* ---------- Render: mecze ---------- */
@@ -310,14 +308,14 @@
     const table = currentTable();
     const zone = (pos) => pos === 1 ? "zone-ucl" : pos <= 3 ? "zone-eu" : pos >= 16 ? "zone-rel" : "";
     $("#content").innerHTML = `<div class="table-wrap"><table class="standings">
-      <thead><tr><th>#</th><th class="team-cell">Drużyna</th><th>M</th><th>Z</th><th>R</th><th>P</th><th>Bramki</th><th>+/−</th><th>Pkt</th><th>Forma</th></tr></thead>
+      <thead><tr><th>#</th><th class="team-cell">Drużyna</th><th>M</th><th class="hide-sm">Z</th><th class="hide-sm">R</th><th class="hide-sm">P</th><th class="hide-xs">Bramki</th><th>+/−</th><th>Pkt</th><th class="hide-sm">Forma</th></tr></thead>
       <tbody>${table.map(r => `<tr class="${zone(r.pos)}">
         <td class="pos num">${r.pos}</td>
         <td class="team-cell"><span class="team">${crest(r.id)}<span class="team__name">${esc(teamName(r.id))}</span>${teams[r.id] && teams[r.id].promoted ? ` <span class="eyebrow" title="Beniaminek">B</span>` : ""}</span></td>
-        <td class="num">${r.p}</td><td class="num">${r.w}</td><td class="num">${r.d}</td><td class="num">${r.l}</td>
-        <td class="num">${r.gf}:${r.ga}</td><td class="num">${r.gd > 0 ? "+" : ""}${r.gd}</td>
+        <td class="num">${r.p}</td><td class="num hide-sm">${r.w}</td><td class="num hide-sm">${r.d}</td><td class="num hide-sm">${r.l}</td>
+        <td class="num hide-xs">${r.gf}:${r.ga}</td><td class="num">${r.gd > 0 ? "+" : ""}${r.gd}</td>
         <td class="pts num">${r.pts}</td>
-        <td><span class="form">${(r.form || []).map(f => `<i class="${f}">${f === "W" ? "Z" : f === "D" ? "R" : "P"}</i>`).join("") || "—"}</span></td>
+        <td class="hide-sm"><span class="form">${(r.form || []).map(f => `<i class="${f}">${f === "W" ? "Z" : f === "D" ? "R" : "P"}</i>`).join("") || "—"}</span></td>
       </tr>`).join("")}</tbody></table></div>
       <div class="legend"><span><i style="background:var(--pitch)"></i>Mistrz / el. Ligi Mistrzów</span><span><i style="background:var(--accent)"></i>Europejskie puchary</span><span><i style="background:var(--lose)"></i>Spadek</span><span>B = beniaminek</span><span>${liveTable ? "Tabela z TheSportsDB" : "Tabela liczona z wyników na stronie"}</span></div>`;
   }
@@ -337,7 +335,7 @@
       const [cls, txt] = badge[b.status];
       return `<div class="bet"><div class="bet__top"><span>Kupon #${b.no} · ${when}${b.legs.length > 1 ? ` · AKO ${b.legs.length}` : ""}</span><span class="badge ${cls}">${txt}</span></div>
         <div class="bet__legs">${legs}</div>
-        <div class="bet__foot"><span>Stawka <b class="num">${fmtKJ(b.stake)}</b> · kurs ${fmtOdd(b.odds)}</span><span>${b.status === "open" ? "Możliwa" : b.status === "lost" ? "Wygrana" : "Wypłata"} <b class="num">${fmtKJ(b.status === "lost" ? 0 : (b.payout != null ? b.payout : b.stake * b.odds))}</b></span></div></div>`;
+        <div class="bet__foot"><span>Stawka <b class="num">${fmtCN(b.stake)}</b> · kurs ${fmtOdd(b.odds)}</span><span>${b.status === "open" ? "Możliwa" : b.status === "lost" ? "Wygrana" : "Wypłata"} <b class="num">${fmtCN(b.status === "lost" ? 0 : (b.payout != null ? b.payout : b.stake * b.odds))}</b></span></div></div>`;
     }).join("")}</div>`;
   }
   function render() {
@@ -364,17 +362,18 @@
       const stake = Number($("#stake").value) || 0;
       const odds = slipOdds();
       $("#totalOdds").textContent = fmtOdd(odds);
-      $("#potential").textContent = fmtKJ(stake * odds);
+      $("#potential").textContent = fmtCN(stake * odds);
       const msg = $("#slipMsg");
       const btn = $("#placeBet");
-      if (stake < 1) { msg.textContent = "Minimalna stawka to 1 KJ."; msg.className = "msg msg--err"; btn.disabled = true; }
-      else if (stake > state.balance) { msg.textContent = `Za mało Kojnów — masz ${fmtKJ(state.balance)}. Użyj kodu doładowania.`; msg.className = "msg msg--err"; btn.disabled = true; }
+      if (stake < 1) { msg.textContent = "Minimalna stawka to 1 CN."; msg.className = "msg msg--err"; btn.disabled = true; }
+      else if (stake > state.balance) { msg.textContent = `Za mało Coinów — masz ${fmtCN(state.balance)}. Użyj kodu doładowania.`; msg.className = "msg msg--err"; btn.disabled = true; }
       else { msg.textContent = ""; msg.className = "msg"; btn.disabled = false; }
     }
     const bar = $("#slipbar");
     bar.hidden = slip.length === 0;
     $("#slipbarCount").textContent = slip.length;
     $("#slipbarOdds").textContent = fmtOdd(slipOdds());
+    const nb = $("#navSlipCount"); nb.hidden = slip.length === 0; nb.textContent = slip.length;
   }
   function togglePick(matchId, type, odd) {
     const m = matches.find(x => x.id === matchId);
@@ -399,28 +398,29 @@
     credit(-stake, `Kupon #${no}`);
     slip = [];
     renderSlip();
+    closeSheet();
     render();
-    showToast(`Kupon #${no} przyjęty. Możliwa wygrana: ${fmtKJ(stake * bet.odds)}`);
+    showToast(`Kupon #${no} przyjęty. Możliwa wygrana: ${fmtCN(stake * bet.odds)}`);
   }
 
   /* ---------- Kody doładowania ---------- */
   function redeem(raw) {
     const code = raw.trim().toUpperCase().replace(/\s+/g, "");
     if (!code) return { ok: false, msg: "Wpisz kod." };
-    const custom = code.match(/^KOJNY\+(\d{1,7})$/);
+    const custom = code.match(/^COIN\+(\d{1,7})$/);
     if (custom) {
       const amt = Number(custom[1]);
       if (amt < 1) return { ok: false, msg: "Kwota musi być większa od zera." };
       credit(amt, `Kod ${code}`);
-      return { ok: true, msg: `Dodano ${fmtKJ(amt)}.` };
+      return { ok: true, msg: `Dodano ${fmtCN(amt)}.` };
     }
     const p = PROMO[code];
     if (!p) return { ok: false, msg: "Nieznany kod. Sprawdź pisownię." };
-    if (p.onlyIfBelow != null && state.balance >= p.onlyIfBelow) return { ok: false, msg: `Ten kod działa tylko, gdy masz mniej niż ${p.onlyIfBelow} KJ.` };
+    if (p.onlyIfBelow != null && state.balance >= p.onlyIfBelow) return { ok: false, msg: `Ten kod działa tylko, gdy masz mniej niż ${p.onlyIfBelow} CN.` };
     if (!p.reusable && state.usedCodes[code]) return { ok: false, msg: "Ten kod był już użyty." };
     state.usedCodes[code] = Date.now();
     credit(p.amount, `${p.label} (${code})`);
-    return { ok: true, msg: `Dodano ${fmtKJ(p.amount)}.` };
+    return { ok: true, msg: `Dodano ${fmtCN(p.amount)}.` };
   }
 
   /* ---------- Dane na żywo (TheSportsDB) ---------- */
@@ -549,7 +549,7 @@
     else if (t.dataset.more) { expanded.has(t.dataset.more) ? expanded.delete(t.dataset.more) : expanded.add(t.dataset.more); render(); }
     else if (t.dataset.round) { round = Number(t.dataset.round); render(); }
     else if (t.dataset.rm) { slip = slip.filter(p => p.matchId !== t.dataset.rm); renderSlip(); render(); }
-    else if (t.classList.contains("tab")) { view = t.dataset.view; render(); }
+    else if (t.classList.contains("tab")) { view = t.dataset.view; closeSheet(); render(); window.scrollTo({ top: 0, behavior: "smooth" }); }
     else if (t.dataset.stake) { $("#stake").value = t.dataset.stake === "max" ? Math.max(1, Math.floor(state.balance)) : t.dataset.stake; renderSlip(); }
   });
   $("#stake").addEventListener("input", renderSlip);
@@ -557,7 +557,13 @@
   $("#clearSlip").addEventListener("click", () => { slip = []; renderSlip(); render(); });
   $("#refreshBtn").addEventListener("click", () => fetchLive(false));
   $("#themeBtn").addEventListener("click", toggleTheme);
-  $("#slipbarOpen").addEventListener("click", () => { $("#aside").classList.remove("mobile-hidden"); $("#slip").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  function openSheet() { $("#aside").classList.add("open"); $("#sheetBackdrop").hidden = false; document.body.classList.add("sheet-open"); }
+  function closeSheet() { $("#aside").classList.remove("open"); $("#sheetBackdrop").hidden = true; document.body.classList.remove("sheet-open"); }
+  $("#slipbarOpen").addEventListener("click", openSheet);
+  $("#navSlip").addEventListener("click", () => ($("#aside").classList.contains("open") ? closeSheet() : openSheet()));
+  $("#sheetClose").addEventListener("click", closeSheet);
+  $("#sheetBackdrop").addEventListener("click", closeSheet);
+  document.addEventListener("keydown", (ev) => { if (ev.key === "Escape") closeSheet(); });
 
   const dlg = $("#topupDialog");
   $("#topupBtn").addEventListener("click", () => { $("#codeMsg").textContent = ""; $("#codeInput").value = ""; dlg.showModal(); $("#codeInput").focus(); });

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Kojny Live</title>
-  <meta name="description" content="Wyniki i terminarz PKO BP Ekstraklasy z zakładami za Kojny — wirtualną walutę, nie za pieniądze." />
+  <title>Coin Live</title>
+  <meta name="description" content="Wyniki i terminarz PKO BP Ekstraklasy z zakładami za Coiny — wirtualną walutę, nie za pieniądze." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -14,9 +14,9 @@
 
 <header class="topbar">
   <div class="topbar__inner">
-    <a class="logo" href="#" aria-label="Kojny Live">
+    <a class="logo" href="#" aria-label="Coin Live">
       <span class="logo__ball" aria-hidden="true"></span>
-      <span>KOJNY<em>LIVE</em><small>Ekstraklasa · sezon 2026/27</small></span>
+      <span>COIN<em>LIVE</em><small>Ekstraklasa · sezon 2026/27</small></span>
     </a>
     <div class="topbar__spacer"></div>
     <div class="source source--snap" id="source">
@@ -24,9 +24,9 @@
       <span class="txt" id="sourceText">Dane: snapshot</span>
       <button type="button" id="refreshBtn" title="Pobierz aktualne wyniki z internetu">Odśwież</button>
     </div>
-    <div class="wallet" title="Twój portfel Kojnów">
+    <div class="wallet" title="Twój portfel Coinów">
       <span class="wallet__label">Portfel</span>
-      <span class="wallet__amount"><span id="balance" class="num">0</span><span class="unit">KJ</span></span>
+      <span class="wallet__amount"><span id="balance" class="num">0</span><span class="unit">CN</span></span>
       <button type="button" class="wallet__topup" id="topupBtn">+ Kod</button>
     </div>
     <button type="button" class="icon-btn" id="themeBtn" title="Przełącz motyw" aria-label="Przełącz motyw">◐</button>
@@ -57,8 +57,8 @@
     <div class="hero">
       <div>
         <div class="eyebrow">PKO BP Ekstraklasa · Polska</div>
-        <h1 id="heroTitle">Wyniki, terminarz i kupony za Kojny</h1>
-        <p>Obstawiasz za Kojny (KJ) — wirtualną walutę tej strony. Żadnych prawdziwych pieniędzy: wygrane i przegrane zostają w Twoim portfelu w przeglądarce.</p>
+        <h1 id="heroTitle">Wyniki, terminarz i kupony za Coiny</h1>
+        <p>Obstawiasz za Coiny (CN) — wirtualną walutę tej strony. Żadnych prawdziwych pieniędzy: wygrane i przegrane zostają w Twoim portfelu w przeglądarce.</p>
       </div>
       <div class="hero__stats">
         <div class="stat"><b id="statLeader" class="num">—</b><span>Lider</span></div>
@@ -71,7 +71,7 @@
       <button class="tab" role="tab" id="tab-fixtures" aria-selected="true" data-view="fixtures">Terminarz</button>
       <button class="tab" role="tab" id="tab-results" aria-selected="false" data-view="results">Wyniki</button>
       <button class="tab" role="tab" id="tab-table" aria-selected="false" data-view="table">Tabela</button>
-      <button class="tab" role="tab" id="tab-bets" aria-selected="false" data-view="bets">Moje kupony<span class="count" id="betsCount" hidden>0</span></button>
+      <button class="tab" role="tab" id="tab-bets" aria-selected="false" data-view="bets">Moje kupony<span class="count betsCount" hidden>0</span></button>
     </div>
 
     <div id="rounds" class="rounds" hidden></div>
@@ -79,7 +79,12 @@
   </section>
 
   <!-- PRAWA KOLUMNA -->
-  <aside class="aside mobile-hidden" id="aside">
+  <aside class="aside" id="aside">
+    <div class="sheet-head">
+      <span class="sheet-handle" aria-hidden="true"></span>
+      <span class="eyebrow">Kupon i portfel</span>
+      <button type="button" class="icon-btn" id="sheetClose" aria-label="Zamknij">✕</button>
+    </div>
     <div class="panel slip" id="slip">
       <div class="panel__head">
         <h2 class="panel__title">Kupon</h2>
@@ -89,7 +94,7 @@
         <div id="picks"></div>
         <div id="slipForm" hidden>
           <div class="stake">
-            <label>Stawka (KJ)<input type="number" id="stake" min="1" step="1" value="50" inputmode="numeric" /></label>
+            <label>Stawka (CN)<input type="number" id="stake" min="1" step="1" value="50" inputmode="numeric" /></label>
             <div class="quick">
               <button type="button" data-stake="10">10</button>
               <button type="button" data-stake="50">50</button>
@@ -99,7 +104,7 @@
           </div>
           <div class="slip__sum" style="margin-top:10px">
             <span>Kurs łączny</span><b id="totalOdds" class="num">1.00</b>
-            <span class="big">Możliwa wygrana</span><b id="potential" class="num big">0 KJ</b>
+            <span class="big">Możliwa wygrana</span><b id="potential" class="num big">0 CN</b>
           </div>
           <div class="msg" id="slipMsg" style="margin:6px 0"></div>
           <button type="button" class="btn-primary" id="placeBet">Postaw kupon</button>
@@ -117,21 +122,31 @@
   </aside>
 </main>
 
+<div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+
 <div class="slipbar" id="slipbar" hidden>
-  <span><span class="eyebrow" style="color:inherit;opacity:.7">Kupon</span> <b id="slipbarCount">0</b> typy · kurs <b id="slipbarOdds">1.00</b></span>
-  <button type="button" id="slipbarOpen">Otwórz</button>
+  <span><b id="slipbarCount">0</b> typy · kurs <b id="slipbarOdds">1.00</b></span>
+  <button type="button" id="slipbarOpen">Postaw</button>
 </div>
+
+<nav class="bottomnav" aria-label="Nawigacja">
+  <button type="button" class="tab tab--nav" data-view="fixtures" aria-selected="true"><span class="ico">📅</span>Terminarz</button>
+  <button type="button" class="tab tab--nav" data-view="results" aria-selected="false"><span class="ico">⚽</span>Wyniki</button>
+  <button type="button" class="tab tab--nav" data-view="table" aria-selected="false"><span class="ico">🏆</span>Tabela</button>
+  <button type="button" class="tab tab--nav" data-view="bets" aria-selected="false"><span class="ico">🎟️</span>Kupony<span class="nav-badge betsCount" hidden>0</span></button>
+  <button type="button" class="tab--nav nav-slip" id="navSlip"><span class="ico">🧾</span>Kupon<span class="nav-badge nav-badge--accent" id="navSlipCount" hidden>0</span></button>
+</nav>
 
 <dialog id="topupDialog">
   <form method="dialog" class="dialog__body" id="topupForm">
-    <h2>Doładuj Kojny</h2>
-    <p>Wpisz kod doładowania. Kojny to zabawa, nie pieniądze — kod dodaje je do portfela w tej przeglądarce.</p>
+    <h2>Doładuj Coiny</h2>
+    <p>Wpisz kod doładowania. Coiny to zabawa, nie pieniądze — kod dodaje je do portfela w tej przeglądarce.</p>
     <div class="code-row">
       <input type="text" id="codeInput" placeholder="KOD" autocomplete="off" spellcheck="false" aria-label="Kod doładowania" />
       <button type="submit" class="btn-primary" style="width:auto;padding:8px 16px;font-size:18px">Dodaj</button>
     </div>
     <div class="msg" id="codeMsg"></div>
-    <div class="hint">Podpowiedź: kod <code>KOJNY2026</code> zawsze działa. Kod w formacie <code>KOJNY+500</code> dodaje dowolną kwotę.</div>
+    <div class="hint">Podpowiedź: kod <code>COIN2026</code> zawsze działa. Kod w formacie <code>COIN+500</code> dodaje dowolną kwotę.</div>
     <button type="button" class="btn-ghost" id="topupClose">Zamknij</button>
   </form>
 </dialog>

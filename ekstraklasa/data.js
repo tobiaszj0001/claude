@@ -1,11 +1,11 @@
 /* =========================================================
-   KOJNY LIVE — dane startowe (snapshot z 15.09.2026)
+   COIN LIVE — dane startowe (snapshot z 15.09.2026)
    Źródło: wyniki PKO BP Ekstraklasy 2026/27, kolejki 1–8
    + plan 9. kolejki. Strona próbuje też pobrać dane na żywo
    z TheSportsDB (patrz app.js → fetchLive).
    ========================================================= */
 
-window.KOJNY_DATA = (function () {
+window.COIN_DATA = (function () {
   // id, nazwa, skrót, miasto, kolory herbu (dwa), sezon: beniaminek?
   const TEAMS = [
     { id: "gornik",     name: "Górnik Zabrze",         short: "Górnik",      abbr: "GÓR", c1: "#1f5fbf", c2: "#e6e6e6" },

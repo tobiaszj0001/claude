@@ -1,7 +1,7 @@
-# Kojny Live — wyniki Ekstraklasy z zakładami za Kojny
+# Coin Live — wyniki Ekstraklasy z zakładami za Coiny
 
 Strona typu Flashscore dla PKO BP Ekstraklasy 2026/27: terminarz, wyniki kolejek, tabela
-i zakłady bukmacherskie za **Kojny (KJ)** — wirtualną walutę, nie pieniądze.
+i zakłady bukmacherskie za **Coiny (CN)** — wirtualną walutę, nie pieniądze.
 
 ## Uruchomienie
 Otwórz `index.html` w przeglądarce (nie wymaga serwera). Portfel, kupony i motyw
@@ -15,15 +15,15 @@ zapisują się w `localStorage` tej przeglądarki.
 - Kursy są liczone z formy drużyn (punkty/mecz, bilans bramek, atut własnego boiska) —
   są orientacyjne, nie pochodzą od bukmachera.
 
-## Kody doładowania Kojnów
+## Kody doładowania Coinów
 | Kod | Ile | Uwagi |
 |---|---|---|
-| `KOJNY2026` | +1000 KJ | działa zawsze, bez limitu |
-| `KOJNY+<kwota>` | dowolna, np. `KOJNY+2500` | działa zawsze |
-| `START500` | +500 KJ | jednorazowy |
-| `MISTRZ` | +250 KJ | jednorazowy |
-| `DERBY` | +100 KJ | jednorazowy |
-| `BANKRUT` | +200 KJ | tylko gdy saldo < 20 KJ |
+| `COIN2026` | +1000 CN | działa zawsze, bez limitu |
+| `COIN+<kwota>` | dowolna, np. `COIN+2500` | działa zawsze |
+| `START500` | +500 CN | jednorazowy |
+| `MISTRZ` | +250 CN | jednorazowy |
+| `DERBY` | +100 CN | jednorazowy |
+| `BANKRUT` | +200 CN | tylko gdy saldo < 20 CN |
 
 Kody edytujesz w `app.js` w obiekcie `PROMO`.
 
