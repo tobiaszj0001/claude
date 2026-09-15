@@ -84,10 +84,13 @@
     return m.time ? `${day} ${m.time}` : day;
   }
   function teamName(id) { return teams[id] ? teams[id].name : id; }
+  const CRESTS = window.COIN_CRESTS || {};          // wbudowane data-URI (wersja jednoplikowa)
+  const CREST_BASE = D.CREST_BASE || "herby/";      // pliki PNG obok strony
+  function crestSrc(id) { return CRESTS[id] || `${CREST_BASE}${id}.png`; }
   function crest(id, lg) {
     const t = teams[id];
     if (!t) return `<span class="crest${lg ? " crest--lg" : ""}" style="--c1:#555;--c2:#999">?</span>`;
-    return `<span class="crest${lg ? " crest--lg" : ""}" style="--c1:${t.c1};--c2:${t.c2}" aria-hidden="true">${t.abbr}</span>`;
+    return `<span class="crest crest--img${lg ? " crest--lg" : ""}" style="--c1:${t.c1};--c2:${t.c2}" aria-hidden="true"><i>${t.abbr}</i><img src="${crestSrc(id)}" alt="" loading="lazy" decoding="async" onerror="this.parentNode.classList.add('crest--fallback')"></span>`;
   }
   function isLive(m) { return m.status === "LIVE"; }
   function isFinished(m) { return m.status === "FT"; }

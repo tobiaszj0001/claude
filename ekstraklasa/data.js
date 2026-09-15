@@ -134,6 +134,7 @@ window.COIN_DATA = (function () {
     SNAPSHOT_DATE: "2026-09-15",
     SEASON: "2026-2027",
     LEAGUE_ID_TSDB: 4422, // Polish Ekstraklasa w TheSportsDB
+    CREST_BASE: "herby/", // herby klubów: herby/<id>.png (źródło: github.com/luukhopman/football-logos)
     TEAMS, MATCHES,
   };
 })();

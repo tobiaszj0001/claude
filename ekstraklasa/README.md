@@ -15,6 +15,11 @@ zapisują się w `localStorage` tej przeglądarki.
 - Kursy są liczone z formy drużyn (punkty/mecz, bilans bramek, atut własnego boiska) —
   są orientacyjne, nie pochodzą od bukmachera.
 
+## Herby
+Prawdziwe herby klubów leżą w `herby/<id drużyny>.png` (139×181 px, przezroczyste tło),
+pobrane z publicznego repozytorium [luukhopman/football-logos](https://github.com/luukhopman/football-logos).
+Gdy plik się nie wczyta, strona pokazuje kolorowy znaczek ze skrótem klubu.
+
 ## Kody doładowania Coinów
 | Kod | Ile | Uwagi |
 |---|---|---|
