@@ -128,7 +128,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .deco--star2 { left: 3%; bottom: 60px; width: 56px; height: 56px; transform: rotate(-20deg); opacity: .6; }
 .deco--star3 { right: 5%; top: 30px; }
 .deco--star4 { left: 4%; bottom: 30px; width: 50px; height: 50px; opacity: .6; }
-.deco--arrow { position: static; width: 110px; height: 66px; flex-shrink: 0; }
+.deco--arrow { position: static; width: 120px; height: 72px; flex-shrink: 0; opacity: 1; }
 .deco--arrow-l { transform: scaleX(-1); }
 
 /* ---------- hero ---------- */
