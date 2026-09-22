@@ -3,58 +3,54 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dzika Liga Socca — amatorska liga szóstek piłkarskich</title>
-  <meta name="description" content="Dzika Liga Socca — amatorska liga piłki nożnej 6-osobowej. Terminarz, tabela, wyniki, drużyny, klasyfikacja strzelców i zapisy na nowy sezon." />
+  <title>Dzika Liga Socca</title>
+  <meta name="description" content="Dzika Liga Socca — amatorska liga piłki nożnej sześcioosobowej na Górnym Śląsku. Wyniki meczów, tabele 1 i 2 ligi, ranking strzelców i asystentów sezonu 2026/27." />
   <meta property="og:title" content="Dzika Liga Socca" />
-  <meta property="og:description" content="Amatorska liga szóstek piłkarskich. Terminarz, tabela, wyniki i zapisy." />
+  <meta property="og:description" content="Amatorska liga socca 6v6 na Śląsku. Wyniki, tabele, rankingi zawodników sezonu 2026/27." />
   <meta property="og:type" content="website" />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Permanent+Marker&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- ===== PASEK INFO ===== -->
-  <div class="ticker" aria-label="Najbliższa kolejka">
+  <!-- symbole SVG używane wielokrotnie -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="crown" viewBox="0 0 120 80">
+        <path d="M8 66 L14 22 L38 44 L60 8 L82 44 L106 22 L112 66 Z" fill="none" stroke="currentColor" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M14 70 H106" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+        <circle cx="14" cy="20" r="4" fill="currentColor"/><circle cx="60" cy="6" r="4" fill="currentColor"/><circle cx="106" cy="20" r="4" fill="currentColor"/>
+      </symbol>
+      <symbol id="arrow" viewBox="0 0 200 120">
+        <path d="M10 60 C60 20 120 20 190 60" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round"/>
+        <path d="M150 40 L192 60 L152 84" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 60 C60 100 120 100 190 60" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+      </symbol>
+      <symbol id="star" viewBox="0 0 100 100">
+        <path d="M50 6 L62 40 L96 40 L68 60 L80 94 L50 72 L20 94 L32 60 L4 40 L38 40 Z" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- ===== PASEK WYNIKÓW ===== -->
+  <div class="ticker" aria-label="Ostatnie wyniki">
     <div class="ticker__track" id="ticker"></div>
   </div>
 
   <!-- ===== NAWIGACJA ===== -->
   <header class="nav" id="nav">
     <div class="container nav__inner">
-      <a href="#start" class="nav__logo" aria-label="Dzika Liga Socca — strona główna">
-        <svg class="logo" viewBox="0 0 64 64" aria-hidden="true">
-          <defs>
-            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#d4ff2b"/><stop offset="1" stop-color="#8fd400"/>
-            </linearGradient>
-          </defs>
-          <path d="M32 3 L58 12 V34 C58 48 46 58 32 62 C18 58 6 48 6 34 V12 Z" fill="url(#lg)"/>
-          <path d="M32 8 L53 15.5 V33.5 C53 44.5 43.5 53 32 56.5 C20.5 53 11 44.5 11 33.5 V15.5 Z" fill="#0b0d10"/>
-          <g fill="url(#lg)">
-            <path d="M20 20 L30 46 L26.5 46 L15.5 22 Z"/>
-            <path d="M30 18 L38 46 L34.5 46 L25.5 20 Z"/>
-            <path d="M40 19 L46 46 L42.5 46 L35.5 21 Z"/>
-          </g>
-          <circle cx="45" cy="19" r="4.5" fill="#fff"/>
-          <path d="M45 15.5 l1.6 2.4 2.7 .2 -2 1.8 .6 2.7 -2.9 -1.4 -2.9 1.4 .6 -2.7 -2 -1.8 2.7 -.2z" fill="#0b0d10"/>
-        </svg>
-        <span class="nav__wordmark">Dzika Liga <em>Socca</em></span>
+      <a href="#start" class="brand brand--nav" aria-label="Dzika Liga Socca — strona główna">
+        <svg class="brand__crown" aria-hidden="true"><use href="#crown"/></svg>
+        <span class="brand__text"><span class="brand__1">Dzika</span> <span class="brand__2">Liga</span> <span class="brand__3">Socca</span></span>
       </a>
-      <nav>
-        <ul class="nav__links" id="navLinks">
-          <li><a href="#aktualnosci">Aktualności</a></li>
-          <li><a href="#terminarz">Terminarz</a></li>
-          <li><a href="#tabela">Tabela</a></li>
-          <li><a href="#druzyny">Drużyny</a></li>
-          <li><a href="#strzelcy">Strzelcy</a></li>
-          <li><a href="#zasady">Zasady</a></li>
-          <li><a href="#kontakt">Kontakt</a></li>
-          <li><a href="#zapisy" class="btn btn--primary btn--sm">Zapisz drużynę</a></li>
-        </ul>
+      <nav aria-label="Menu główne">
+        <ul class="nav__links" id="navLinks"></ul>
       </nav>
+      <div class="nav__social" id="navSocial"></div>
       <button class="nav__burger" id="burger" aria-label="Otwórz menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -65,230 +61,200 @@
 
   <!-- ===== HERO ===== -->
   <section class="hero" id="start">
-    <div class="hero__bg" aria-hidden="true">
-      <div class="hero__stripes"></div>
-      <div class="hero__glow"></div>
-      <svg class="hero__claw" viewBox="0 0 400 400" aria-hidden="true">
-        <path d="M60 40 L200 380 L170 380 L30 60 Z" />
-        <path d="M150 20 L280 380 L250 380 L120 40 Z" />
-        <path d="M250 30 L360 380 L330 380 L220 50 Z" />
-      </svg>
-    </div>
-    <div class="container hero__content">
-      <div class="hero__badge"><span class="dot"></span> Sezon <span id="heroSezon">Jesień 2026</span> w toku</div>
-      <h1 class="hero__title">
-        <span class="hero__line">Dzika</span>
-        <span class="hero__line hero__line--accent">Liga Socca</span>
-      </h1>
-      <p class="hero__sub">
-        Amatorska liga szóstek piłkarskich. 6 na 6, sztuczna trawa, prawdziwe emocje.
-        Zbierz ekipę i zagraj o tytuł najdzikszej drużyny w mieście.
-      </p>
-      <div class="hero__cta">
-        <a href="#zapisy" class="btn btn--primary btn--lg">Zgłoś drużynę</a>
-        <a href="#tabela" class="btn btn--ghost btn--lg">Zobacz tabelę</a>
+    <svg class="deco deco--star deco--star1" aria-hidden="true"><use href="#star"/></svg>
+    <svg class="deco deco--star deco--star2" aria-hidden="true"><use href="#star"/></svg>
+    <div class="container hero__grid">
+      <div class="hero__content">
+        <svg class="crown crown--lg" aria-hidden="true"><use href="#crown"/></svg>
+        <div class="hero__title-row">
+          <svg class="deco deco--arrow deco--arrow-l" aria-hidden="true"><use href="#arrow"/></svg>
+          <h1 class="title2 title2--xl"><span>Dzika</span><em>Liga Socca</em></h1>
+          <svg class="deco deco--arrow deco--arrow-r" aria-hidden="true"><use href="#arrow"/></svg>
+        </div>
+        <p class="hero__meta">Sezon <b class="js-sezon"></b> <span class="sep">•</span> <b class="js-region"></b> <span class="sep">•</span> <b>6v6</b></p>
+        <p class="hero__sub js-opis"></p>
+        <div class="hero__cta">
+          <a href="#terminarz" class="btn btn--lime">Wyniki meczów</a>
+          <a href="#tabela" class="btn btn--cream">Tabela</a>
+        </div>
       </div>
-      <div class="hero__stats" id="heroStats"></div>
+      <div class="hero__art" aria-hidden="true">
+        <div class="brand brand--hero">
+          <svg class="brand__crown" aria-hidden="true"><use href="#crown"/></svg>
+          <span class="brand__1">Dzika</span>
+          <span class="brand__2">Liga</span>
+          <span class="brand__3">Socca</span>
+        </div>
+      </div>
     </div>
-    <div class="hero__next" id="heroNext"></div>
+    <div class="container hero__stats" id="heroStats"></div>
+  </section>
+
+  <!-- ===== WYNIKI / TERMINARZ ===== -->
+  <section class="section" id="terminarz">
+    <div class="container">
+      <div class="section__head section__head--center">
+        <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2"><span>Wyniki</span><em>meczów</em></h2>
+        <div class="tabs" data-tabs="fixtures" role="tablist" aria-label="Liga"></div>
+      </div>
+      <div id="fixtures"></div>
+      <div class="section__foot">
+        <a class="btn btn--outline" id="allMatchesLink" href="#" target="_blank" rel="noopener">Otwórz wszystkie kolejki</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TABELA ===== -->
+  <section class="section section--dim" id="tabela">
+    <div class="container">
+      <div class="section__head section__head--center">
+        <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2"><span>Tabela</span><em>sezon <span class="js-sezon"></span></em></h2>
+        <div class="tabs" data-tabs="table" role="tablist" aria-label="Liga"></div>
+      </div>
+      <div id="standings"></div>
+      <div class="legend">
+        <span><i class="legend__swatch legend__swatch--top"></i> Czołówka tabeli</span>
+        <span><i class="legend__swatch legend__swatch--bottom"></i> Strefa spadkowa</span>
+        <span class="legend__note">M – mecze, Z – zwycięstwa, R – remisy, P – porażki, Bramki – strzelone:stracone, +/− – różnica bramek, Pkt – punkty. Kolejność: punkty, różnica bramek, bramki strzelone.</span>
+      </div>
+    </div>
   </section>
 
   <!-- ===== AKTUALNOŚCI ===== -->
   <section class="section" id="aktualnosci">
     <div class="container">
-      <div class="section__head">
-        <div>
-          <span class="eyebrow">Z boiska</span>
-          <h2 class="section__title">Aktualności</h2>
-        </div>
-        <a class="link-arrow" id="fbLink" href="#" target="_blank" rel="noopener">Więcej na Facebooku</a>
+      <div class="section__head section__head--center">
+        <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2"><span>Aktualności</span><em>z boiska</em></h2>
+        <div class="tabs" data-tabs="news" role="tablist" aria-label="Filtr aktualności"></div>
       </div>
       <div class="news" id="news"></div>
     </div>
   </section>
 
-  <!-- ===== TERMINARZ ===== -->
-  <section class="section section--alt" id="terminarz">
+  <!-- ===== RANKING ===== -->
+  <section class="section section--dim" id="ranking">
     <div class="container">
-      <div class="section__head">
-        <div>
-          <span class="eyebrow">Kiedy gramy</span>
-          <h2 class="section__title">Terminarz i wyniki</h2>
-        </div>
-        <div class="rounds" id="rounds" role="tablist" aria-label="Kolejki"></div>
+      <div class="section__head section__head--center">
+        <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2"><span>Najlepsi</span><em>zawodnicy</em></h2>
+        <p class="section__lead">Ranking sezonu <span class="js-sezon"></span></p>
+        <div class="tabs" data-tabs="rankType" role="tablist" aria-label="Rodzaj rankingu"></div>
       </div>
-      <div class="fixtures" id="fixtures"></div>
-    </div>
-  </section>
-
-  <!-- ===== TABELA ===== -->
-  <section class="section" id="tabela">
-    <div class="container">
-      <div class="section__head">
-        <div>
-          <span class="eyebrow">Sezon <span class="js-sezon">Jesień 2026</span></span>
-          <h2 class="section__title">Tabela ligowa</h2>
-        </div>
-        <p class="section__note">Kolejność: punkty → różnica bramek → bramki strzelone. Zwycięstwo 3 pkt, remis 1 pkt.</p>
-      </div>
-      <div class="table-wrap">
-        <table class="standings" id="standings">
-          <thead>
-            <tr>
-              <th class="c">#</th>
-              <th>Drużyna</th>
-              <th class="c">M</th>
-              <th class="c">Z</th>
-              <th class="c">R</th>
-              <th class="c">P</th>
-              <th class="c hide-sm">Bramki</th>
-              <th class="c">+/−</th>
-              <th class="c hide-sm">Forma</th>
-              <th class="c pts">Pkt</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <div class="legend">
-        <span><i class="legend__swatch legend__swatch--top"></i> Strefa medalowa</span>
-        <span><i class="legend__swatch legend__swatch--playoff"></i> Play-off</span>
-      </div>
+      <div class="ranking" id="ranking"></div>
     </div>
   </section>
 
   <!-- ===== DRUŻYNY ===== -->
-  <section class="section section--alt" id="druzyny">
+  <section class="section" id="druzyny">
     <div class="container">
-      <div class="section__head">
-        <div>
-          <span class="eyebrow">Kto gra</span>
-          <h2 class="section__title">Drużyny</h2>
-        </div>
+      <div class="section__head section__head--center">
+        <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2"><span>Drużyny</span><em>ligi</em></h2>
+        <div class="tabs" data-tabs="teams" role="tablist" aria-label="Liga"></div>
       </div>
       <div class="teams" id="teams"></div>
     </div>
   </section>
 
-  <!-- ===== STRZELCY ===== -->
-  <section class="section" id="strzelcy">
+  <!-- ===== GALERIE ===== -->
+  <section class="section section--dim" id="galerie">
     <div class="container">
-      <div class="section__head">
-        <div>
-          <span class="eyebrow">Królowie pola karnego</span>
-          <h2 class="section__title">Klasyfikacja strzelców</h2>
-        </div>
+      <div class="section__head section__head--center">
+        <svg class="crown" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2"><span>Galerie</span><em>meczowe</em></h2>
+        <a class="link-arrow" id="galleryFbLink" href="#" target="_blank" rel="noopener">Więcej zdjęć na Facebooku</a>
       </div>
-      <div class="scorers" id="scorers"></div>
+      <div class="gallery" id="gallery"></div>
     </div>
   </section>
 
-  <!-- ===== ZASADY ===== -->
-  <section class="section section--alt" id="zasady">
-    <div class="container">
-      <div class="section__head">
-        <div>
-          <span class="eyebrow">W skrócie</span>
-          <h2 class="section__title">Zasady gry</h2>
+  <!-- ===== O NAS ===== -->
+  <section class="section" id="onas">
+    <div class="container about">
+      <div class="about__text">
+        <svg class="crown crown--left" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2 title2--left"><span>O nas</span><em class="js-onas-naglowek"></em></h2>
+        <p class="js-onas-tekst"></p>
+        <div class="about__facts" id="aboutFacts"></div>
+      </div>
+      <div class="about__pitch" aria-hidden="true">
+        <div class="pitch">
+          <div class="pitch__box pitch__box--l"></div>
+          <div class="pitch__box pitch__box--r"></div>
+          <div class="pitch__circle"></div>
+          <div class="pitch__line"></div>
         </div>
       </div>
-      <div class="rules">
-        <div class="rule">
-          <div class="rule__num">6v6</div>
-          <h3>Skład</h3>
-          <p>Pięciu zawodników w polu i bramkarz. Zmiany lotne, bez limitu. Maksymalnie 14 osób w kadrze.</p>
-        </div>
-        <div class="rule">
-          <div class="rule__num">2×20</div>
-          <h3>Czas gry</h3>
-          <p>Dwie połowy po 20 minut z krótką przerwą. Brak spalonych, aut wznawiany nogą.</p>
-        </div>
-        <div class="rule">
-          <div class="rule__num">3 / 1 / 0</div>
-          <h3>Punktacja</h3>
-          <p>Zwycięstwo 3 punkty, remis 1, porażka 0. Po fazie ligowej cztery najlepsze ekipy grają play-off.</p>
-        </div>
-        <div class="rule">
-          <div class="rule__num">2'</div>
-          <h3>Kary</h3>
-          <p>Żółta kartka to 2 minuty osłabienia. Czerwona kartka to koniec meczu i pauza w kolejnym spotkaniu.</p>
-        </div>
-      </div>
-      <div class="faq" id="faq"></div>
     </div>
   </section>
 
-  <!-- ===== ZAPISY ===== -->
-  <section class="section signup" id="zapisy">
-    <div class="container signup__grid">
-      <div class="signup__text">
-        <span class="eyebrow eyebrow--dark">Nowy sezon</span>
-        <h2 class="section__title">Zgłoś swoją drużynę</h2>
-        <p>Nie musisz mieć klubu ani trenera. Wystarczy sześciu kumpli, jeden kolor koszulek i chęć do gry. Resztą zajmujemy się my: boisko, sędziowie, statystyki, nagrody.</p>
-        <ul class="signup__list">
-          <li><strong>Wpisowe:</strong> <span id="wpisowe"></span></li>
-          <li><strong>Zapisy do:</strong> <span id="zapisyDo"></span></li>
-          <li><strong>Mecze:</strong> <span id="dzienMeczowy"></span></li>
-          <li><strong>Miejsce:</strong> <span id="boisko"></span></li>
-        </ul>
+  <!-- ===== WSPÓŁPRACA ===== -->
+  <section class="section sponsor" id="wspolpraca">
+    <svg class="deco deco--star deco--star3" aria-hidden="true"><use href="#star"/></svg>
+    <svg class="deco deco--star deco--star4" aria-hidden="true"><use href="#star"/></svg>
+    <div class="container sponsor__grid">
+      <div class="sponsor__text">
+        <svg class="crown crown--left" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2 title2--left title2--stack"><span>Zostań</span><em>sponsorem!</em></h2>
+        <p class="sponsor__lead">I stań się częścią zespołu tworzącego Dziką Ligę Socca!</p>
+        <p class="js-wspolpraca-tekst"></p>
+        <ul class="sponsor__list" id="coopList"></ul>
       </div>
-      <form class="form" id="signupForm" novalidate>
-        <div class="form__row">
-          <label>Nazwa drużyny
-            <input type="text" name="druzyna" placeholder="np. Dzikie Koty" required />
-          </label>
-        </div>
+      <form class="form" id="coopForm" novalidate>
         <div class="form__row form__row--2">
-          <label>Kapitan
-            <input type="text" name="kapitan" placeholder="Imię i nazwisko" required />
+          <label>Firma / marka
+            <input type="text" name="firma" placeholder="Nazwa firmy" required />
           </label>
-          <label>Telefon
-            <input type="tel" name="telefon" placeholder="+48 ..." required />
+          <label>Osoba kontaktowa
+            <input type="text" name="osoba" placeholder="Imię i nazwisko" required />
           </label>
         </div>
         <div class="form__row">
           <label>E-mail
-            <input type="email" name="email" placeholder="kapitan@email.pl" required />
+            <input type="email" name="email" placeholder="kontakt@firma.pl" required />
           </label>
         </div>
         <div class="form__row">
-          <label>Kilka słów o ekipie (opcjonalnie)
-            <textarea name="wiadomosc" rows="3" placeholder="Skąd jesteście, jak długo gracie razem..."></textarea>
+          <label>Wiadomość
+            <textarea name="wiadomosc" rows="3" placeholder="Jaką współpracą jesteście zainteresowani?"></textarea>
           </label>
         </div>
-        <button type="submit" class="btn btn--dark btn--lg btn--block">Wyślij zgłoszenie</button>
+        <button type="submit" class="btn btn--lime btn--block">Wyślij zapytanie</button>
         <p class="form__status" id="formStatus" aria-live="polite"></p>
       </form>
     </div>
   </section>
 
   <!-- ===== PARTNERZY ===== -->
-  <section class="section partners">
+  <section class="partners">
     <div class="container">
-      <span class="eyebrow eyebrow--center">Partnerzy ligi</span>
+      <p class="partners__title">Partnerzy ligi</p>
       <div class="partners__row" id="partners"></div>
     </div>
   </section>
 
   <!-- ===== KONTAKT ===== -->
-  <section class="section section--alt" id="kontakt">
+  <section class="section section--dim" id="kontakt">
     <div class="container contact">
       <div>
-        <span class="eyebrow">Masz pytania?</span>
-        <h2 class="section__title">Kontakt</h2>
-        <p class="contact__lead">Piszcie śmiało. Najszybciej odpowiadamy na Messengerze i mailowo.</p>
+        <svg class="crown crown--left" aria-hidden="true"><use href="#crown"/></svg>
+        <h2 class="title2 title2--left"><span>Kontakt</span><em>z ligą</em></h2>
+        <p class="contact__lead">Zgłoszenia drużyn, pytania o rozgrywki, media i współpraca. Najszybciej odpowiadamy na Messengerze i mailowo.</p>
         <ul class="contact__list" id="contactList"></ul>
       </div>
       <div class="contact__card">
-        <h3>Gdzie gramy</h3>
-        <p id="contactBoisko"></p>
-        <p id="contactCzas"></p>
-        <div class="pitch" aria-hidden="true">
-          <div class="pitch__box pitch__box--l"></div>
-          <div class="pitch__box pitch__box--r"></div>
-          <div class="pitch__circle"></div>
-          <div class="pitch__line"></div>
+        <div class="brand brand--card">
+          <svg class="brand__crown" aria-hidden="true"><use href="#crown"/></svg>
+          <span class="brand__1">Dzika</span>
+          <span class="brand__2">Liga</span>
+          <span class="brand__3">Socca</span>
         </div>
+        <p class="js-opis"></p>
+        <p class="contact__region">Region: <strong class="js-region"></strong></p>
+        <p class="contact__region">Sezon: <strong class="js-sezon"></strong></p>
       </div>
     </div>
   </section>
@@ -299,21 +265,15 @@
   <footer class="footer">
     <div class="container footer__inner">
       <div class="footer__brand">
-        <span class="nav__wordmark">Dzika Liga <em>Socca</em></span>
-        <p>Amatorska liga szóstek piłkarskich. Od kumpli dla kumpli.</p>
+        <span class="brand brand--nav"><svg class="brand__crown" aria-hidden="true"><use href="#crown"/></svg><span class="brand__text"><span class="brand__1">Dzika</span> <span class="brand__2">Liga</span> <span class="brand__3">Socca</span></span></span>
+        <p class="js-opis"></p>
       </div>
-      <ul class="footer__links">
-        <li><a href="#terminarz">Terminarz</a></li>
-        <li><a href="#tabela">Tabela</a></li>
-        <li><a href="#druzyny">Drużyny</a></li>
-        <li><a href="#zasady">Regulamin</a></li>
-        <li><a href="#zapisy">Zapisy</a></li>
-      </ul>
+      <ul class="footer__links" id="footerLinks"></ul>
       <div class="footer__social" id="footerSocial"></div>
     </div>
     <div class="container footer__bottom">
-      <span>© <span id="year"></span> Dzika Liga Socca. Wszystkie prawa zastrzeżone.</span>
-      <a href="#start" class="footer__top">Do góry ↑</a>
+      <span>© <span id="year"></span> Dzika Liga Socca</span>
+      <a href="#start" class="footer__top">Przewiń na górę ↑</a>
     </div>
   </footer>
 
