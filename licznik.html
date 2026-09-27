@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Licznik punktów</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: system-ui, sans-serif; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+    .board { display: flex; height: 100%; }
+    .team { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; cursor: pointer; position: relative; touch-action: manipulation; }
+    .team:active { filter: brightness(1.15); }
+    .red { background: #e53935; }
+    .blue { background: #1e88e5; }
+    .name { font-size: clamp(1.2rem, 5vw, 2.5rem); font-weight: 700; opacity: .9; background: none; border: none; color: inherit; text-align: center; width: 80%; outline: none; }
+    .score { font-size: clamp(6rem, 30vw, 18rem); font-weight: 800; line-height: 1; }
+    .minus { position: absolute; bottom: 24px; width: 64px; height: 64px; border-radius: 50%; border: 3px solid rgba(255,255,255,.7); background: rgba(0,0,0,.15); color: #fff; font-size: 2.2rem; cursor: pointer; }
+    .reset { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 999px; border: none; background: #fff; color: #222; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.3); z-index: 10; }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <div class="team red" data-team="0">
+      <input class="name" value="Drużyna 1" aria-label="Nazwa drużyny 1">
+      <div class="score">0</div>
+      <button class="minus" aria-label="Odejmij punkt">−</button>
+    </div>
+    <div class="team blue" data-team="1">
+      <input class="name" value="Drużyna 2" aria-label="Nazwa drużyny 2">
+      <div class="score">0</div>
+      <button class="minus" aria-label="Odejmij punkt">−</button>
+    </div>
+  </div>
+  <button class="reset">Reset</button>
+
+  <script>
+    const KEY = 'licznik-punktow';
+    let state = { scores: [0, 0], names: ['Drużyna 1', 'Drużyna 2'] };
+    try { state = JSON.parse(localStorage.getItem(KEY)) || state; } catch (e) {}
+
+    const teams = document.querySelectorAll('.team');
+
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+    function render() {
+      teams.forEach((el, i) => {
+        el.querySelector('.score').textContent = state.scores[i];
+        el.querySelector('.name').value = state.names[i];
+      });
+      save();
+    }
+
+    teams.forEach((el, i) => {
+      el.addEventListener('click', e => {
+        if (e.target.closest('.minus, .name')) return;
+        state.scores[i]++;
+        render();
+      });
+      el.querySelector('.minus').addEventListener('click', () => {
+        if (state.scores[i] > 0) state.scores[i]--;
+        render();
+      });
+      el.querySelector('.name').addEventListener('input', e => {
+        state.names[i] = e.target.value;
+        save();
+      });
+    });
+
+    document.querySelector('.reset').addEventListener('click', () => {
+      if (confirm('Wyzerować wynik?')) { state.scores = [0, 0]; render(); }
+    });
+
+    render();
+  </script>
+</body>
+</html>
