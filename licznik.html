@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Licznik punktów</title>
   <style>
+    :root { --red: #e53935; --blue: #1e88e5; --bg: #111; --btn-bg: #fff; --btn-fg: #222; }
+    @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --red: #c62828; --blue: #1565c0; --bg: #000; --btn-bg: #eee; --btn-fg: #111; } }
+    :root[data-theme="dark"] { --red: #c62828; --blue: #1565c0; --bg: #000; --btn-bg: #eee; --btn-fg: #111; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow: hidden; font-family: system-ui, sans-serif; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: var(--bg); overflow: hidden; font-family: system-ui, sans-serif; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
     .board { display: flex; height: 100%; }
     .team { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; cursor: pointer; position: relative; touch-action: manipulation; }
     .team:active { filter: brightness(1.15); }
-    .red { background: #e53935; }
-    .blue { background: #1e88e5; }
+    .red { background: var(--red); }
+    .blue { background: var(--blue); }
     .name { font-size: clamp(1.2rem, 5vw, 2.5rem); font-weight: 700; opacity: .9; background: none; border: none; color: inherit; text-align: center; width: 80%; outline: none; }
     .score { font-size: clamp(6rem, 30vw, 18rem); font-weight: 800; line-height: 1; }
     .minus { position: absolute; bottom: 24px; width: 64px; height: 64px; border-radius: 50%; border: 3px solid rgba(255,255,255,.7); background: rgba(0,0,0,.15); color: #fff; font-size: 2.2rem; cursor: pointer; }
-    .reset { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 999px; border: none; background: #fff; color: #222; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.3); z-index: 10; }
+    .reset { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); padding: 10px 20px; border-radius: 999px; border: none; background: var(--btn-bg); color: var(--btn-fg); font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.3); z-index: 10; }
   </style>
 </head>
 <body>
@@ -65,8 +68,17 @@
       });
     });
 
-    document.querySelector('.reset').addEventListener('click', () => {
-      if (confirm('Wyzerować wynik?')) { state.scores = [0, 0]; render(); }
+    const resetBtn = document.querySelector('.reset');
+    let resetTimer = null;
+    resetBtn.addEventListener('click', () => {
+      if (resetTimer) {
+        clearTimeout(resetTimer); resetTimer = null;
+        resetBtn.textContent = 'Reset';
+        state.scores = [0, 0]; render();
+      } else {
+        resetBtn.textContent = 'Kliknij ponownie';
+        resetTimer = setTimeout(() => { resetTimer = null; resetBtn.textContent = 'Reset'; }, 2500);
+      }
     });
 
     render();
